@@ -1,0 +1,77 @@
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: $mdtt-font;
+    background-color: $bg-color-base;
+    padding-top: 50px; // Move down content because we have a fixed navbar
+}
+
+*::selection{
+    background-color: #6C6C6C;
+    color: #FFF;
+}
+
+.highlighted{
+    font-weight: 500;
+}
+
+.scroll-container {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; //iOS scrollbar
+
+    // custom scrollbar only for desktop
+    @media #{$screen-1200} {
+        &::-webkit-scrollbar{
+            height: 6px;
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb{
+            background: rgba(0,0,0,.26);
+        }
+
+        &::-webkit-scrollbar-corner{
+            background: 0;
+        }
+    }
+}
+
+// No Gutter classes for Bootstrap columns
+.no-gutter > [class*='col-'] {
+    padding-right:0;
+    padding-left:0;
+}
+
+.is-link{
+    cursor: pointer;
+}
+
+img {
+    width: auto;
+    max-width: 100%;
+}
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+// Main layout elements
+// Resets for Bts styles
+
+.navbar-fixed-top {
+  border: 0;
+}
+
+// Main content
+.main {
+    padding: 20px;
+}
+
+h1{
+    margin: 0 0 15px;
+    font-weight: 400;
+}
+
+h2{
+    font-weight: 500;
+}

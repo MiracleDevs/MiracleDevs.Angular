@@ -1,0 +1,56 @@
+//
+// Fonts
+// --------------------------------------------------
+
+$mdtt-font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+//
+// Colors
+// --------------------------------------------------
+
+$tt-red: #e0655a;
+$tt-blue: #237aeb;
+$tt-green: $btn-success-bg;
+$text-gray: #737373;
+$validation-red: #e04c4c;
+
+$bg-color-base: #F5F5F5;
+
+//
+// Sizes
+// --------------------------------------------------
+
+// Common
+$header-height: 50px;
+$new-task-module-height: 90px;
+
+// Index
+$sidenav-width: 256px;
+
+// Timesheet screen
+$new-task-form-elements-height: 48px;
+
+// User dashboard
+$main-pic-size: 260px;
+$side-promo-width: 14.9%;
+
+// Spinners
+$spinner-xs-size: 16px;
+$spinner-md-size: 30px;
+
+//
+// Responsive media queries
+// --------------------------------------------------
+
+// Custom breakpoints for specific modules
+$screen-480: "(min-width: 480px)";
+$screen-640: "(min-width: 640px)";
+
+// Matches with SM bts breakpoint
+$screen-768: "(min-width: 768px)";
+
+// Matches with MD bts breakpoint
+$screen-992: "(min-width: 992px)";
+
+// Matches with LG bts breakpoint
+$screen-1200: "(min-width: 1200px)";

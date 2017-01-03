@@ -1,0 +1,19 @@
+{
+  "name": "bower",
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "angular": "1.5.8",
+    "angular-animate": "1.5.8",
+    "angular-ui-router": "0.3.1",
+    "jquery": "3.1.1",
+    "angular-translate": "2.11.1",
+    "angular-translate-loader-url": "2.11.1",
+    "angular-translate-loader-static-files": "2.11.1",
+    "tooltipster": "4.1.4",
+    "eonasdan-bootstrap-datetimepicker": "4.17.42",
+    "ng-pattern-restrict": "0.2.2",
+    "angular-ui-select": "0.19.4",
+    "angular-sanitize": "1.5.8"
+  }
+}

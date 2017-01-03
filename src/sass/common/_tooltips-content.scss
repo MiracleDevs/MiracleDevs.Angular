@@ -1,0 +1,17 @@
+//
+// Timesheet screen: hour notes
+// --------------------------------------------------
+
+.hour-notes-wrap{
+
+	.notes-text{
+		white-space: pre-line;
+	}
+
+	.notes-actions{
+		margin-top: 15px;
+    	padding-top: 15px;
+	    border-top: 1px solid #E5E5E5;
+		text-align: right;
+	}
+}

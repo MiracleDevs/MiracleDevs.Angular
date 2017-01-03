@@ -1,0 +1,29 @@
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+
+    // Recommended sizes
+    &.mi-18 {
+        font-size: 18px;
+    }
+    &.mi-24 {
+        font-size: 24px;
+    }
+    &.mi-36 {
+        font-size: 36px;
+    }
+    &.mi-48 {
+        font-size: 48px;
+    }
+}

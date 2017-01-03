@@ -1,0 +1,162 @@
+//
+// Basic styles
+// --------------------------------------------------
+
+input,
+select,
+textarea{
+    padding: 12px 15px;
+    border-radius: 0;
+    border: 1px solid #DFDFDF;
+
+    &:focus {
+        outline: 0;
+    }
+}
+
+textarea{
+    resize: none;
+}
+
+input,
+textarea{
+    &::placeholder{
+        transition: color ease 150ms;
+        color: #BBB;
+    }
+
+    &:hover:not(:disabled),
+    &:focus{
+        &::placeholder{
+            color: #777;
+        }
+    }
+}
+
+//
+// Material icons wrapper
+// --------------------------------------------------
+
+.icon-btn{
+    border: none;
+    background: none;
+    padding: 0;
+    line-height: 0;
+    cursor: pointer;
+
+    &.rounded-focus{
+        border-radius: 50%;
+        transition: background-color ease 150ms;
+        padding: 2px;
+
+        &:hover:not(:disabled),
+        &:focus:not(:disabled){
+            outline: 0;
+            color: #237aeb;
+            background-color: #FFF;
+        }
+    }
+
+    &:disabled{
+        cursor: default;
+        color: #c8c8c8;
+    }
+}
+
+//
+// Hide/show spinners inside 'button'
+// Only for block displayed btn
+// --------------------------------------------------
+
+button{
+    [class^="spinner"]{
+        display: none;
+    }
+}
+
+.btn-loading{
+
+    [class^="spinner"]{
+        display: inline-block;
+    }
+    .btn-text{
+        display: none;
+    }
+}
+
+//
+// Custom checkbox
+// --------------------------------------------------
+
+.custom-hidden {
+    position: absolute;
+    width: auto !important;
+    opacity: 0;
+
+    &:focus{
+        + .custom-checkbox,
+        ~ .text-checkbox {
+            color: lighten($tt-blue, 10%);
+        }
+    } 
+
+    &:checked + .custom-checkbox {
+        &:before{
+            content: "check_box";
+        }
+    }
+}
+
+.custom-check-wrap {
+    cursor: pointer;
+    user-select: none;
+    @include clearfix();
+}
+
+.custom-checkbox {
+    color: gray;
+    vertical-align: middle;
+
+    &:before{
+        // content: "\E835";
+        content: "check_box_outline_blank";
+    }
+}
+
+.text-checkbox {
+    margin: 0px;
+    padding-left: 2px;
+    font-weight: 400;
+    display: inline;
+    vertical-align: middle;
+    color: gray;
+}
+
+//
+// Input resets
+// --------------------------------------------------
+
+input[type=number]{
+    -moz-appearance: textfield;
+
+	&:focus{
+	    outline: 0;
+	}
+
+	&::-webkit-inner-spin-button, 
+	&::-webkit-outer-spin-button {
+	    appearance: none;
+	    margin: 0; 
+	}
+}
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 100px #FFF inset !important;
+    color: $text-gray;
+}
+
+:invalid, :required {
+  box-shadow: none;
+}

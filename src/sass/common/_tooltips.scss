@@ -1,0 +1,139 @@
+//
+// Customized tooltipster styles
+// --------------------------------------------------
+
+.tooltipster-base {
+	// this ensures that a constrained height set by functionPosition,
+	// if greater that the natural height of the tooltip, will be enforced
+	// in browsers that support display:flex
+	display: flex;
+	pointer-events: none;
+	// this may be overriden in JS for fixed position origins
+	position: absolute;
+}
+
+.tooltipster-box {
+	// see .tooltipster-base. flex-shrink 1 is only necessary for
+	// IE10- and flex-basis auto for IE11- (at least)
+	flex: 1 1 auto;
+}
+
+.tooltipster-content {
+	// these make sure we'll be able to detect any overflow
+	max-height: 100%;
+	max-width: 100%;
+	overflow: auto;
+}
+
+.tooltipster-ruler {
+	// these let us test the size of the tooltip
+	// without overflowing the window
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	right: 0;
+	top: 0;
+	visibility: hidden;
+}
+
+// ANIMATIONS
+// Open/close animations
+
+// fade
+.tooltipster-fade {
+	opacity: 0;
+	transition-property: opacity, transform;
+	transform: translate3d(-5px,0,0);
+}
+.tooltipster-fade.tooltipster-show {
+	opacity: 1;
+	transform: translate3d(0,0,0);
+}
+
+// Update animations
+
+// We use animations rather than transitions here because
+// transition durations may be specified in the style tag due to
+// animationDuration, and we try to avoid collisions and the use
+// of !important
+
+// fade
+@keyframes tooltipster-fading {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.tooltipster-update-fade {
+	animation: tooltipster-fading 0ms;
+}
+
+// rotate
+@keyframes tooltipster-rotating {
+	25% {
+		transform: rotate(-2deg);
+	}
+	75% {
+		transform: rotate(2deg);
+	}
+	100% {
+		transform: rotate(0);
+	}
+}
+
+.tooltipster-update-rotate {
+	animation: tooltipster-rotating 600ms;
+}
+
+// scale
+@keyframes tooltipster-scaling {
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.tooltipster-update-scale {
+	animation: tooltipster-scaling 600ms;
+}
+
+// DEFAULT STYLE OF THE SIDETIP PLUGIN 
+// All styles are "namespaced" with .tooltipster-sidetip to prevent
+// conflicts between plugins.
+
+// .tooltipster-box
+.tooltipster-sidetip .tooltipster-box {
+	border: none;
+	border-radius: 2px;
+	background-color: $dropdown-bg;
+	border: 1px solid $dropdown-border;
+	border-radius: $border-radius-base;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.tooltipster-sidetip.tooltipster-bottom .tooltipster-box {
+	margin-top: 8px;
+}
+
+.tooltipster-sidetip.tooltipster-left .tooltipster-box {
+	margin-right: 8px;
+}
+
+.tooltipster-sidetip.tooltipster-right .tooltipster-box {
+	margin-left: 8px;
+}
+
+.tooltipster-sidetip.tooltipster-top .tooltipster-box {
+	margin-bottom: 8px;
+}
+
+// .tooltipster-content
+.tooltipster-sidetip .tooltipster-content {
+	padding: 15px;
+}

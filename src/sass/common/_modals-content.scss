@@ -1,0 +1,40 @@
+//
+// Timesheet screen: Task single
+// --------------------------------------------------
+
+.modal{
+
+	.task-subheader{
+		// background-color: #FFF2CF;
+		background-color: #F2F2F2;
+	    padding: 15px;
+	}
+
+	.task-data-item{
+		margin-bottom: 5px;
+		font-size: 15px;
+	}
+
+	.task-notes-head{
+		margin-bottom: 10px;
+		@include clearfix();
+
+		h3{
+			float: left;
+			margin: 0;
+		}
+		button{
+			margin-left: 10px;
+		}
+	}
+
+	.task-notes-edit{
+		color: $tt-blue;
+		margin-left: 10px;
+		font-weight: 500;
+	}
+
+	.task-notes{
+		white-space: pre-line;
+	}
+}

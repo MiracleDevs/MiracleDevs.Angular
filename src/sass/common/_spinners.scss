@@ -1,0 +1,133 @@
+.spinner{
+    position: relative;
+    border-style: solid;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    animation: rotation 550ms infinite linear;
+}
+
+// Sizes also extended
+// to allow color modifiers
+.spinner-xs{
+    @extend .spinner;
+    height: $spinner-xs-size;
+    width: $spinner-xs-size;
+    border-width: 2px;
+}
+
+.spinner-md{
+    @extend .spinner;
+    height: $spinner-md-size;
+    width: $spinner-md-size;
+    border-width: 3px;
+}
+
+// Classes to be used
+.spinner-xs-blue{
+    @extend .spinner-xs;
+    border-color: rgba(0, 0, 0,.2);
+    border-right-color: $tt-blue;
+}
+
+.spinner-xs-white{
+    @extend .spinner-xs;
+    border-color: rgba(255, 255, 255,.35);
+    border-right-color: #FFF;
+}
+
+.spinner-md-blue{
+    @extend .spinner-md;
+    border-color: rgba(0, 0, 0,.2);
+    border-right-color: $tt-blue;
+}
+
+// Common animation
+@keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+}
+
+// Used when main content module is loading
+.main-loading{
+    text-align: center;
+    margin: 40px 0 30px;
+
+    p{
+        color: #acacac;
+        margin-top: 5px;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*#main.loading {
+    #header .loading-main {
+        display: block;
+    }
+
+    &.hide-content {
+        #content-wrapper {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}
+
+.loading-main {
+    // display: none;
+    position: absolute;
+    height: 5px;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: #D0D0D0;
+
+    .bar-wrapper {
+        position: relative;
+        float: left;
+        height: 100%;
+        width: 50%;
+        overflow: hidden;
+
+        &.left .inner-bar {
+            animation: progress-load-left linear 2s infinite;
+        }
+        &.right .inner-bar {
+            animation: progress-load-right linear 2s infinite;
+        }
+    }
+
+    .inner-bar {
+        background: $tt-green;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@keyframes progress-load-right {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }    
+}
+
+@keyframes progress-load-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }    
+}
+
+*/

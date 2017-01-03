@@ -1,0 +1,50 @@
+//
+// Main UI view
+// --------------------------------------------------
+
+[ui-view]{
+  transition: opacity ease 150ms;
+
+    &.ng-leave{
+        // opacity: 1;
+        // transform:translate3d(0,0,0);
+        display: none;
+    }
+    &.ng-leave-active{
+        // transform:translate3d(0,-20px,0);
+        // opacity: 0;
+        display: none;
+    }
+
+    &.ng-enter {
+        opacity: 0;
+        // transform:translate3d(0,0,0);
+    }
+    &.ng-enter-active {
+        opacity: 1;
+        // transform:translate3d(0,-20px,0);
+    }
+}
+
+//
+// Modal windows
+// --------------------------------------------------
+
+.modal-content{
+    .show-content {
+        transition: opacity ease 250ms, transform ease 250ms;
+        transition-delay: 100ms;
+        &.ng-hide-add,
+        &.ng-hide-add-active{
+            display: none;
+        }
+        &.ng-hide-remove{
+            opacity: 0;
+            transform: translate3d(0, 4px, 0);
+        }
+        &.ng-hide-remove-active{
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+}

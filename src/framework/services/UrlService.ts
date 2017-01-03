@@ -1,0 +1,50 @@
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="../interfaces/IServiceRegister.ts"/>
+///<reference path="../core/String.ts"/>
+///<reference path="IModalService.ts"/>
+
+module MiracleDevs.Angular.Services
+{
+    import IServiceRegister = Interfaces.IServiceRegister;
+    import ISCEService = angular.ISCEService;
+
+    export class UrlService extends ServiceBase implements IUrlService
+    {
+        static register: IServiceRegister =
+        {
+            name: FrameworkServices.urlService,
+            factory: UrlService.factory,
+            dependencies: [AngularServices.sce]
+        };
+
+        private sce: ISCEService;
+
+        constructor(sce: ISCEService)
+        {
+            super();
+            this.sce = sce;
+        }
+
+        getParsedUrl(url: string): string
+        {        
+            if (String.isNullOrEmpty(url))
+                return url;
+
+            if (url.indexOf("http://") < 0 && url.indexOf("https://") < 0)
+                url = `http://${url}`;
+
+            return this.sce.trustAsUrl(url);
+        }
+
+        static factory(sce: ISCEService): IUrlService
+        {
+            return new UrlService(sce);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Register service
+    ////////////////////////////////////////////////////////////
+    FrameworkModule.instance.registerService(UrlService.register);
+}

@@ -1,0 +1,26 @@
+{
+  "name": "miracledevs",
+  "version": "1.0.0",
+  "dependencies": {
+    "angular-mocks": "^1.6.1",
+    "gulp": "^3.9.1",
+    "gulp-karma-runner": "^1.2.0",
+    "gulp-typescript": "3.1.3",
+    "jasmine": "^2.5.2",
+    "jasmine-core": "^2.5.2",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-coverage": "~0.2.4",
+    "karma-jasmine": "^0.1.6",    
+    "karma-spec-reporter": "0.0.26",
+    "typescript": "^2.1.4"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.5.2",
+    "karma": "^0.12.37",
+    "karma-jasmine": "^0.1.6",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "phantomjs": "^2.1.7"
+  }
+}
