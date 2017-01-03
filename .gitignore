@@ -11,10 +11,14 @@ chcfg.sh
 *.user
 *.jfm
 *.dbmdl
+*.csproj
+*.sln
 _ReSharper.*
+packages
 node_modules
 bower_components
 bin
 obj
+Properties
 packages
 .vs
