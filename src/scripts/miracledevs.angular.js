@@ -3,6 +3,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -19,6 +24,11 @@ var MiracleDevs;
         })(Exceptions = Angular.Exceptions || (Angular.Exceptions = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 Array.forEach = function (array, action) {
     for (var index = 0; index < array.length; index++) {
         action(array[index]);
@@ -120,6 +130,11 @@ Array.removeAll = function (array, func) {
         Array.remove(array, elements[i]);
     }
 };
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="Array.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -208,6 +223,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ArrayList.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -254,6 +274,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="exceptions/Exception.ts" />
 ///<reference path="core/Dictionary.ts"/>
 var MiracleDevs;
@@ -312,11 +337,21 @@ var MiracleDevs;
         Angular.BuildInfo = BuildInfo;
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 Function.prototype.getFunctionName = function () {
     var f = typeof this == "function";
     var s = f && ((this.name && ["", this.name]) || this.toString().match(/function ([^\(]+)/));
     return (!f && "not a function") || (s && s[1] || "anonymous");
 };
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 Object.getTypeName = function (obj) {
     var funcNameRegex = /function (.{1,})\(/;
     var results = (funcNameRegex).exec((obj).constructor.toString());
@@ -473,6 +508,11 @@ if (!Object.keys) {
         };
     })();
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -816,7 +856,37 @@ var MiracleDevs;
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (INSERT LICENSE)
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 ///<reference path="core/Function.ts"/>
 ///<reference path="core/Object.ts"/>
@@ -960,6 +1030,11 @@ var MiracleDevs;
         Angular.ModuleBase = ModuleBase;
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -975,6 +1050,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -1035,6 +1115,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ServiceBase.ts" />
 ///<reference path="FrameworkServices.ts"/>
 var MiracleDevs;
@@ -1081,6 +1166,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ModuleBase.ts"/>
 ///<reference path="services/LoggingService.ts"/>
 var MiracleDevs;
@@ -1124,6 +1214,11 @@ var MiracleDevs;
         Angular.FrameworkModule = FrameworkModule;
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../services/FrameworkServices.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -1245,6 +1340,11 @@ var MiracleDevs;
         })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 Date.prototype.fromIso8601 = function (string) {
     var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
         "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
@@ -1272,6 +1372,11 @@ Date.prototype.fromIso8601 = function (string) {
     var time = (Number(date) + (offset * 60 * 1000));
     this.setTime(Number(time));
 };
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -2085,6 +2190,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -2107,6 +2217,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../core/Function.ts" />
 ///<reference path="../core/Object.ts" />
 var MiracleDevs;
@@ -2161,6 +2276,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -2342,9 +2462,19 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 Number.isNumber = function (value) {
     return !isNaN(parseFloat(value)) && isFinite(value);
 };
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 String.empty = "";
 String.isString = function (value) {
     return (typeof (value) === "string" || value instanceof String);
@@ -2375,6 +2505,11 @@ String.formatArray = function (format, args) { return String(format).replace(/\{
     }
     return args[index];
 }); };
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -2432,6 +2567,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2479,6 +2619,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2532,6 +2677,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2577,6 +2727,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2696,6 +2851,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2738,6 +2898,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/datetimepicker/datetimepicker.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
@@ -2829,6 +2994,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2891,6 +3061,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -2945,6 +3120,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../interfaces/IDirectiveRegister.ts"/>
@@ -2989,6 +3169,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3150,6 +3335,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3206,6 +3396,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../core/ArrayList.ts"/>
@@ -3322,6 +3517,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../interfaces/IDirectiveRegister.ts" />
@@ -3374,6 +3574,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3425,6 +3630,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3471,6 +3681,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3525,6 +3740,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3585,6 +3805,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3650,6 +3875,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3700,6 +3930,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3748,6 +3983,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../interfaces/IDirectiveRegister.ts"/>
@@ -3789,6 +4029,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../interfaces/IDirectiveRegister.ts"/>
@@ -3849,6 +4094,11 @@ var MiracleDevs;
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -3866,6 +4116,11 @@ var MiracleDevs;
         })(Exceptions = Angular.Exceptions || (Angular.Exceptions = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -3921,6 +4176,11 @@ var MiracleDevs;
         })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -3956,6 +4216,11 @@ var MiracleDevs;
         })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../FrameworkModule.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -3983,6 +4248,11 @@ var MiracleDevs;
         })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../FrameworkModule.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4010,6 +4280,11 @@ var MiracleDevs;
         })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../FrameworkModule.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4044,6 +4319,11 @@ var MiracleDevs;
         })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../FrameworkModule.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4071,6 +4351,11 @@ var MiracleDevs;
         })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4105,6 +4390,11 @@ var MiracleDevs;
         })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -4132,36 +4422,11 @@ var MiracleDevs;
         })(Models = Angular.Models || (Angular.Models = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
-///<reference path="../core/Object.ts"/>
-///<reference path="../core/LocalStorage.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Session;
-        (function (Session) {
-            var LocalStorage = Angular.Core.LocalStorage;
-            var ObjectSession = (function () {
-                function ObjectSession() {
-                }
-                ObjectSession.save = function (name, data) {
-                    LocalStorage.set(name, JSON.stringify(data));
-                };
-                ObjectSession.restore = function (name) {
-                    var content = LocalStorage.get(String, name);
-                    if (Object.isNull(content))
-                        return null;
-                    return JSON.parse(content.valueOf());
-                };
-                ObjectSession.clear = function (name) {
-                    LocalStorage.remove(name);
-                };
-                return ObjectSession;
-            }());
-            Session.ObjectSession = ObjectSession;
-        })(Session = Angular.Session || (Angular.Session = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Core/ArrayList.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4213,6 +4478,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../core/ArrayList.ts" />
 ///<reference path="../interfaces/IServiceRegister.ts" />
 ///<reference path="../FrameworkModule.ts" />
@@ -4275,6 +4545,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -4327,6 +4602,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="IDateService.ts" />
 ///<reference path="FrameworkServices.ts" />
 ///<reference path="ServiceBase.ts" />
@@ -4428,6 +4708,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ServiceBase.ts" />
 ///<reference path="FrameworkServices.ts"/>
 ///<reference path="../FrameworkModule.ts"/>
@@ -4468,6 +4753,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ServiceBase.ts" />
 ///<reference path="../FrameworkModule.ts"/>
 var MiracleDevs;
@@ -4559,6 +4849,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ServiceBase.ts" />
 ///<reference path="../FrameworkModule.ts"/>
 var MiracleDevs;
@@ -4610,6 +4905,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -4648,6 +4948,31 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Core/Dictionary.ts" />
 ///<reference path="../Core/Guid.ts" />
 var MiracleDevs;
@@ -4700,7 +5025,22 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 /// <reference path="../../typings/angularjs/angular.d.ts" />
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Core/Dictionary.ts" />
 ///<reference path="../Core/Guid.ts" />
 ///<reference path="ServiceBase.ts" />
@@ -4773,6 +5113,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
@@ -4915,6 +5260,11 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../interfaces/IServiceRegister.ts"/>
@@ -4958,6 +5308,46 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../core/Object.ts"/>
+///<reference path="../core/LocalStorage.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Session;
+        (function (Session) {
+            var LocalStorage = Angular.Core.LocalStorage;
+            var ObjectSession = (function () {
+                function ObjectSession() {
+                }
+                ObjectSession.save = function (name, data) {
+                    LocalStorage.set(name, JSON.stringify(data));
+                };
+                ObjectSession.restore = function (name) {
+                    var content = LocalStorage.get(String, name);
+                    if (Object.isNull(content))
+                        return null;
+                    return JSON.parse(content.valueOf());
+                };
+                ObjectSession.clear = function (name) {
+                    LocalStorage.remove(name);
+                };
+                return ObjectSession;
+            }());
+            Session.ObjectSession = ObjectSession;
+        })(Session = Angular.Session || (Angular.Session = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../ControllerBase.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4988,6 +5378,11 @@ var MiracleDevs;
         })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -5008,6 +5403,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Dictionary.ts"/>
 ///<reference path="PropertyMapping.ts"/>
 var MiracleDevs;
@@ -5057,6 +5457,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Dictionary.ts"/>
 ///<reference path="TypeMapping.ts"/>
 var MiracleDevs;
@@ -5127,6 +5532,11 @@ var MiracleDevs;
         })(Core = Angular.Core || (Angular.Core = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -5155,6 +5565,11 @@ var MiracleDevs;
         })(Scopes = Angular.Scopes || (Angular.Scopes = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../../../typings/angularjs/angular.d.ts"/>
 ///<reference path="../../../FrameworkModule.ts"/>
 ///<reference path="../../ControllerBase.ts"/>

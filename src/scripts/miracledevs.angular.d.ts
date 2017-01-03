@@ -3,12 +3,22 @@
 /// <reference path="../angular-ui-router/angular-ui-router.d.ts" />
 /// <reference path="../datetimepicker/datetimepicker.d.ts" />
 /// <reference path="../bootstrap/bootstrap.d.ts" />
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Exceptions {
     class Exception {
         message: string;
         constructor(message: string);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 interface ArrayConstructor {
     forEach<T>(array: Array<T>, action: (element: T) => void): void;
     where<T>(array: Array<T>, func: (element: T) => boolean): Array<T>;
@@ -25,6 +35,11 @@ interface ArrayConstructor {
     removeAt<T>(array: Array<T>, index: number): any;
     removeAll<T>(array: Array<T>, func: (element: T) => boolean): void;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     class ArrayList<T> {
         private innerList;
@@ -53,6 +68,11 @@ declare module MiracleDevs.Angular.Core {
         clear(): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     interface IDictionary<TKey, TValue> {
         getKeys(): ArrayList<TKey>;
@@ -79,6 +99,11 @@ declare module MiracleDevs.Angular.Core {
         clear(): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular {
     class BuildInfo {
         version: string;
@@ -93,9 +118,19 @@ declare module MiracleDevs.Angular {
         getData<T>(key: string): T;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 interface Function {
     getFunctionName(): string;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 interface ObjectConstructor {
     getTypeName(obj: any): string;
     isEqualTo(source: any, other: any, ignore?: Array<string>): boolean;
@@ -105,6 +140,11 @@ interface ObjectConstructor {
     }): T;
     isNull(obj: any): boolean;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     class AngularServices {
         static readonly translateProvider: string;
@@ -174,6 +214,11 @@ declare module MiracleDevs.Angular.Services {
         static readonly urlRouterProvider: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interfaces {
     interface IControllerRegister {
         name: string;
@@ -186,6 +231,11 @@ declare module MiracleDevs.Angular.Interfaces {
         dependencies?: Array<string>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interfaces {
     interface IServiceRegister {
         name: string;
@@ -193,6 +243,11 @@ declare module MiracleDevs.Angular.Interfaces {
         dependencies?: Array<string>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interfaces {
     interface IDirectiveRegister {
         name: string;
@@ -200,6 +255,11 @@ declare module MiracleDevs.Angular.Interfaces {
         dependencies?: Array<string>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interfaces {
     interface IFilterRegister {
         name: string;
@@ -207,6 +267,11 @@ declare module MiracleDevs.Angular.Interfaces {
         dependencies?: Array<string>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interfaces {
     interface IInterceptorRegister {
         name: string;
@@ -214,6 +279,11 @@ declare module MiracleDevs.Angular.Interfaces {
         dependencies?: Array<string>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface ILoggingService {
         writeMessage(message: string): void;
@@ -224,7 +294,7 @@ declare module MiracleDevs.Angular.Services {
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (INSERT LICENSE)
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular {
     import IModule = angular.IModule;
@@ -268,10 +338,20 @@ declare module MiracleDevs.Angular {
         protected preRegister(): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     class ServiceBase {
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     class FrameworkServices {
         static readonly alertService: string;
@@ -285,6 +365,11 @@ declare module MiracleDevs.Angular.Services {
         static readonly messageBus: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class DummyLoggingService extends ServiceBase implements ILoggingService {
@@ -300,6 +385,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(): ILoggingService;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular {
     import IScope = angular.IScope;
     import IInjectorService = angular.auto.IInjectorService;
@@ -319,6 +409,11 @@ declare module MiracleDevs.Angular {
         protected getModuleDependencies(): string[];
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Controllers {
     import IAlertService = Services.IAlertService;
     import ILoadingService = Services.ILoadingService;
@@ -353,9 +448,19 @@ declare module MiracleDevs.Angular.Controllers {
         protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 interface Date {
     fromIso8601(value: string): void;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     class FileMimeType {
         private extensions;
@@ -364,6 +469,11 @@ declare module MiracleDevs.Angular.Core {
     }
     var mimeType: FileMimeType;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     class Guid {
         value: string;
@@ -372,6 +482,11 @@ declare module MiracleDevs.Angular.Core {
         static new(): Guid;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     class LocalStorage {
         static set<T>(name: string, value: T): void;
@@ -386,14 +501,29 @@ declare module MiracleDevs.Angular.Core {
         static clear(): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     class Md5 {
         static computeHash(value: string): string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 interface NumberConstructor {
     isNumber(value: any): boolean;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 interface StringConstructor {
     isString(value: any): boolean;
     isNullOrEmpty(value: string): boolean;
@@ -402,6 +532,11 @@ interface StringConstructor {
     formatArray(format: string, arguments: any[]): string;
     empty: string;
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -420,6 +555,11 @@ declare module MiracleDevs.Angular.Directives {
         protected tryGet(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -437,6 +577,11 @@ declare module MiracleDevs.Angular.Directives {
         element: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -458,6 +603,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(timeout: ITimeoutService): Alert;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -471,6 +621,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(): BackgroundImage;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -500,6 +655,11 @@ declare module MiracleDevs.Angular.Directives {
         negativeClass?: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -514,6 +674,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(): ConvertToNumber;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -531,6 +696,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(filter: IFilterService): DateTimePicker;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -556,6 +726,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(timeout: ITimeoutService): FileButton;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -572,6 +747,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(): FileDragAndDrop;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -585,6 +765,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(): FocusInvalidField;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -639,6 +824,11 @@ declare module MiracleDevs.Angular.Directives {
         dispose(): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -657,6 +847,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(interpolate: IInterpolateService, state: IStateService): MdUiSrefActive;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -684,6 +879,11 @@ declare module MiracleDevs.Angular.Directives {
         action: ICompiledExpression;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -713,6 +913,11 @@ declare module MiracleDevs.Angular.Directives {
     interface IPaginationBarParameters {
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -733,6 +938,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(timeout: ITimeoutService): PreventEventIf;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -750,6 +960,11 @@ declare module MiracleDevs.Angular.Directives {
         element: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -770,6 +985,11 @@ declare module MiracleDevs.Angular.Directives {
         onContentChange: boolean;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -791,6 +1011,11 @@ declare module MiracleDevs.Angular.Directives {
         cssClass: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -811,6 +1036,11 @@ declare module MiracleDevs.Angular.Directives {
         onClick: boolean;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -824,6 +1054,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(): SelectToggleClass;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -841,6 +1076,11 @@ declare module MiracleDevs.Angular.Directives {
         element: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -854,6 +1094,11 @@ declare module MiracleDevs.Angular.Directives {
         static factory(): ToggleClassOnClick;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -907,11 +1152,21 @@ declare module MiracleDevs.Angular.Directives {
         zIndex: number;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Exceptions {
     class WrongTypeException extends Exception {
         constructor(message: string);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     class AngularFilters {
         static readonly currency: string;
@@ -924,6 +1179,11 @@ declare module MiracleDevs.Angular.Filters {
         static readonly orderBy: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     class FrameworkFilters {
         static readonly reverse: string;
@@ -932,6 +1192,11 @@ declare module MiracleDevs.Angular.Filters {
         static readonly uppercase: string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     import FilterRegister = Interfaces.IFilterRegister;
     class LowercaseFilter {
@@ -939,6 +1204,11 @@ declare module MiracleDevs.Angular.Filters {
         static factory(): (value: string) => string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     import FilterRegister = Interfaces.IFilterRegister;
     class ReverseFilter {
@@ -946,6 +1216,11 @@ declare module MiracleDevs.Angular.Filters {
         static factory(): (items: any[]) => any[];
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     import FilterRegister = Interfaces.IFilterRegister;
     class TrimFilter {
@@ -954,6 +1229,11 @@ declare module MiracleDevs.Angular.Filters {
         static factory(): (value: string, maxChars: number) => string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     import FilterRegister = Interfaces.IFilterRegister;
     class UppercaseFilter {
@@ -961,6 +1241,11 @@ declare module MiracleDevs.Angular.Filters {
         static factory(): (value: string) => string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interceptors {
     import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
     import IPromise = angular.IPromise;
@@ -980,6 +1265,11 @@ declare module MiracleDevs.Angular.Interceptors {
         onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Models {
     class ModelBase {
         private original;
@@ -989,13 +1279,11 @@ declare module MiracleDevs.Angular.Models {
         isTracking(): boolean;
     }
 }
-declare module MiracleDevs.Angular.Session {
-    class ObjectSession {
-        static save<T>(name: string, data: T): void;
-        static restore<T>(name: string): T;
-        static clear(name: string): void;
-    }
-}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import ArrayList = Core.ArrayList;
     interface IAlertService {
@@ -1022,6 +1310,11 @@ declare module MiracleDevs.Angular.Services {
         private static getTypeName(alertType);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     import ArrayList = Core.ArrayList;
@@ -1040,6 +1333,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(logger: ILoggingService): IAlertService;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface IDateService {
         getDate(value: Date | string): Date;
@@ -1083,6 +1381,11 @@ declare module MiracleDevs.Angular.Services {
         constructor(value: number, range: DateRange);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class DateService extends ServiceBase implements IDateService {
@@ -1093,6 +1396,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(): IDateService;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class ExceptionService extends ServiceBase implements IExceptionService {
@@ -1104,6 +1412,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(alertService: IAlertService, logger: ILoggingService): (exception: Error, cause: string) => void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class FileManagementService extends ServiceBase implements IFileManagementService {
@@ -1117,6 +1430,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(): FileManagementService;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class GeolocationService extends ServiceBase implements IGeolocationService {
@@ -1129,6 +1447,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(): GeolocationService;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     class HttpServiceBase extends ServiceBase {
         $http: ng.IHttpService;
@@ -1142,11 +1465,21 @@ declare module MiracleDevs.Angular.Services {
         protected getHeaders(): any;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface IExceptionService {
         processException(exception: Error, cause: string): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface IFileManagementService {
         read(file: File, completed: (file: File, content: string) => void, progress?: (p: number) => void, error?: (e: string) => void): void;
@@ -1155,6 +1488,11 @@ declare module MiracleDevs.Angular.Services {
         getBlobUrl(fileName: string, content: string): string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface IGeolocationService {
         getPosition(callback: (info: IGeolocationInformation) => void, onError?: (error: PositionError) => void, options?: IPositionOptions): void;
@@ -1181,12 +1519,22 @@ declare module MiracleDevs.Angular.Services {
         maximumAge?: number;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface ILoadingService {
         show(): void;
         hide(): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import Dictionary = Core.Dictionary;
     import ArrayList = Core.ArrayList;
@@ -1216,6 +1564,11 @@ declare module MiracleDevs.Angular.Services {
         constructor(type: Function);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IControllerRegister = Interfaces.IControllerRegister;
     import IDeferred = angular.IDeferred;
@@ -1238,11 +1591,21 @@ declare module MiracleDevs.Angular.Services {
         dispose: () => void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     interface IUrlService {
         getParsedUrl(url: string): string;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     import Dictionary = Core.Dictionary;
@@ -1261,6 +1624,11 @@ declare module MiracleDevs.Angular.Services {
         static factory(): MessageBus;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class ModalService extends ServiceBase implements IModalService {
@@ -1290,6 +1658,11 @@ declare module MiracleDevs.Angular.Services {
         resolve(result: any): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     import ISCEService = angular.ISCEService;
@@ -1301,6 +1674,23 @@ declare module MiracleDevs.Angular.Services {
         static factory(sce: ISCEService): IUrlService;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Session {
+    class ObjectSession {
+        static save<T>(name: string, data: T): void;
+        static restore<T>(name: string): T;
+        static clear(name: string): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Controllers.Dialogs {
     import IInjectorService = angular.auto.IInjectorService;
     import IModalInstance = Services.IModalInstance;
@@ -1312,6 +1702,11 @@ declare module MiracleDevs.Angular.Controllers.Dialogs {
         protected close(result?: any): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core.Mapping {
     class PropertyMapping<TSource, TDest> {
         property: string;
@@ -1319,6 +1714,11 @@ declare module MiracleDevs.Angular.Core.Mapping {
         constructor(property: string, method: (o: TSource) => any);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core.Mapping {
     class TypeMapping<TSource, TDest> {
         properties: Dictionary<string, PropertyMapping<TSource, TDest>>;
@@ -1329,6 +1729,11 @@ declare module MiracleDevs.Angular.Core.Mapping {
         run(source: TSource, destination: TDest): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core.Mapping {
     class AutoMapper {
         private static types;
@@ -1351,6 +1756,11 @@ declare module MiracleDevs.Angular.Core.Mapping {
         static dynamicMap(source: any, destination: any): void;
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Scopes.Directives.PaginationBar {
     import IScope = angular.IScope;
     interface IPaginationBarScope extends IScope {
@@ -1373,6 +1783,11 @@ declare module MiracleDevs.Angular.Scopes.Directives.PaginationBar {
         constructor(name: string, tag: any, enabled?: boolean, selected?: boolean);
     }
 }
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Controllers.Directives.PaginationBar {
     import IControllerRegister = Interfaces.IControllerRegister;
     import IInjectorService = angular.auto.IInjectorService;

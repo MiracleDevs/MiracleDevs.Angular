@@ -1,3 +1,9 @@
+/*!
+ * MiracleDevs.Angular v1.0.0 
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />

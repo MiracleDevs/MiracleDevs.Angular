@@ -1,5 +1,15 @@
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var FrameworkServices = MiracleDevs.Angular.Services.FrameworkServices;
 var FrameworkModule = MiracleDevs.Angular.FrameworkModule;
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../typings/jasmine/jasmine.d.ts" />
 ///<reference path="../typings/angularjs/angular.d.ts" />
 ///<reference path="../typings/angularjs/angular-mocks.d.ts" />
@@ -17,6 +27,11 @@ describe("Framework Module", function () {
         expect(FrameworkModule.instance.getModuleName()).not.toBeNull();
     });
 });
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/jasmine/jasmine.d.ts" />
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/angularjs/angular-mocks.d.ts" />
