@@ -13,80 +13,80 @@ Array.forEach = function (array, action) {
         action(array[index]);
     }
 };
-Array.where = function (array, func) {
+Array.where = function (array, predicate) {
     var temp = Array();
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             temp.push(array[index]);
     }
     return temp;
 };
-Array.select = function (array, func) {
+Array.select = function (array, predicate) {
     var temp = Array();
     for (var index = 0; index < array.length; index++) {
-        temp.push(func(array[index]));
+        temp.push(predicate(array[index]));
     }
     return temp;
 };
-Array.firstOrDefault = function (array, func) {
-    if (func == null) {
+Array.firstOrDefault = function (array, predicate) {
+    if (predicate == null) {
         if (array.length > 0)
             return array[0];
         return null;
     }
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             return array[index];
     }
     return null;
 };
-Array.lastOrDefault = function (array, func) {
-    if (func == null) {
+Array.lastOrDefault = function (array, predicate) {
+    if (predicate == null) {
         if (array.length > 0)
             return array[array.length - 1];
         return null;
     }
     for (var index = array.length - 1; index >= 0; index--) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             return array[index];
     }
     return null;
 };
-Array.first = function (array, func) {
-    var element = Array.firstOrDefault(array, func);
+Array.first = function (array, predicate) {
+    var element = Array.firstOrDefault(array, predicate);
     if (Object.isNull(element))
         throw new Error("The source sequence is empty.");
     return element;
 };
-Array.last = function (array, func) {
-    var element = Array.lastOrDefault(array, func);
+Array.last = function (array, predicate) {
+    var element = Array.lastOrDefault(array, predicate);
     if (Object.isNull(element))
         throw new Error("The source sequence is empty.");
     return element;
 };
-Array.any = function (array, func) {
-    if (func == null)
+Array.any = function (array, predicate) {
+    if (predicate == null)
         return array.length > 0;
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             return true;
     }
     return false;
 };
-Array.count = function (array, func) {
-    if (func == null)
+Array.count = function (array, predicate) {
+    if (predicate == null)
         return array.length;
     var count = 0;
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             count++;
     }
     return count;
 };
-Array.sum = function (array, func) {
+Array.sum = function (array, predicate) {
     var sum = null;
     for (var index = 0; index < array.length; index++) {
-        var value = Object.isNull(func) ? array[index] : func(array[index]);
+        var value = Object.isNull(predicate) ? array[index] : predicate(array[index]);
         if (sum == null)
             sum = value;
         else
@@ -103,21 +103,21 @@ Array.contains = function (array, value) {
     }
     return false;
 };
-Array.orderBy = function (array, func) {
-    var onlyValues = Object.isNull(func);
+Array.orderBy = function (array, predicate) {
+    var onlyValues = Object.isNull(predicate);
     var newArray = array.slice();
     return newArray.sort(function (a, b) {
-        var valueA = onlyValues ? a : func(a);
-        var valueB = onlyValues ? b : func(b);
+        var valueA = onlyValues ? a : predicate(a);
+        var valueB = onlyValues ? b : predicate(b);
         return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
     });
 };
-Array.orderByDesc = function (array, func) {
-    var onlyValues = Object.isNull(func);
+Array.orderByDesc = function (array, predicate) {
+    var onlyValues = Object.isNull(predicate);
     var newArray = array.slice();
     return newArray.sort(function (a, b) {
-        var valueA = onlyValues ? a : func(a);
-        var valueB = onlyValues ? b : func(b);
+        var valueA = onlyValues ? a : predicate(a);
+        var valueB = onlyValues ? b : predicate(b);
         return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
     });
 };
@@ -138,8 +138,8 @@ Array.removeAt = function (array, index) {
     delete array[index];
     array.splice(index, 1);
 };
-Array.removeAll = function (array, func) {
-    var elements = Object.isNull(func) ? array.slice() : Array.where(array, func);
+Array.removeAll = function (array, predicate) {
+    var elements = Object.isNull(predicate) ? array.slice() : Array.where(array, predicate);
     var count = 0;
     for (var i = 0; i < elements.length; i++) {
         Array.remove(array, elements[i]);
@@ -161,88 +161,91 @@ var MiracleDevs;
         (function (Core) {
             var ArrayList = (function () {
                 function ArrayList(array) {
-                    this.innerList = array || new Array();
+                    this.innerArray = array || new Array();
                 }
                 ArrayList.prototype.forEach = function (action) {
-                    Array.forEach(this.innerList, action);
+                    Array.forEach(this.innerArray, action);
                 };
-                ArrayList.prototype.where = function (func) {
-                    return new ArrayList(Array.where(this.innerList, func));
+                ArrayList.prototype.where = function (predicate) {
+                    return new ArrayList(Array.where(this.innerArray, predicate));
                 };
-                ArrayList.prototype.select = function (func) {
-                    return new ArrayList(Array.select(this.innerList, func));
+                ArrayList.prototype.select = function (predicate) {
+                    return new ArrayList(Array.select(this.innerArray, predicate));
                 };
-                ArrayList.prototype.firstOrDefault = function (func) {
-                    return Array.firstOrDefault(this.innerList, func);
+                ArrayList.prototype.firstOrDefault = function (predicate) {
+                    return Array.firstOrDefault(this.innerArray, predicate);
                 };
-                ArrayList.prototype.lastOrDefault = function (func) {
-                    return Array.lastOrDefault(this.innerList, func);
+                ArrayList.prototype.lastOrDefault = function (predicate) {
+                    return Array.lastOrDefault(this.innerArray, predicate);
                 };
-                ArrayList.prototype.first = function (func) {
-                    return Array.first(this.innerList, func);
+                ArrayList.prototype.first = function (predicate) {
+                    return Array.first(this.innerArray, predicate);
                 };
-                ArrayList.prototype.last = function (func) {
-                    return Array.last(this.innerList, func);
+                ArrayList.prototype.last = function (predicate) {
+                    return Array.last(this.innerArray, predicate);
                 };
-                ArrayList.prototype.any = function (func) {
-                    return Array.any(this.innerList, func);
+                ArrayList.prototype.any = function (predicate) {
+                    return Array.any(this.innerArray, predicate);
                 };
-                ArrayList.prototype.count = function (func) {
-                    return Array.count(this.innerList, func);
+                ArrayList.prototype.count = function (predicate) {
+                    return Array.count(this.innerArray, predicate);
                 };
-                ArrayList.prototype.sum = function (func) {
-                    return Array.sum(this.innerList, func);
+                ArrayList.prototype.sum = function (predicate) {
+                    return Array.sum(this.innerArray, predicate);
                 };
                 ArrayList.prototype.contains = function (value) {
-                    return Array.contains(this.innerList, value);
+                    return Array.contains(this.innerArray, value);
                 };
-                ArrayList.prototype.orderBy = function (func) {
-                    return new ArrayList(Array.orderBy(this.innerList, func));
+                ArrayList.prototype.orderBy = function (predicate) {
+                    return new ArrayList(Array.orderBy(this.innerArray, predicate));
                 };
-                ArrayList.prototype.orderByDesc = function (func) {
-                    return new ArrayList(Array.orderByDesc(this.innerList, func));
+                ArrayList.prototype.orderByDesc = function (predicate) {
+                    return new ArrayList(Array.orderByDesc(this.innerArray, predicate));
                 };
-                ArrayList.prototype.values = function () {
-                    return this.innerList;
+                ArrayList.prototype.getInnerArray = function () {
+                    return this.innerArray;
                 };
                 ArrayList.prototype.get = function (index) {
                     if (index < 0)
                         throw new Error("index is less than 0.");
-                    if (index >= this.innerList.length)
+                    if (index >= this.innerArray.length)
                         throw new Error("index is equal to or greater than length.");
-                    return this.innerList[index];
+                    return this.innerArray[index];
                 };
                 ArrayList.prototype.add = function (value) {
-                    this.innerList.push(value);
+                    this.innerArray.push(value);
                 };
                 ArrayList.prototype.addRange = function (value) {
                     var i;
                     if (value instanceof ArrayList) {
                         for (i = 0; i < value.count(); i++)
-                            this.innerList.push(value.get(i));
+                            this.innerArray.push(value.get(i));
                     }
                     else if (value instanceof Array) {
                         for (i = 0; i < value.length; i++)
-                            this.innerList.push(value[i]);
+                            this.innerArray.push(value[i]);
                     }
                 };
                 ArrayList.prototype.pop = function () {
-                    return this.innerList.pop();
+                    return this.innerArray.pop();
                 };
                 ArrayList.prototype.indexOf = function (element) {
-                    return this.innerList.indexOf(element);
+                    return this.innerArray.indexOf(element);
                 };
                 ArrayList.prototype.remove = function (element) {
-                    return Array.remove(this.innerList, element);
+                    return Array.remove(this.innerArray, element);
                 };
                 ArrayList.prototype.removeAt = function (index) {
-                    Array.removeAt(this.innerList, index);
+                    Array.removeAt(this.innerArray, index);
                 };
-                ArrayList.prototype.removeAll = function (func) {
-                    return Array.removeAll(this.innerList, func);
+                ArrayList.prototype.removeAll = function (predicate) {
+                    return Array.removeAll(this.innerArray, predicate);
                 };
                 ArrayList.prototype.clear = function () {
-                    this.innerList = new Array();
+                    // we prefer to execute remove all and not create a new array, to
+                    // preserve the reference to the original array, if someone used the
+                    // getInnerArray method.
+                    this.removeAll();
                 };
                 return ArrayList;
             }());
@@ -263,37 +266,116 @@ var MiracleDevs;
         var Core;
         (function (Core) {
             var Dictionary = (function () {
-                function Dictionary(init) {
-                    this.dictionary = (init != null) ? new Core.ArrayList(init) : new Core.ArrayList();
+                function Dictionary(array) {
+                    this.innerArray = new Array();
+                    if (!Object.isNull(array)) {
+                        this.addRange(array);
+                    }
                 }
-                Dictionary.prototype.getKeys = function () {
-                    return this.dictionary.select(function (x) { return x.key; });
-                };
                 Dictionary.prototype.getValues = function () {
-                    return this.dictionary.select(function (x) { return x.value; });
+                    return this.select(function (x) { return x.value; });
                 };
-                Dictionary.prototype.add = function (key, value) {
-                    if (this.containsKey(key))
-                        throw new Error("The dictionary already contains the key '" + key + "'");
-                    this.dictionary.add({ key: key, value: value });
-                };
-                Dictionary.prototype.remove = function (key) {
-                    if (!this.containsKey(key))
-                        throw new Error("The dictionary does not contains the key '" + key + "'");
-                    this.dictionary.remove(this.dictionary.firstOrDefault(function (x) { return x.key === key; }));
-                };
-                Dictionary.prototype.removeAll = function (func) {
-                    this.dictionary.removeAll(func);
-                };
-                Dictionary.prototype.get = function (key) {
-                    var pair = this.dictionary.firstOrDefault(function (x) { return x.key === key; });
-                    return (pair != null) ? pair.value : null;
+                Dictionary.prototype.getKeys = function () {
+                    return this.select(function (x) { return x.key; });
                 };
                 Dictionary.prototype.containsKey = function (key) {
-                    return this.dictionary.any(function (x) { return x.key === key; });
+                    return this.any(function (x) { return x.key === key; });
+                };
+                Dictionary.prototype.forEach = function (action) {
+                    Array.forEach(this.innerArray, action);
+                };
+                Dictionary.prototype.where = function (predicate) {
+                    return new Dictionary(Array.where(this.innerArray, predicate));
+                };
+                Dictionary.prototype.select = function (predicate) {
+                    return new Core.ArrayList(Array.select(this.innerArray, predicate));
+                };
+                Dictionary.prototype.firstOrDefault = function (predicate) {
+                    return Array.firstOrDefault(this.innerArray, predicate);
+                };
+                Dictionary.prototype.lastOrDefault = function (predicate) {
+                    return Array.lastOrDefault(this.innerArray, predicate);
+                };
+                Dictionary.prototype.first = function (predicate) {
+                    return Array.first(this.innerArray, predicate);
+                };
+                Dictionary.prototype.last = function (predicate) {
+                    return Array.last(this.innerArray, predicate);
+                };
+                Dictionary.prototype.any = function (predicate) {
+                    return Array.any(this.innerArray, predicate);
+                };
+                Dictionary.prototype.count = function (predicate) {
+                    return Array.count(this.innerArray, predicate);
+                };
+                Dictionary.prototype.sum = function (predicate) {
+                    if (Object.isNull(predicate))
+                        throw new Error("Predicate can not be null.");
+                    return Array.sum(this.innerArray, predicate);
+                };
+                Dictionary.prototype.orderBy = function (predicate) {
+                    if (Object.isNull(predicate))
+                        throw new Error("Predicate can not be null.");
+                    return new Dictionary(Array.orderBy(this.innerArray, predicate));
+                };
+                Dictionary.prototype.orderByDesc = function (predicate) {
+                    if (Object.isNull(predicate))
+                        throw new Error("Predicate can not be null.");
+                    return new Dictionary(Array.orderByDesc(this.innerArray, predicate));
+                };
+                Dictionary.prototype.getInnerArray = function () {
+                    return this.innerArray;
+                };
+                Dictionary.prototype.get = function (key) {
+                    var pair = this.firstOrDefault(function (x) { return x.key === key; });
+                    if (Object.isNull(pair))
+                        throw new Error("The given key was not present in the dictionary.");
+                    return pair.value;
+                };
+                Dictionary.prototype.keyOf = function (value) {
+                    var pair = this.firstOrDefault(function (x) { return x.value === value; });
+                    if (Object.isNull(pair))
+                        throw new Error("The given value was not present in the dictionary.");
+                    return pair.key;
+                };
+                Dictionary.prototype.add = function (key, value) {
+                    if (Object.isNull(key))
+                        throw new Error("Key can not be null.");
+                    if (this.containsKey(key))
+                        throw new Error("An element with the same key already exists in the Dictionary<TKey, TValue>.");
+                    this.innerArray.push({ key: key, value: value });
+                };
+                Dictionary.prototype.addRange = function (value) {
+                    var i;
+                    if (!Object.isNull(value) && !Object.isNull(value.getInnerArray))
+                        value = value.getInnerArray();
+                    if (!(value instanceof Array))
+                        throw new Error("value is must be an array or an IEnumerable class.");
+                    for (i = 0; i < value.length; i++) {
+                        var innerValue = value[i];
+                        if (Object.isNull(innerValue))
+                            throw new Error("Item can not be null");
+                        this.add(innerValue.key, innerValue.value);
+                    }
+                    ;
+                };
+                Dictionary.prototype.pop = function () {
+                    return this.innerArray.pop();
+                };
+                Dictionary.prototype.remove = function (key) {
+                    var pair = this.firstOrDefault(function (x) { return x.key === key; });
+                    if (Object.isNull(pair))
+                        throw new Error("The given key was not present in the dictionary.");
+                    Array.remove(this.innerArray, pair);
+                };
+                Dictionary.prototype.removeAll = function (predicate) {
+                    return Array.removeAll(this.innerArray, predicate);
                 };
                 Dictionary.prototype.clear = function () {
-                    this.dictionary.clear();
+                    // we prefer to execute remove all and not create a new array, to
+                    // preserve the reference to the original array, if someone used the
+                    // getInnerArray method.
+                    this.removeAll();
                 };
                 return Dictionary;
             }());
@@ -2530,241 +2612,6 @@ String.formatArray = function (format, args) { return String(format).replace(/\{
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var AngularFilters = (function () {
-                function AngularFilters() {
-                }
-                Object.defineProperty(AngularFilters, "currency", {
-                    get: function () { return "currency"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "number", {
-                    get: function () { return "number"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "date", {
-                    get: function () { return "date"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "json", {
-                    get: function () { return "json"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "limitTo", {
-                    get: function () { return "limitTo"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "orderBy", {
-                    get: function () { return "orderBy"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return AngularFilters;
-            }());
-            Filters.AngularFilters = AngularFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var FrameworkFilters = (function () {
-                function FrameworkFilters() {
-                }
-                Object.defineProperty(FrameworkFilters, "reverse", {
-                    get: function () { return "reverse"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "trim", {
-                    get: function () { return "trim"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return FrameworkFilters;
-            }());
-            Filters.FrameworkFilters = FrameworkFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var LowercaseFilter = (function () {
-                function LowercaseFilter() {
-                }
-                LowercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
-                };
-                return LowercaseFilter;
-            }());
-            LowercaseFilter.register = {
-                name: Filters.FrameworkFilters.lowercase,
-                factory: LowercaseFilter.factory
-            };
-            Filters.LowercaseFilter = LowercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var ReverseFilter = (function () {
-                function ReverseFilter() {
-                }
-                ReverseFilter.factory = function () {
-                    return function (items) { return items.slice().reverse(); };
-                };
-                return ReverseFilter;
-            }());
-            ReverseFilter.register = {
-                name: Filters.FrameworkFilters.reverse,
-                factory: ReverseFilter.factory
-            };
-            Filters.ReverseFilter = ReverseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var TrimFilter = (function () {
-                function TrimFilter() {
-                }
-                TrimFilter.trim = function (value, maxChars) {
-                    if (Object.isNull(value))
-                        return null;
-                    if (value.length < maxChars)
-                        return value;
-                    return value.substr(0, maxChars) + "...";
-                };
-                TrimFilter.factory = function () {
-                    return TrimFilter.trim;
-                };
-                return TrimFilter;
-            }());
-            TrimFilter.register = {
-                name: Filters.FrameworkFilters.trim,
-                factory: TrimFilter.factory
-            };
-            Filters.TrimFilter = TrimFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var UppercaseFilter = (function () {
-                function UppercaseFilter() {
-                }
-                UppercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
-                };
-                return UppercaseFilter;
-            }());
-            UppercaseFilter.register = {
-                name: Filters.FrameworkFilters.uppercase,
-                factory: UppercaseFilter.factory
-            };
-            Filters.UppercaseFilter = UppercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4331,38 +4178,234 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
     (function (Angular) {
-        var Interceptors;
-        (function (Interceptors) {
-            var InterceptorBase = (function () {
-                function InterceptorBase(q) {
-                    var _this = this;
-                    this.q = q;
-                    this.request = function (c) { return _this.onRequest(c); };
-                    this.response = function (r) { return _this.onResponse(r); };
-                    this.requestError = function (r) { return _this.onRequestError(r); };
-                    this.responseError = function (r) { return _this.onResponseError(r); };
+        var Filters;
+        (function (Filters) {
+            var AngularFilters = (function () {
+                function AngularFilters() {
                 }
-                InterceptorBase.prototype.onRequest = function (config) {
-                    return config;
-                };
-                InterceptorBase.prototype.onResponse = function (response) {
-                    return this.q.resolve(response);
-                };
-                InterceptorBase.prototype.onRequestError = function (rejection) {
-                    return this.q.reject(rejection);
-                };
-                InterceptorBase.prototype.onResponseError = function (rejection) {
-                    return this.q.reject(rejection);
-                };
-                return InterceptorBase;
+                Object.defineProperty(AngularFilters, "currency", {
+                    get: function () { return "currency"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "number", {
+                    get: function () { return "number"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "date", {
+                    get: function () { return "date"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "json", {
+                    get: function () { return "json"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "limitTo", {
+                    get: function () { return "limitTo"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "orderBy", {
+                    get: function () { return "orderBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return AngularFilters;
             }());
-            Interceptors.InterceptorBase = InterceptorBase;
-        })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
+            Filters.AngularFilters = AngularFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var FrameworkFilters = (function () {
+                function FrameworkFilters() {
+                }
+                Object.defineProperty(FrameworkFilters, "reverse", {
+                    get: function () { return "reverse"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "trim", {
+                    get: function () { return "trim"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return FrameworkFilters;
+            }());
+            Filters.FrameworkFilters = FrameworkFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var LowercaseFilter = (function () {
+                function LowercaseFilter() {
+                }
+                LowercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
+                };
+                return LowercaseFilter;
+            }());
+            LowercaseFilter.register = {
+                name: Filters.FrameworkFilters.lowercase,
+                factory: LowercaseFilter.factory
+            };
+            Filters.LowercaseFilter = LowercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var ReverseFilter = (function () {
+                function ReverseFilter() {
+                }
+                ReverseFilter.factory = function () {
+                    return function (items) { return items.slice().reverse(); };
+                };
+                return ReverseFilter;
+            }());
+            ReverseFilter.register = {
+                name: Filters.FrameworkFilters.reverse,
+                factory: ReverseFilter.factory
+            };
+            Filters.ReverseFilter = ReverseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var TrimFilter = (function () {
+                function TrimFilter() {
+                }
+                TrimFilter.trim = function (value, maxChars) {
+                    if (Object.isNull(value))
+                        return null;
+                    if (value.length < maxChars)
+                        return value;
+                    return value.substr(0, maxChars) + "...";
+                };
+                TrimFilter.factory = function () {
+                    return TrimFilter.trim;
+                };
+                return TrimFilter;
+            }());
+            TrimFilter.register = {
+                name: Filters.FrameworkFilters.trim,
+                factory: TrimFilter.factory
+            };
+            Filters.TrimFilter = TrimFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var UppercaseFilter = (function () {
+                function UppercaseFilter() {
+                }
+                UppercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
+                };
+                return UppercaseFilter;
+            }());
+            UppercaseFilter.register = {
+                name: Filters.FrameworkFilters.uppercase,
+                factory: UppercaseFilter.factory
+            };
+            Filters.UppercaseFilter = UppercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -4395,6 +4438,45 @@ var MiracleDevs;
             }());
             Models.ModelBase = ModelBase;
         })(Models = Angular.Models || (Angular.Models = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Interceptors;
+        (function (Interceptors) {
+            var InterceptorBase = (function () {
+                function InterceptorBase(q) {
+                    var _this = this;
+                    this.q = q;
+                    this.request = function (c) { return _this.onRequest(c); };
+                    this.response = function (r) { return _this.onResponse(r); };
+                    this.requestError = function (r) { return _this.onRequestError(r); };
+                    this.responseError = function (r) { return _this.onResponseError(r); };
+                }
+                InterceptorBase.prototype.onRequest = function (config) {
+                    return config;
+                };
+                InterceptorBase.prototype.onResponse = function (response) {
+                    return this.q.resolve(response);
+                };
+                InterceptorBase.prototype.onRequestError = function (rejection) {
+                    return this.q.reject(rejection);
+                };
+                InterceptorBase.prototype.onResponseError = function (rejection) {
+                    return this.q.reject(rejection);
+                };
+                return InterceptorBase;
+            }());
+            Interceptors.InterceptorBase = InterceptorBase;
+        })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

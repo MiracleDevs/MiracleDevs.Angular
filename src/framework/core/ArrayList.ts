@@ -8,83 +8,83 @@
 
 module MiracleDevs.Angular.Core
 {
-    export class ArrayList<T>
+    export class ArrayList<T> implements IEnumerable<T>
     {
-        private innerList: Array<T>;
+        protected innerArray: Array<T>;
 
         constructor(array?: Array<T>) 
         {
-            this.innerList = array || new Array<T>();
+            this.innerArray = array || new Array<T>();
         }
 
         forEach(action: (element: T) => void): void 
         {
-            Array.forEach(this.innerList, action);
+            Array.forEach(this.innerArray, action);
         }
 
-        where(func: (element: T) => boolean): ArrayList<T>
+        where(predicate: (element: T) => boolean): ArrayList<T>
         {
-            return new ArrayList(Array.where(this.innerList, func));
+            return new ArrayList(Array.where(this.innerArray, predicate));
         }
 
-        select<TR>(func: (element: T) => TR): ArrayList<TR>
+        select<TR>(predicate: (element: T) => TR): ArrayList<TR>
         {
-            return new ArrayList(Array.select(this.innerList, func));
+            return new ArrayList(Array.select(this.innerArray, predicate));
         }
 
-        firstOrDefault(func?: (element: T) => boolean): T
+        firstOrDefault(predicate?: (element: T) => boolean): T
         {
-            return Array.firstOrDefault(this.innerList, func);
+            return Array.firstOrDefault(this.innerArray, predicate);
         }
 
-        lastOrDefault(func?: (element: T) => boolean): T
+        lastOrDefault(predicate?: (element: T) => boolean): T
         {
-            return Array.lastOrDefault(this.innerList, func);
+            return Array.lastOrDefault(this.innerArray, predicate);
         }
 
-        first(func?: (element: T) => boolean): T
+        first(predicate?: (element: T) => boolean): T
         {
-            return Array.first(this.innerList, func);
+            return Array.first(this.innerArray, predicate);
         }
 
-        last(func?: (element: T) => boolean): T
+        last(predicate?: (element: T) => boolean): T
         {
-            return Array.last(this.innerList, func);
+            return Array.last(this.innerArray, predicate);
         }
         
-        any(func?: (element: T) => boolean): boolean
+        any(predicate?: (element: T) => boolean): boolean
         {
-            return Array.any(this.innerList, func);
+            return Array.any(this.innerArray, predicate);
         }
 
-        count(func?: (element: T) => boolean): number
+        count(predicate?: (element: T) => boolean): number
         {
-            return Array.count(this.innerList, func);
+            return Array.count(this.innerArray, predicate);
         }
 
-        sum<TI>(func?: (element: T) => TI): TI
+        sum<TI>(predicate?: (element: T) => TI): TI
         {
-            return Array.sum(this.innerList, func);
+            return Array.sum(this.innerArray, predicate);
         }
 
         contains(value: T): boolean
         {
-            return Array.contains(this.innerList, value);
+            return Array.contains(this.innerArray, value);
         }
 
-        orderBy<TR>(func?: (element: T) => TR): ArrayList<T>
+        orderBy<TR>(predicate?: (element: T) => TR): ArrayList<T>
         {
-            return new ArrayList(Array.orderBy(this.innerList, func));
+            return new ArrayList(Array.orderBy(this.innerArray, predicate));
         }
 
-        orderByDesc<TR>(func?: (element: T) => TR): ArrayList<T>
+        orderByDesc<TR>(predicate?: (element: T) => TR): ArrayList<T>
         {
-            return new ArrayList(Array.orderByDesc(this.innerList, func));
+            return new ArrayList(Array.orderByDesc(this.innerArray, predicate));
         }
 
-        values(): Array<T> 
+        getInnerArray(): Array<T> 
         {
-            return this.innerList;
+            return this.innerArray;
         }
 
         get(index: number): T 
@@ -92,15 +92,15 @@ module MiracleDevs.Angular.Core
             if (index < 0)
                 throw new Error("index is less than 0.");
 
-            if (index >= this.innerList.length)
+            if (index >= this.innerArray.length)
                 throw new Error("index is equal to or greater than length.");
 
-            return this.innerList[index];
+            return this.innerArray[index];
         }
 
         add(value: T) 
         {
-            this.innerList.push(value);
+            this.innerArray.push(value);
         }
 
         addRange(value: Array<T>);
@@ -112,44 +112,46 @@ module MiracleDevs.Angular.Core
             if (value instanceof ArrayList)
             {
                 for (i = 0; i < value.count(); i++)
-                    this.innerList.push(value.get(i));
+                    this.innerArray.push(value.get(i));
             }
             else if(value instanceof Array)
             {
                 for (i = 0; i < value.length; i++)
-                    this.innerList.push(value[i]);
+                    this.innerArray.push(value[i]);
             }
         }
 
-
         pop(): T
         {
-            return this.innerList.pop();
+            return this.innerArray.pop();
         }
 
         indexOf(element: T): number
         {
-            return this.innerList.indexOf(element);
+            return this.innerArray.indexOf(element);
         }
 
         remove(element: T): boolean
         {
-            return Array.remove(this.innerList, element);
+            return Array.remove(this.innerArray, element);
         }
 
         removeAt(index: number): void
         {
-            Array.removeAt(this.innerList, index);
+            Array.removeAt(this.innerArray, index);
         }
 
-        removeAll(func?: (element: T) => boolean): number
+        removeAll(predicate?: (element: T) => boolean): number
         {
-            return Array.removeAll(this.innerList, func);
+            return Array.removeAll(this.innerArray, predicate);
         }
 
         clear()
         {
-            this.innerList = new Array<T>();
+            // we prefer to execute remove all and not create a new array, to
+            // preserve the reference to the original array, if someone used the
+            // getInnerArray method.
+            this.removeAll();
         }
     }
 } 

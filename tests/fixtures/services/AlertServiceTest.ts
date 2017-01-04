@@ -41,7 +41,7 @@ describe("AlertService", () =>
         it("alert collection shouldn't be null", () =>
         {
             expect(alertService.getAlerts()).not.toBeNull();
-            expect(alertService.getAlerts().values()).not.toBeNull();
+            expect(alertService.getAlerts().getInnerArray()).not.toBeNull();
         });
         
         it("alert collection should be empty", () =>
