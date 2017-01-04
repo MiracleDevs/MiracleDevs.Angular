@@ -15,6 +15,9 @@ interface ObjectConstructor
 
 Object.getTypeName = (obj: any) =>
 {
+    if (Object.isNull(obj))
+        throw new Error("Object can not be null.");
+
     var funcNameRegex = /function (.{1,})\(/;
     var results = (funcNameRegex).exec((obj).constructor.toString());
     return (results && results.length > 1) ? results[1] : "";
@@ -23,25 +26,29 @@ Object.getTypeName = (obj: any) =>
 
 Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
 {
+    if (Object.isNull(source) && Object.isNull(other))
+        return true;
+
+    if ((!Object.isNull(source) && Object.isNull(other)) ||
+        (Object.isNull(source) && !Object.isNull(other)))
+        return false;
+
     if (other == null)
         return false;
 
-    if ((source instanceof Number && (typeof (other) == "number" || other instanceof Number)) ||
-        (source instanceof String && (typeof (other) == "string" || other instanceof String)) ||
-        (source instanceof Boolean && (typeof (other) == "boolean" || other instanceof Boolean)))
-    {
-        if (source !== other)
-            console.debug(`IsEqualTo: Property value is different: ${source} - ${other}`);
+    if (Object.getTypeName(source) !== Object.getTypeName(other))
+        return false;
 
+    if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
+        (Object.getTypeName(source) === "String" && Object.getTypeName(other) === "String") ||
+        (Object.getTypeName(source) === "Boolean" && Object.getTypeName(other) === "Boolean"))
+    {
         return (source === other);
     }
 
-    if (source instanceof Date && other instanceof Date) 
+    if (Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date")
     {
-        if (source.valueOf() !== other.valueOf())
-            console.debug(`IsEqualTo: Property value is different: ${source} - ${other}`);
-
-        return (source.valueOf() === other.valueOf());
+        return source.getTime() === other.getTime();
     }
 
     var sourceKeys = Object.keys(source);
@@ -63,7 +70,6 @@ Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
 
             if (key !== otherKey)
             {
-                console.debug(`IsEqualTo: Keys do not match: ${key} != ${otherKey}`);
                 return false;
             }
 
@@ -75,53 +81,32 @@ Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
 
             if ((sourceValue == null && otherValue != null) ||
                 (sourceValue != null && otherValue == null))
-            {
-                console.debug(`IsEqualTo: One of the opearands is null [${key}]: ${sourceValue} - ${otherValue}`);
                 return false;
-            }
 
-            if (((typeof (sourceValue) == "number" || sourceValue instanceof Number) && (typeof (otherValue) == "number" || otherValue instanceof Number)) ||
-                ((typeof (sourceValue) == "string" || sourceValue instanceof String) && (typeof (otherValue) == "string" || otherValue instanceof String)) ||
-                ((typeof (sourceValue) == "boolean" || sourceValue instanceof Boolean) && (typeof (otherValue) == "boolean" || otherValue instanceof Boolean)))
-            {
-                if (sourceValue !== otherValue)
-                {
-                    console.debug(`IsEqualTo: Property value is different [${key}]: ${sourceValue} != ${otherValue}`);
-                    return false;
-                }
-            }
-            else if (sourceValue instanceof Date && otherValue instanceof Date)
-            {
-                if (sourceValue.valueOf() !== otherValue.valueOf())
-                {
-                    console.debug(`IsEqualTo: Property value is different [${key}]: ${sourceValue} != ${otherValue}`);
-                    return false;
-                }
-            }
+            if (((Object.getTypeName(sourceValue) === "Number" && Object.getTypeName(otherValue) === "Number") ||
+                (Object.getTypeName(sourceValue) === "String" && Object.getTypeName(otherValue) === "String") ||
+                (Object.getTypeName(sourceValue) === "Boolean" && Object.getTypeName(otherValue) === "Boolean")) &&
+                (sourceValue !== otherValue))
+                return false;
+
+            else if ((Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") && (source.getTime() !== other.getTime()))
+                return false;
+
             else if (sourceValue instanceof Array && otherValue instanceof Array)
             {
                 if (sourceValue.length !== otherValue.length)
-                {
-                    console.debug(`IsEqualTo: Array length is different [${key}]: ${sourceValue.length} != ${otherValue.length}`);
                     return false;
-                }
 
                 for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++)
                 {
                     if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex]))
-                    {
-                        console.debug(`IsEqualTo: Array value is different [${key}]: ${sourceValue[arrayIndex]} != ${otherValue[arrayIndex]}`);
                         return false;
-                    }
                 }
             }
             else
             {
                 if (!Object.isEqualTo(sourceValue, otherValue))
-                {
-                    console.debug(`IsEqualTo: Object value is different [${key}]: ${sourceValue} != ${otherValue}`);
                     return false;
-                }
             }
         }
     }
@@ -131,7 +116,19 @@ Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
 
 Object.clone = (object: any, ignore?: Array<string>): any =>
 {
-    var newObject = {};
+    if (Object.getTypeName(object) === "Number" ||
+        Object.getTypeName(object) === "String" ||
+        Object.getTypeName(object) === "Boolean")
+    {
+        return object;
+    }
+
+    if (Object.getTypeName(object) === "Date")
+    {
+        return new Date(object.getTime());
+    }
+
+    var newObject = object instanceof Array ? [] : {};
 
     function clone(source, destination): void
     {
@@ -190,7 +187,7 @@ Object.extendInstance = <T>(object: any, classType: { new (): T }): T =>
     return object;
 };
 
-Object.isNull = (obj: any) : boolean =>
+Object.isNull = (obj: any): boolean =>
 {
     return obj === null || obj === undefined;
 };

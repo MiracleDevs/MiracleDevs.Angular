@@ -460,24 +460,29 @@ Function.prototype.getFunctionName = function () {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 Object.getTypeName = function (obj) {
+    if (Object.isNull(obj))
+        throw new Error("Object can not be null.");
     var funcNameRegex = /function (.{1,})\(/;
     var results = (funcNameRegex).exec((obj).constructor.toString());
     return (results && results.length > 1) ? results[1] : "";
 };
 Object.isEqualTo = function (source, other, ignore) {
+    if (Object.isNull(source) && Object.isNull(other))
+        return true;
+    if ((!Object.isNull(source) && Object.isNull(other)) ||
+        (Object.isNull(source) && !Object.isNull(other)))
+        return false;
     if (other == null)
         return false;
-    if ((source instanceof Number && (typeof (other) == "number" || other instanceof Number)) ||
-        (source instanceof String && (typeof (other) == "string" || other instanceof String)) ||
-        (source instanceof Boolean && (typeof (other) == "boolean" || other instanceof Boolean))) {
-        if (source !== other)
-            console.debug("IsEqualTo: Property value is different: " + source + " - " + other);
+    if (Object.getTypeName(source) !== Object.getTypeName(other))
+        return false;
+    if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
+        (Object.getTypeName(source) === "String" && Object.getTypeName(other) === "String") ||
+        (Object.getTypeName(source) === "Boolean" && Object.getTypeName(other) === "Boolean")) {
         return (source === other);
     }
-    if (source instanceof Date && other instanceof Date) {
-        if (source.valueOf() !== other.valueOf())
-            console.debug("IsEqualTo: Property value is different: " + source + " - " + other);
-        return (source.valueOf() === other.valueOf());
+    if (Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") {
+        return source.getTime() === other.getTime();
     }
     var sourceKeys = Object.keys(source);
     var otherKeys = Object.keys(other);
@@ -490,7 +495,6 @@ Object.isEqualTo = function (source, other, ignore) {
             if (!Object.isNull(ignore) && Array.contains(ignore, key))
                 continue;
             if (key !== otherKey) {
-                console.debug("IsEqualTo: Keys do not match: " + key + " != " + otherKey);
                 return false;
             }
             var sourceValue = source[key];
@@ -498,48 +502,41 @@ Object.isEqualTo = function (source, other, ignore) {
             if (sourceValue == null && otherValue == null)
                 continue;
             if ((sourceValue == null && otherValue != null) ||
-                (sourceValue != null && otherValue == null)) {
-                console.debug("IsEqualTo: One of the opearands is null [" + key + "]: " + sourceValue + " - " + otherValue);
+                (sourceValue != null && otherValue == null))
                 return false;
-            }
-            if (((typeof (sourceValue) == "number" || sourceValue instanceof Number) && (typeof (otherValue) == "number" || otherValue instanceof Number)) ||
-                ((typeof (sourceValue) == "string" || sourceValue instanceof String) && (typeof (otherValue) == "string" || otherValue instanceof String)) ||
-                ((typeof (sourceValue) == "boolean" || sourceValue instanceof Boolean) && (typeof (otherValue) == "boolean" || otherValue instanceof Boolean))) {
-                if (sourceValue !== otherValue) {
-                    console.debug("IsEqualTo: Property value is different [" + key + "]: " + sourceValue + " != " + otherValue);
-                    return false;
-                }
-            }
-            else if (sourceValue instanceof Date && otherValue instanceof Date) {
-                if (sourceValue.valueOf() !== otherValue.valueOf()) {
-                    console.debug("IsEqualTo: Property value is different [" + key + "]: " + sourceValue + " != " + otherValue);
-                    return false;
-                }
-            }
+            if (((Object.getTypeName(sourceValue) === "Number" && Object.getTypeName(otherValue) === "Number") ||
+                (Object.getTypeName(sourceValue) === "String" && Object.getTypeName(otherValue) === "String") ||
+                (Object.getTypeName(sourceValue) === "Boolean" && Object.getTypeName(otherValue) === "Boolean")) &&
+                (sourceValue !== otherValue))
+                return false;
+            else if ((Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") && (source.getTime() !== other.getTime()))
+                return false;
             else if (sourceValue instanceof Array && otherValue instanceof Array) {
-                if (sourceValue.length !== otherValue.length) {
-                    console.debug("IsEqualTo: Array length is different [" + key + "]: " + sourceValue.length + " != " + otherValue.length);
+                if (sourceValue.length !== otherValue.length)
                     return false;
-                }
                 for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++) {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex])) {
-                        console.debug("IsEqualTo: Array value is different [" + key + "]: " + sourceValue[arrayIndex] + " != " + otherValue[arrayIndex]);
+                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex]))
                         return false;
-                    }
                 }
             }
             else {
-                if (!Object.isEqualTo(sourceValue, otherValue)) {
-                    console.debug("IsEqualTo: Object value is different [" + key + "]: " + sourceValue + " != " + otherValue);
+                if (!Object.isEqualTo(sourceValue, otherValue))
                     return false;
-                }
             }
         }
     }
     return true;
 };
 Object.clone = function (object, ignore) {
-    var newObject = {};
+    if (Object.getTypeName(object) === "Number" ||
+        Object.getTypeName(object) === "String" ||
+        Object.getTypeName(object) === "Boolean") {
+        return object;
+    }
+    if (Object.getTypeName(object) === "Date") {
+        return new Date(object.getTime());
+    }
+    var newObject = object instanceof Array ? [] : {};
     function clone(source, destination) {
         var isArray = source instanceof Array;
         var sourceKeys = (isArray) ? source : Object.keys(source);
@@ -2592,6 +2589,8 @@ String.format = function (format) {
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
     }
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
     return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
         index = parseInt(index, 10);
         if (index < 0 || index >= args.length) {
@@ -2600,13 +2599,252 @@ String.format = function (format) {
         return args[index];
     });
 };
-String.formatArray = function (format, args) { return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
-    index = parseInt(index, 10);
-    if (index < 0 || index >= args.length) {
-        throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-    }
-    return args[index];
-}); };
+String.formatArray = function (format, args) {
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
+        index = parseInt(index, 10);
+        if (index < 0 || index >= args.length) {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+        return args[index];
+    });
+};
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var AngularFilters = (function () {
+                function AngularFilters() {
+                }
+                Object.defineProperty(AngularFilters, "currency", {
+                    get: function () { return "currency"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "number", {
+                    get: function () { return "number"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "date", {
+                    get: function () { return "date"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "json", {
+                    get: function () { return "json"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "limitTo", {
+                    get: function () { return "limitTo"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "orderBy", {
+                    get: function () { return "orderBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return AngularFilters;
+            }());
+            Filters.AngularFilters = AngularFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var FrameworkFilters = (function () {
+                function FrameworkFilters() {
+                }
+                Object.defineProperty(FrameworkFilters, "reverse", {
+                    get: function () { return "reverse"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "trim", {
+                    get: function () { return "trim"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return FrameworkFilters;
+            }());
+            Filters.FrameworkFilters = FrameworkFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var LowercaseFilter = (function () {
+                function LowercaseFilter() {
+                }
+                LowercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
+                };
+                return LowercaseFilter;
+            }());
+            LowercaseFilter.register = {
+                name: Filters.FrameworkFilters.lowercase,
+                factory: LowercaseFilter.factory
+            };
+            Filters.LowercaseFilter = LowercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var ReverseFilter = (function () {
+                function ReverseFilter() {
+                }
+                ReverseFilter.factory = function () {
+                    return function (items) { return items.slice().reverse(); };
+                };
+                return ReverseFilter;
+            }());
+            ReverseFilter.register = {
+                name: Filters.FrameworkFilters.reverse,
+                factory: ReverseFilter.factory
+            };
+            Filters.ReverseFilter = ReverseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var TrimFilter = (function () {
+                function TrimFilter() {
+                }
+                TrimFilter.trim = function (value, maxChars) {
+                    if (Object.isNull(value))
+                        return null;
+                    if (value.length < maxChars)
+                        return value;
+                    return value.substr(0, maxChars) + "...";
+                };
+                TrimFilter.factory = function () {
+                    return TrimFilter.trim;
+                };
+                return TrimFilter;
+            }());
+            TrimFilter.register = {
+                name: Filters.FrameworkFilters.trim,
+                factory: TrimFilter.factory
+            };
+            Filters.TrimFilter = TrimFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var UppercaseFilter = (function () {
+                function UppercaseFilter() {
+                }
+                UppercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
+                };
+                return UppercaseFilter;
+            }());
+            UppercaseFilter.register = {
+                name: Filters.FrameworkFilters.uppercase,
+                factory: UppercaseFilter.factory
+            };
+            Filters.UppercaseFilter = UppercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -4178,273 +4416,6 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var AngularFilters = (function () {
-                function AngularFilters() {
-                }
-                Object.defineProperty(AngularFilters, "currency", {
-                    get: function () { return "currency"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "number", {
-                    get: function () { return "number"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "date", {
-                    get: function () { return "date"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "json", {
-                    get: function () { return "json"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "limitTo", {
-                    get: function () { return "limitTo"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "orderBy", {
-                    get: function () { return "orderBy"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return AngularFilters;
-            }());
-            Filters.AngularFilters = AngularFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var FrameworkFilters = (function () {
-                function FrameworkFilters() {
-                }
-                Object.defineProperty(FrameworkFilters, "reverse", {
-                    get: function () { return "reverse"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "trim", {
-                    get: function () { return "trim"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return FrameworkFilters;
-            }());
-            Filters.FrameworkFilters = FrameworkFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var LowercaseFilter = (function () {
-                function LowercaseFilter() {
-                }
-                LowercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
-                };
-                return LowercaseFilter;
-            }());
-            LowercaseFilter.register = {
-                name: Filters.FrameworkFilters.lowercase,
-                factory: LowercaseFilter.factory
-            };
-            Filters.LowercaseFilter = LowercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var ReverseFilter = (function () {
-                function ReverseFilter() {
-                }
-                ReverseFilter.factory = function () {
-                    return function (items) { return items.slice().reverse(); };
-                };
-                return ReverseFilter;
-            }());
-            ReverseFilter.register = {
-                name: Filters.FrameworkFilters.reverse,
-                factory: ReverseFilter.factory
-            };
-            Filters.ReverseFilter = ReverseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var TrimFilter = (function () {
-                function TrimFilter() {
-                }
-                TrimFilter.trim = function (value, maxChars) {
-                    if (Object.isNull(value))
-                        return null;
-                    if (value.length < maxChars)
-                        return value;
-                    return value.substr(0, maxChars) + "...";
-                };
-                TrimFilter.factory = function () {
-                    return TrimFilter.trim;
-                };
-                return TrimFilter;
-            }());
-            TrimFilter.register = {
-                name: Filters.FrameworkFilters.trim,
-                factory: TrimFilter.factory
-            };
-            Filters.TrimFilter = TrimFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var UppercaseFilter = (function () {
-                function UppercaseFilter() {
-                }
-                UppercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
-                };
-                return UppercaseFilter;
-            }());
-            UppercaseFilter.register = {
-                name: Filters.FrameworkFilters.uppercase,
-                factory: UppercaseFilter.factory
-            };
-            Filters.UppercaseFilter = UppercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Models;
-        (function (Models) {
-            var ModelBase = (function () {
-                function ModelBase() {
-                }
-                ModelBase.prototype.startTracking = function () {
-                    this.original = Object.clone(this, ["original"]);
-                };
-                ModelBase.prototype.stopTracking = function () {
-                    this.original = null;
-                };
-                ModelBase.prototype.isDirty = function () {
-                    return !Object.isEqualTo(this, this.original, ["original"]);
-                };
-                ModelBase.prototype.isTracking = function () {
-                    return this.original != null;
-                };
-                return ModelBase;
-            }());
-            Models.ModelBase = ModelBase;
-        })(Models = Angular.Models || (Angular.Models = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4477,6 +4448,38 @@ var MiracleDevs;
             }());
             Interceptors.InterceptorBase = InterceptorBase;
         })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Models;
+        (function (Models) {
+            var ModelBase = (function () {
+                function ModelBase() {
+                }
+                ModelBase.prototype.startTracking = function () {
+                    this.original = Object.clone(this, ["original"]);
+                };
+                ModelBase.prototype.stopTracking = function () {
+                    this.original = null;
+                };
+                ModelBase.prototype.isDirty = function () {
+                    return !Object.isEqualTo(this, this.original, ["original"]);
+                };
+                ModelBase.prototype.isTracking = function () {
+                    return this.original != null;
+                };
+                return ModelBase;
+            }());
+            Models.ModelBase = ModelBase;
+        })(Models = Angular.Models || (Angular.Models = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

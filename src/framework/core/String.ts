@@ -38,6 +38,9 @@ String.isNullOrWhiteSpace = (value: string): boolean =>
 
 String.format = (format: string, ...args: any[]): string =>
 {
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+
     return String(format).replace(/\{([0-9]+)\}/g, (match, index) =>
     {
         index = parseInt(index, 10);
@@ -51,14 +54,21 @@ String.format = (format: string, ...args: any[]): string =>
     });
 };
 
-String.formatArray = (format: string, args: any[]) => String(format).replace(/\{([0-9]+)\}/g, (match, index) =>
+String.formatArray = (format: string, args: any[]) =>
 {
-    index = parseInt(index, 10);
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
 
-    if (index < 0 || index >= args.length)
+    return String(format).replace(/\{([0-9]+)\}/g, (match, index) =>
     {
-        throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-    }
 
-    return args[index];
-});
+        index = parseInt(index, 10);
+
+        if (index < 0 || index >= args.length)
+        {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+
+        return args[index];
+    });
+};

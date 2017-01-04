@@ -18,3 +18,5 @@ import AlertType = MiracleDevs.Angular.Services.AlertType;
 
 import ArrayList = MiracleDevs.Angular.Core.ArrayList;
 import Dictionary = MiracleDevs.Angular.Core.Dictionary;
+
+import Guid = MiracleDevs.Angular.Core.Guid;

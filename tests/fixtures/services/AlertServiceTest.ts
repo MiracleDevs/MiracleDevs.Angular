@@ -31,7 +31,7 @@ describe("AlertService", () =>
     }));
 
 
-    describe("Instantiation", () => 
+    describe("creating the service", () => 
     {
         it("should initialize correctly", () =>
         {
@@ -50,7 +50,7 @@ describe("AlertService", () =>
         });      
     });
     
-    describe("Messages", () =>
+    describe("working with messages", () =>
     {
         it("should add a Message", () =>
         {
@@ -75,7 +75,7 @@ describe("AlertService", () =>
         });
     });
 
-    describe("Warnings", () =>
+    describe("working with warnings", () =>
     {
         it("should add a Warning", () =>
         {
@@ -100,22 +100,22 @@ describe("AlertService", () =>
         });
     });
 
-    describe("Errors", () =>
+    describe("working with errors", () =>
     {
-        it("should add a Error", () =>
+        it("should add an Error", () =>
         {
             alertService.addError("testing Error");
             expect(alertService.getAlerts().count()).toBe(1);
         });
 
-        it("should remove a Error", () =>
+        it("should remove an Error", () =>
         {
             alertService.addError("testing Error");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
 
-        it("should get a Error", () =>
+        it("should get an Error", () =>
         {
             alertService.addError("testing Error");
             var alert = alertService.get(0);

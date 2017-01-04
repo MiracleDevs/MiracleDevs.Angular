@@ -9,6 +9,7 @@ var DummyLoggingService = MiracleDevs.Angular.Services.DummyLoggingService;
 var AlertType = MiracleDevs.Angular.Services.AlertType;
 var ArrayList = MiracleDevs.Angular.Core.ArrayList;
 var Dictionary = MiracleDevs.Angular.Core.Dictionary;
+var Guid = MiracleDevs.Angular.Core.Guid;
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -940,6 +941,142 @@ describe("Dictionary", function () {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../Imports.ts"/>
+//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
+describe("Object", function () {
+    var objectNullError = "Object can not be null.";
+    describe("get type name", function () {
+        it("should get type of number", function () { return expect(Object.getTypeName(3)).toBe("Number"); });
+        it("should get type of Number", function () { return expect(Object.getTypeName(new Number(3))).toBe("Number"); });
+        it("should get type of string", function () { return expect(Object.getTypeName("hello")).toBe("String"); });
+        it("should get type of String", function () { return expect(Object.getTypeName(new String("hello"))).toBe("String"); });
+        it("should get type of boolean", function () { return expect(Object.getTypeName(false)).toBe("Boolean"); });
+        it("should get type of Boolean", function () { return expect(Object.getTypeName(new Boolean(false))).toBe("Boolean"); });
+        it("should get type of array", function () { return expect(Object.getTypeName([])).toBe("Array"); });
+        it("should get type of date", function () { return expect(Object.getTypeName(new Date())).toBe("Date"); });
+        it("should get type of custom object", function () { return expect(Object.getTypeName({})).toBe("Object"); });
+        it("should get type of custom class", function () { return expect(Object.getTypeName(Guid.new())).toBe("Guid"); });
+        it("should get type of null", function () { return expect(function () { return Object.getTypeName(null); }).toThrow(objectNullError); });
+    });
+    describe("object is null", function () {
+        it("should be true if null", function () { return expect(Object.isNull(null)).toBe(true); });
+        it("should be true if undefined", function () { return expect(Object.isNull(undefined)).toBe(true); });
+        it("should be false if instance", function () { return expect(Object.isNull({})).toBe(false); });
+        it("should be false if number", function () { return expect(Object.isNull(0)).toBe(false); });
+        it("should be false if boolean", function () { return expect(Object.isNull(false)).toBe(false); });
+        it("should be false if date", function () { return expect(Object.isNull(new Date())).toBe(false); });
+        it("should be false if array", function () { return expect(Object.isNull([])).toBe(false); });
+    });
+    describe("object is equal", function () {
+        it("should be true for two nulls", function () { return expect(Object.isEqualTo(null, null)).toBe(true); });
+        it("should be true for two undefined", function () { return expect(Object.isEqualTo(undefined, undefined)).toBe(true); });
+        it("should be true for null and undefined", function () { return expect(Object.isEqualTo(null, undefined)).toBe(true); });
+        it("should be false for null and any not null", function () { return expect(Object.isEqualTo(null, 1)).toBe(false); });
+        it("should be false for undefined and any not null", function () { return expect(Object.isEqualTo(undefined, 1)).toBe(false); });
+        it("should be true for two equal numbers", function () { return expect(Object.isEqualTo(1, 1)).toBe(true); });
+        it("should be false for two different numbers", function () { return expect(Object.isEqualTo(1, 2)).toBe(false); });
+        it("should be false for a number and a bool", function () { return expect(Object.isEqualTo(1, true)).toBe(false); });
+        it("should be false for a number and a string", function () { return expect(Object.isEqualTo(1, "1")).toBe(false); });
+        it("should be true for two equal strings", function () { return expect(Object.isEqualTo("hello", "hello")).toBe(true); });
+        it("should be false for two different strings", function () { return expect(Object.isEqualTo("hello", "world")).toBe(false); });
+        it("should be false for a string and a bool", function () { return expect(Object.isEqualTo("true", true)).toBe(false); });
+        it("should be true for two equal booleans", function () { return expect(Object.isEqualTo(true, true)).toBe(true); });
+        it("should be false for two different booleans", function () { return expect(Object.isEqualTo(true, false)).toBe(false); });
+        it("should be true for two equal dates", function () { return expect(Object.isEqualTo(new Date(2012, 12, 12, 12, 12, 12), new Date(2012, 12, 12, 12, 12, 12))).toBe(true); });
+        it("should be false for two different dates", function () { return expect(Object.isEqualTo(new Date(2014, 12, 12), new Date(2012, 12, 12))).toBe(false); });
+        it("should be true for two equal objects", function () { return expect(Object.isEqualTo({ number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) }, { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe(true); });
+        it("should be false for two equal objects with different numbers", function () { return expect(Object.isEqualTo({ number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) }, { number: 2, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe(false); });
+        it("should be false for two equal objects with different strings", function () { return expect(Object.isEqualTo({ number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) }, { number: 1, text: "world", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe(false); });
+        it("should be false for two equal objects with different booleans", function () { return expect(Object.isEqualTo({ number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) }, { number: 1, text: "hello", bool: false, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe(false); });
+        it("should be false for two equal objects with different dates", function () { return expect(Object.isEqualTo({ number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) }, { number: 1, text: "hello", bool: true, date: new Date(2014, 12, 12, 12, 12, 12) })).toBe(false); });
+        it("should be true for two equal arrays", function () { return expect(Object.isEqualTo([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])).toBe(true); });
+        it("should be false for two equal arrays with different values", function () { return expect(Object.isEqualTo([1, 2, 3, 4, 5], [1, 2, 3, 4, 4])).toBe(false); });
+        it("should be false for two equal arrays with different length", function () { return expect(Object.isEqualTo([1, 2, 3, 4, 5], [1, 2, 3, 4])).toBe(false); });
+        it("should be true for two equal complex objects", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } })).toBe(true); });
+        it("should be false for two equal complex objects whith different values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 1" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 2" } })).toBe(false); });
+        it("should be false for two equal complex objects whith different values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
+        it("should be false for two equal complex objects whith different childs", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
+    });
+    describe("clone object", function () {
+        it("should clone numbers", function () { return expect(Object.clone(1)).toBe(1); });
+        it("should clone strings", function () { return expect(Object.clone("hello")).toBe("hello"); });
+        it("should clone booleans", function () { return expect(Object.clone(true)).toBe(true); });
+        it("should clone numbers", function () {
+            var date1 = new Date(12, 12, 12);
+            var date2 = Object.clone(date1);
+            expect(date1 == date2).toBe(false);
+            expect(date1.getTime() === date2.getTime()).toBe(true);
+        });
+        it("should clone simple objects", function () {
+            var object1 = { number: 1, text: "hello", bool: true, date: new Date(12, 12, 12) };
+            var object2 = Object.clone(object1);
+            expect(Object.isEqualTo(object1, object2)).toBe(true);
+        });
+        it("should clone arrays", function () {
+            var object1 = [1, 2, 3, 4];
+            var object2 = Object.clone(object1);
+            expect(Object.isEqualTo(object1, object2)).toBe(true);
+        });
+        it("should clone complex objects", function () {
+            var object1 = { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } };
+            var object2 = Object.clone(object1);
+            expect(Object.isEqualTo(object1, object2)).toBe(true);
+        });
+    });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts"/>
+//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
+describe("String", function () {
+    var formatNullError = "Format string can not be null.";
+    describe("is string", function () {
+        it("should be true if string literal", function () { return expect(String.isString("hello world")).not.toBeNull(); });
+        it("should be false if number", function () { return expect(String.isString(45)).not.toBeNull(); });
+        it("should be false if number array", function () { return expect(String.isString([])).not.toBeNull(); });
+        it("should be false if number boolean", function () { return expect(String.isString(true)).not.toBeNull(); });
+        it("should be false if number date", function () { return expect(String.isString(new Date())).not.toBeNull(); });
+    });
+    describe("is null or empty", function () {
+        it("should be true if empty", function () { return expect(String.isNullOrEmpty("")); });
+        it("should be true if null", function () { return expect(String.isNullOrEmpty(null)); });
+        it("should be true if undefined", function () { return expect(String.isNullOrEmpty(undefined)); });
+        it("should be false if string isn't null nor empty", function () { return expect(String.isNullOrEmpty("hello world")); });
+    });
+    describe("is null or white space", function () {
+        it("should be true if white spaces", function () { return expect(String.isNullOrEmpty("    ")); });
+        it("should be true if empty", function () { return expect(String.isNullOrEmpty("")); });
+        it("should be true if null", function () { return expect(String.isNullOrEmpty(null)); });
+        it("should be true if undefined", function () { return expect(String.isNullOrEmpty(undefined)); });
+        it("should be false if string isn't null nor empty", function () { return expect(String.isNullOrEmpty("hello world")); });
+    });
+    describe("format string", function () {
+        it("should format strings", function () { return expect(String.format("{0} {1}", "hello", "world")).toBe("hello world"); });
+        it("should format numbers", function () { return expect(String.format("Number: {0}", 10.3)).toBe("Number: 10.3"); });
+        it("should format booleans", function () { return expect(String.format("Boolean: {0}", true)).toBe("Boolean: true"); });
+        it("should format arrays", function () { return expect(String.format("Array: {0}", [1, 2, 3])).toBe("Array: 1,2,3"); });
+        it("should format nulls", function () { return expect(String.format("Null: {0}", null)).toBe("Null: null"); });
+        it("should format undefined", function () { return expect(String.format("Null: {0}", undefined)).toBe("Null: undefined"); });
+        it("should fail without format string", function () { return expect(function () { return String.format(null, "hello"); }).toThrow(formatNullError); });
+    });
+    describe("format array", function () {
+        it("should format strings", function () { return expect(String.formatArray("{0} {1}", ["hello", "world"])).toBe("hello world"); });
+        it("should format numbers", function () { return expect(String.formatArray("Number: {0}", [10.3])).toBe("Number: 10.3"); });
+        it("should format booleans", function () { return expect(String.formatArray("Boolean: {0}", [true])).toBe("Boolean: true"); });
+        it("should format arrays", function () { return expect(String.formatArray("Array: {0}", [[1, 2, 3]])).toBe("Array: 1,2,3"); });
+        it("should format nulls", function () { return expect(String.formatArray("Null: {0}", [null])).toBe("Null: null"); });
+        it("should format undefined", function () { return expect(String.formatArray("Null: {0}", [undefined])).toBe("Null: undefined"); });
+        it("should fail without format string", function () { return expect(function () { return String.formatArray(null, ["hello"]); }).toThrow(formatNullError); });
+    });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Imports.ts" />
 describe("AlertService", function () {
     var injector;
@@ -957,7 +1094,7 @@ describe("AlertService", function () {
         injector = $injector;
         alertService = injector.get(FrameworkServices.alertService);
     }));
-    describe("Instantiation", function () {
+    describe("creating the service", function () {
         it("should initialize correctly", function () {
             expect(alertService).toBeDefined();
         });
@@ -969,7 +1106,7 @@ describe("AlertService", function () {
             expect(alertService.getAlerts().count()).toBe(0);
         });
     });
-    describe("Messages", function () {
+    describe("working with messages", function () {
         it("should add a Message", function () {
             alertService.addMessage("testing Message");
             expect(alertService.getAlerts().count()).toBe(1);
@@ -987,7 +1124,7 @@ describe("AlertService", function () {
             expect(alert.message).toBe("testing Message");
         });
     });
-    describe("Warnings", function () {
+    describe("working with warnings", function () {
         it("should add a Warning", function () {
             alertService.addWarning("testing Warning");
             expect(alertService.getAlerts().count()).toBe(1);
@@ -1005,17 +1142,17 @@ describe("AlertService", function () {
             expect(alert.message).toBe("testing Warning");
         });
     });
-    describe("Errors", function () {
-        it("should add a Error", function () {
+    describe("working with errors", function () {
+        it("should add an Error", function () {
             alertService.addError("testing Error");
             expect(alertService.getAlerts().count()).toBe(1);
         });
-        it("should remove a Error", function () {
+        it("should remove an Error", function () {
             alertService.addError("testing Error");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
-        it("should get a Error", function () {
+        it("should get an Error", function () {
             alertService.addError("testing Error");
             var alert = alertService.get(0);
             alertService.remove(0);
