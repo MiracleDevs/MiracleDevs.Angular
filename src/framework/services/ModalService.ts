@@ -7,8 +7,6 @@
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../interfaces/IServiceRegister.ts"/>
-///<reference path="../interfaces/IControllerRegister.ts"/>
 ///<reference path="../core/String.ts"/>
 ///<reference path="../core/Date.ts"/>
 ///<reference path="../core/Dictionary.ts"/>
@@ -21,7 +19,6 @@ module MiracleDevs.Angular.Services
     import Dictionary = Core.Dictionary;
     import Guid = Core.Guid;
     import IControllerRegister = Interfaces.IControllerRegister;
-    import Exception = Exceptions.Exception;
 
     export class ModalService extends ServiceBase implements IModalService
     {
@@ -68,7 +65,7 @@ module MiracleDevs.Angular.Services
         open(dialog: any, parameters?: any, staticDialog: boolean = false, keyboard: boolean = true): IModalInstance
         {
             if (dialog.register == null)
-                throw new Exception("The modal controller registration information is missing.");
+                throw new Error("The modal controller registration information is missing.");
 
             var register = dialog.register;
             var controllerAs = dialog.controllerAs || "controller";

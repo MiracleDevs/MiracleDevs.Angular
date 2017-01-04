@@ -6,7 +6,6 @@
 
 ///<reference path="core/Function.ts"/>
 ///<reference path="core/Object.ts"/>
-///<reference path="exceptions/Exception.ts"/>
 ///<reference path="services/AngularServices.ts"/>
 ///<reference path="../typings/angularjs/angular.d.ts"/>
 ///<reference path="../typings/angular-translate/angular-translate.d.ts"/>
@@ -28,8 +27,6 @@ module MiracleDevs.Angular
     import IState = angular.ui.IState;
     import IUrlRouterProvider = angular.ui.IUrlRouterProvider;   
     import IInjectorService = angular.auto.IInjectorService;
-
-    import Exception = Exceptions.Exception;  
     import IControllerRegister = Interfaces.IControllerRegister;
     import IServiceRegister = Interfaces.IServiceRegister;
     import IFilterRegister = Interfaces.IFilterRegister;
@@ -76,13 +73,13 @@ module MiracleDevs.Angular
 
         getModuleName(): string
         {
-            throw new Exception("Please override getModuleName method and provide a name for the module.");
+            throw new Error("Please override getModuleName method and provide a name for the module.");
         }
 
         registerController(register: IControllerRegister): void
         {
             if (register == null)
-                throw new Exception("Problems registering the controller.");
+                throw new Error("Problems registering the controller.");
 
             if (!Object.isNull(register.dependencies))
                 register.controller.$inject = register.dependencies;
@@ -99,7 +96,7 @@ module MiracleDevs.Angular
         registerService(register: IServiceRegister): void
         {
             if (register == null)
-                throw new Exception("Problems registering the service.");
+                throw new Error("Problems registering the service.");
 
             const parameters = (register.dependencies || new Array<any>()) as Array<any>;
             parameters.push(register.factory);
@@ -111,7 +108,7 @@ module MiracleDevs.Angular
         registerLoggingService(register: IServiceRegister): void
         {
             if (register == null)
-                throw new Exception("Problems registering the logging service.");
+                throw new Error("Problems registering the logging service.");
 
             const parameters = (register.dependencies || new Array<any>()) as Array<any>;
             parameters.push(register.factory);
@@ -125,7 +122,7 @@ module MiracleDevs.Angular
         registerInterceptor(register: IInterceptorRegister): void
         {
             if (register == null)
-                throw new Exception("Problems registering the Interceptor.");
+                throw new Error("Problems registering the Interceptor.");
 
             if (this.httpProvider == null)
                 this.interceptorsQueue.push(register);
@@ -142,7 +139,7 @@ module MiracleDevs.Angular
         registerFilter(register: IFilterRegister)
         {
             if (register == null)
-                throw new Exception("Problems registering the filter.");
+                throw new Error("Problems registering the filter.");
 
             const parameters = (register.dependencies || new Array<any>()) as Array<any>;
             parameters.push(register.factory);
@@ -154,7 +151,7 @@ module MiracleDevs.Angular
         registerDirective(register: IDirectiveRegister)
         {
             if (register == null)
-                throw new Exception("Problems registering the directive.");
+                throw new Error("Problems registering the directive.");
 
             const parameters = (register.dependencies || new Array<any>()) as Array<any>;
             parameters.push(register.factory);
@@ -175,7 +172,6 @@ module MiracleDevs.Angular
                 }
 
                 this.controllersQueue = null;
-                this.logger.writeMessage("registering states");
             }                   
         }
 
@@ -191,7 +187,6 @@ module MiracleDevs.Angular
                 }
 
                 this.interceptorsQueue = null;
-                this.logger.writeMessage("registering Interceptors");
             }           
         }
 
@@ -223,7 +218,7 @@ module MiracleDevs.Angular
 
         protected getModuleDependencies(): Array<string>
         {
-            throw new Exception("Please override getModuleDependencies method and provide other required modules or an empty array.");
+            throw new Error("Please override getModuleDependencies method and provide other required modules or an empty array.");
         }
 
         protected preRegister()

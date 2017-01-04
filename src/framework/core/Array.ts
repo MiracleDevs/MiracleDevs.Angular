@@ -17,23 +17,27 @@ interface ArrayConstructor
 
     lastOrDefault<T>(array: Array<T>, func?: (element: T) => boolean): T;
 
+    first<T>(array: Array<T>, func?: (element: T) => boolean): T;
+
+    last<T>(array: Array<T>, func?: (element: T) => boolean): T;
+
     any<T>(array: Array<T>, func?: (element: T) => boolean): boolean;
 
     count<T>(array: Array<T>, func?: (element: T) => boolean): number;
 
-    sum<T, TI>(array: Array<T>, func: (element: T) => TI): TI;
+    sum<T, TI>(array: Array<T>, func?: (element: T) => TI): TI;
 
     contains<T>(array: Array<T>, value: T): boolean;
 
-    orderBy<T, TR>(array: Array<T>, func: (element: T) => TR): Array<T>;
+    orderBy<T, TR>(array: Array<T>, func?: (element: T) => TR): Array<T>;
 
-    orderByDesc<T, TR>(array: Array<T>, func: (element: T) => TR): Array<T>;
+    orderByDesc<T, TR>(array: Array<T>, func?: (element: T) => TR): Array<T>;
 
-    remove<T>(array: Array<T>, element: T);
+    remove<T>(array: Array<T>, element: T): boolean;
 
-    removeAt<T>(array: Array<T>, index: number);
+    removeAt<T>(array: Array<T>, index: number): void;
 
-    removeAll<T>(array: Array<T>, func: (element: T) => boolean): void;
+    removeAll<T>(array: Array<T>, func?: (element: T) => boolean): number;
 }
 
 Array.forEach = <T>(array: Array<T>, action: (element: T) => void): void =>
@@ -107,6 +111,27 @@ Array.lastOrDefault = <T>(array: Array<T>, func?: (element: T) => boolean): T =>
     return null;
 };
 
+Array.first = <T>(array: Array<T>, func?: (element: T) => boolean): T =>
+{
+    var element = Array.firstOrDefault(array, func);
+
+    if (Object.isNull(element))
+        throw new Error("The source sequence is empty.");
+
+    return element;
+};
+
+Array.last = <T>(array: Array<T>, func?: (element: T) => boolean): T =>
+{
+    var element = Array.lastOrDefault(array, func);
+
+    if (Object.isNull(element))
+        throw new Error("The source sequence is empty.");
+
+    return element;
+};
+
+
 Array.any = <T>(array: Array<T>, func?: (element: T) => boolean): boolean =>
 {
     if (func == null)
@@ -137,20 +162,22 @@ Array.count = <T>(array: Array<T>, func?: (element: T) => boolean): number =>
     return count;
 };
 
-Array.sum = <T, TI>(array: Array<T>, func: (element: T) => TI): TI =>
+Array.sum = <T, TI>(array: Array<T>, func?: (element: T) => TI): TI =>
 {
-    if (func == null)
-        throw new MiracleDevs.Angular.Exceptions.Exception("Sum function is a mandatory field.");
-
-    var sum = null;
+   var sum = null;
 
     for (let index = 0; index < array.length; index++)
     {
+        const value = Object.isNull(func) ? array[index] : func(array[index]);
+
         if (sum == null)
-            sum = func(array[index]);
+            sum = value;
         else
-            sum += func(array[index]); 
+            sum += value;
     }
+
+    if (sum === undefined)
+        return null;
 
     return sum;
 };
@@ -166,33 +193,69 @@ Array.contains = <T>(array: Array<T>, value: any): boolean =>
     return false;
 };
 
-Array.orderBy = <T, TR>(array: Array<T>, func: (element: T) => TR): Array<T> =>
+Array.orderBy = <T, TR>(array: Array<T>, func?: (element: T) => TR): Array<T> =>
 {
-    return array.sort((a, b) => func(a) > func(b) ? 1 : func(a) < func(b) ? -1 : 0);
+    var onlyValues = Object.isNull(func);
+    var newArray = array.slice();
+
+    return newArray.sort((a, b) =>
+    {
+        var valueA = onlyValues ? a : func(a);
+        var valueB = onlyValues ? b : func(b);
+
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+    });
 };
 
-Array.orderByDesc = <T, TR>(array: Array<T>, func: (element: T) => TR): Array<T> =>
+Array.orderByDesc = <T, TR>(array: Array<T>, func?: (element: T) => TR): Array<T> =>
 {
-    return array.sort((a, b) => func(a) > func(b) ? -1 : func(a) < func(b) ? 1 : 0);
+    var onlyValues = Object.isNull(func);
+    var newArray = array.slice();
+
+    return newArray.sort((a, b) =>
+    {
+        var valueA = onlyValues ? a : func(a);
+        var valueB = onlyValues ? b : func(b);
+
+        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+    });
 };
 
-Array.remove = <T>(array: Array<T>, element: T) =>
+Array.remove = <T>(array: Array<T>, element: T): boolean =>
 {
-    Array.removeAt(array, array.indexOf(element, 0));
+    try
+    {
+        Array.removeAt(array, array.indexOf(element, 0));  
+        return true;  
+    }
+    catch (e)
+    {
+        return false;
+    }   
 };
 
-Array.removeAt = <T>(array: Array<T>, index: number) =>
+Array.removeAt = <T>(array: Array<T>, index: number): void =>
 {
+    if (index < 0)
+        throw new Error("index is less than 0.");
+
+    if (index >= array.length)
+        throw new Error("index is equal to or greater than length.");
+
     delete array[index];
     array.splice(index, 1);
 };
 
-Array.removeAll = <T>(array: Array<T>, func: (element: T) => boolean): void =>
+Array.removeAll = <T>(array: Array<T>, func?: (element: T) => boolean): number =>
 {
-    var elements = Array.where(array, func);
+    var elements = Object.isNull(func) ? array.slice() : Array.where(array, func);
+    var count = 0;
 
     for (let i = 0; i < elements.length; i++)
     {
         Array.remove(array, elements[i]);
+        count++;
     }
+
+    return count;
 };

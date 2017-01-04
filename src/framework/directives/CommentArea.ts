@@ -7,7 +7,6 @@
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
-///<reference path="../interfaces/IDirectiveRegister.ts" />
 ///<reference path="../core/String.ts" />
 
 module MiracleDevs.Angular.Directives

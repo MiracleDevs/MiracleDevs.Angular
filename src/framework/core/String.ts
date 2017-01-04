@@ -44,7 +44,7 @@ String.format = (format: string, ...args: any[]): string =>
 
         if (index < 0 || index >= args.length)
         {
-            throw new MiracleDevs.Angular.Exceptions.Exception("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
         }
 
         return args[index];
@@ -57,7 +57,7 @@ String.formatArray = (format: string, args: any[]) => String(format).replace(/\{
 
     if (index < 0 || index >= args.length)
     {
-        throw new MiracleDevs.Angular.Exceptions.Exception("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
     }
 
     return args[index];

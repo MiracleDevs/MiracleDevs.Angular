@@ -4,12 +4,10 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="exceptions/Exception.ts" />
 ///<reference path="core/Dictionary.ts"/>
 
 module MiracleDevs.Angular
 {
-    import Exception = Exceptions.Exception;
     import Dictionary = Core.Dictionary;
 
     export class BuildInfo
@@ -36,7 +34,7 @@ module MiracleDevs.Angular
         constructor()
         {
             if (BuildInfo.internalInstance != null)
-                throw new Exception("The program does not allow more than one instance of BuildInfo.");
+                throw new Error("The program does not allow more than one instance of BuildInfo.");
 
             if (MiracleDevs != null && MiracleDevs["BuildInfo"] != null)
             {

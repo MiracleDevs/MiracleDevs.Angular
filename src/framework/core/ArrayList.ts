@@ -41,6 +41,16 @@ module MiracleDevs.Angular.Core
         {
             return Array.lastOrDefault(this.innerList, func);
         }
+
+        first(func?: (element: T) => boolean): T
+        {
+            return Array.first(this.innerList, func);
+        }
+
+        last(func?: (element: T) => boolean): T
+        {
+            return Array.last(this.innerList, func);
+        }
         
         any(func?: (element: T) => boolean): boolean
         {
@@ -62,12 +72,12 @@ module MiracleDevs.Angular.Core
             return Array.contains(this.innerList, value);
         }
 
-        orderBy<TR>(func: (element: T) => TR): ArrayList<T>
+        orderBy<TR>(func?: (element: T) => TR): ArrayList<T>
         {
             return new ArrayList(Array.orderBy(this.innerList, func));
         }
 
-        orderByDesc<TR>(func: (element: T) => TR): ArrayList<T>
+        orderByDesc<TR>(func?: (element: T) => TR): ArrayList<T>
         {
             return new ArrayList(Array.orderByDesc(this.innerList, func));
         }
@@ -79,6 +89,12 @@ module MiracleDevs.Angular.Core
 
         get(index: number): T 
         {
+            if (index < 0)
+                throw new Error("index is less than 0.");
+
+            if (index >= this.innerList.length)
+                throw new Error("index is equal to or greater than length.");
+
             return this.innerList[index];
         }
 
@@ -116,19 +132,19 @@ module MiracleDevs.Angular.Core
             return this.innerList.indexOf(element);
         }
 
-        remove(element: T)
+        remove(element: T): boolean
         {
-            Array.remove(this.innerList, element);
+            return Array.remove(this.innerList, element);
         }
 
-        removeAt(index: number)
+        removeAt(index: number): void
         {
             Array.removeAt(this.innerList, index);
         }
 
-        removeAll(func: (element: T) => boolean): void
+        removeAll(func?: (element: T) => boolean): number
         {
-            Array.removeAll(this.innerList, func);
+            return Array.removeAll(this.innerList, func);
         }
 
         clear()

@@ -7,7 +7,6 @@
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../core/ArrayList.ts"/>
-///<reference path="../interfaces/IDirectiveRegister.ts"/>
 ///<reference path="DirectiveBase.ts" />
 
 module MiracleDevs.Angular.Directives
@@ -20,7 +19,6 @@ module MiracleDevs.Angular.Directives
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import AngularServices = Services.AngularServices;
     import IParseService = angular.IParseService;
-    import Exception = Exceptions.Exception;
     import ArrayList = Core.ArrayList;
 
     export class OnKeyboard extends DirectiveBase
@@ -99,20 +97,20 @@ module MiracleDevs.Angular.Directives
                 const parts = actionString.split(":");
 
                 if (parts.length !== 2)
-                    throw new Exception(`The key-submit expression number ${i} is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action`);
+                    throw new Error(`The key-submit expression number ${i} is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action`);
 
                 const firstParenthesis = parts[0].indexOf("(");
                 const lastParenthesis = parts[0].indexOf(")");
 
                 if (firstParenthesis < 0 || lastParenthesis < 0)
-                    throw new Exception(`The key-submit expression number ${i} is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action`);
+                    throw new Error(`The key-submit expression number ${i} is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action`);
 
                 const eventType = parts[0].substr(0, firstParenthesis);
 
                 if (eventType !== "keypress" &&
                     eventType !== "keydown" &&
                     eventType !== "keyup")
-                    throw new Exception(`Only keypress, keydown and keyup events are allowed on action strings.`);
+                    throw new Error(`Only keypress, keydown and keyup events are allowed on action strings.`);
 
                 const keys = parts[0].substr(firstParenthesis + 1, lastParenthesis - firstParenthesis - 1);
                 const parameters = keys.split(",");
@@ -125,7 +123,7 @@ module MiracleDevs.Angular.Directives
                 }
                 catch (error)
                 {
-                    throw new Exception(`The key-submit expression number ${i} is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action.`);
+                    throw new Error(`The key-submit expression number ${i} is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action.`);
                 }
 
                 if (parameters.length > 1)

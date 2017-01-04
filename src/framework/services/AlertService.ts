@@ -7,7 +7,6 @@
 ///<reference path="../core/ArrayList.ts" />
 ///<reference path="../interfaces/IServiceRegister.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="ILoggingService.ts"/>
 ///<reference path="IAlertService.ts"/>
 
 module MiracleDevs.Angular.Services

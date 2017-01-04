@@ -15,7 +15,6 @@ module MiracleDevs.Angular
     import IStateProvider = angular.ui.IStateProvider;
     import IStateService = angular.ui.IStateService;
     import IUrlRouterProvider = angular.ui.IUrlRouterProvider;
-    import Exception = Exceptions.Exception;
     import LoggingService = Services.LoggingService;
     import ILocationProvider = angular.ILocationProvider;
 
@@ -28,10 +27,10 @@ module MiracleDevs.Angular
         constructor() 
         {
             if (FrameworkModule.internalInstance != null)
-                throw new Exception("The program does not allow more than one instance of the ModuleBase.");
+                throw new Error("The program does not allow more than one instance of the ModuleBase.");
 
             super();
-            FrameworkModule.internalInstance = this;         
+            FrameworkModule.internalInstance = this;
             this.logger.writeMessage("creating application");
         }
 

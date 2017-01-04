@@ -46,7 +46,7 @@ module MiracleDevs.Angular.Core
         add(key: TKey, value: TValue): void
         {
             if (this.containsKey(key))
-                throw new Exceptions.Exception(`The dictionary already contains the key '${key}'`);
+                throw new Error(`The dictionary already contains the key '${key}'`);
 
             this.dictionary.add({ key: key, value: value });
         }
@@ -54,7 +54,7 @@ module MiracleDevs.Angular.Core
         remove(key: TKey): void
         {
             if (!this.containsKey(key))
-                throw new Exceptions.Exception(`The dictionary does not contains the key '${key}'`);
+                throw new Error(`The dictionary does not contains the key '${key}'`);
 
             this.dictionary.remove(this.dictionary.firstOrDefault(x => x.key === key));
         }

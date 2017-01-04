@@ -1,6 +1,9 @@
 {
-  "name": "miracledevs",
+  "name": "miracledevs.angular",
   "version": "1.0.0",
+  "license": "MIT",
+  "description": "An easy to learn application structure fixing some of the problems with angular.",
+  "repository": "https://github.com/MiracleDevs/MiracleDevs.Angular/",
   "dependencies": {
     "browser-sync": "^2.14.3",
     "connect-history-api-fallback": "^1.3.0",

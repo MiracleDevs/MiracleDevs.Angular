@@ -14,7 +14,7 @@ var FrameworkModule = MiracleDevs.Angular.FrameworkModule;
 ///<reference path="../typings/angularjs/angular.d.ts" />
 ///<reference path="../typings/angularjs/angular-mocks.d.ts" />
 ///<reference path="../typings/miracledevs.angular/miracledevs.angular.d.ts" />
-///<reference path="imports.ts"/>
+///<reference path="Imports.ts"/>
 //import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
 describe("Framework Module", function () {
     it("001 - Framework shoulnd't be null", function () {
@@ -36,11 +36,13 @@ describe("Framework Module", function () {
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/angularjs/angular-mocks.d.ts" />
 ///<reference path="../../typings/miracledevs.angular/miracledevs.angular.d.ts" />
-///<reference path="../imports.ts" />
+///<reference path="../Imports.ts" />
 describe("AlertService", function () {
     var injector;
     var alertService;
-    beforeEach(angular.mock.module(FrameworkModule.instance.getModuleName()));
+    beforeEach(function () {
+        angular.mock.module(FrameworkModule.instance.getModuleName());
+    });
     beforeEach(inject(function ($injector) {
         injector = $injector;
         alertService = injector.get(FrameworkServices.alertService);
@@ -58,9 +60,23 @@ describe("AlertService", function () {
         });
     });
     describe("Methods", function () {
-        it("001 - should add an alert", function () {
-            alertService.addMessage("Adding an alert");
+        it("001 - should add a message", function () {
+            alertService.addMessage("testing message");
             expect(alertService.getAlerts().count()).toBe(1);
+        });
+        it("002 - should remove a message", function () {
+            alertService.addMessage("testing message");
+            alertService.remove(0);
+            expect(alertService.getAlerts().count()).toBe(0);
+        });
+        it("003 - should add a warning", function () {
+            alertService.addWarning("testing warning");
+            expect(alertService.getAlerts().count()).toBe(1);
+        });
+        it("004 - should remove a warning", function () {
+            alertService.addWarning("testing warning");
+            alertService.remove(0);
+            expect(alertService.getAlerts().count()).toBe(0);
         });
     });
 });
