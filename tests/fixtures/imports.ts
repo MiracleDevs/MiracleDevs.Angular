@@ -18,5 +18,9 @@ import AlertType = MiracleDevs.Angular.Services.AlertType;
 
 import ArrayList = MiracleDevs.Angular.Core.ArrayList;
 import Dictionary = MiracleDevs.Angular.Core.Dictionary;
-
 import Guid = MiracleDevs.Angular.Core.Guid;
+import LocalStorage = MiracleDevs.Angular.Core.LocalStorage;
+import mimeType = MiracleDevs.Angular.Core.mimeType;
+import Md5 = MiracleDevs.Angular.Core.Md5;
+
+import DialogControllerBase = MiracleDevs.Angular.Controllers.Dialogs.DialogControllerBase;

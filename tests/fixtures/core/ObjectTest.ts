@@ -6,8 +6,6 @@
 
 ///<reference path="../Imports.ts"/>
 
-//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
-
 describe("Object", () =>
 {
     var objectNullError = "Object can not be null.";
@@ -127,7 +125,7 @@ describe("Object", () =>
                 { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 1" } },
                 { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 2" } })).toBe(false));
 
-        it("should be false for two equal complex objects whith different values",
+        it("should be false for two equal complex objects whith different child values",
             () => expect(Object.isEqualTo(
                 { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
                 { name: "object", childs: [{ name: "child1" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false));

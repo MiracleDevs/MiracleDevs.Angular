@@ -6,8 +6,6 @@
 
 ///<reference path="Imports.ts"/>
 
-//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
-
 describe("Framework Module", () =>
 {
     it("Framework shoulnd't be null", () =>

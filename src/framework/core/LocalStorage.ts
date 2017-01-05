@@ -60,10 +60,22 @@ module MiracleDevs.Angular.Core
             return Object.isNull(value) ? null : new Date(value);
         }
 
-
         static remove(name: string): void
         {
             localStorage.removeItem(name);
+        }
+
+        static getAllContent(): Dictionary<string, string>
+        {
+            const dictionary = new Dictionary<string, string>();
+
+            for (let i = 0; i < localStorage.length; i++)
+            {
+                const key = localStorage.key(i);
+                dictionary.add(key, localStorage.getItem(key));
+            }
+
+            return dictionary;
         }
 
         static clear(): void

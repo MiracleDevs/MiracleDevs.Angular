@@ -5,6 +5,7 @@ var gulp = require("gulp");
 var typeScript = require("gulp-typescript");
 var karma = require("gulp-karma-runner");
 var util = require("gulp-util");
+var argv = require("yargs").argv;
 
 var bowerFolder = "bower_components/";
 var nodeFolder = "node_modules/";
@@ -69,6 +70,7 @@ gulp.task(serverTask, function () {
             scriptsFolder + "miracledevs.angular.test.js"], { "read": false })
       .pipe(karma.server({
           quiet: true,
+
           configFile: "karma.conf.js"
       }))
       .on("error", function (err) {

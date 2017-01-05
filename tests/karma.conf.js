@@ -7,16 +7,18 @@
 
         reporters: ["spec"],
 
-        browsers: ["Chrome"],
+        browsers: ["Chrome", "Firefox", "IE"],
 
         plugins: [
             "karma-spec-reporter",
             "karma-jasmine",
-            "karma-chrome-launcher"
+            "karma-chrome-launcher",
+            "karma-firefox-launcher",
+            "karma-ie-launcher"
         ],
 
         logLevel: config.LOG_WARN,
-
+        
         port: 7676,
 
         colors: true,

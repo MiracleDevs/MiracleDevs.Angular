@@ -10,13 +10,16 @@ var AlertType = MiracleDevs.Angular.Services.AlertType;
 var ArrayList = MiracleDevs.Angular.Core.ArrayList;
 var Dictionary = MiracleDevs.Angular.Core.Dictionary;
 var Guid = MiracleDevs.Angular.Core.Guid;
+var LocalStorage = MiracleDevs.Angular.Core.LocalStorage;
+var mimeType = MiracleDevs.Angular.Core.mimeType;
+var Md5 = MiracleDevs.Angular.Core.Md5;
+var DialogControllerBase = MiracleDevs.Angular.Controllers.Dialogs.DialogControllerBase;
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 ///<reference path="Imports.ts"/>
-//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
 describe("Framework Module", function () {
     it("Framework shoulnd't be null", function () {
         expect(angular.mock.module("miracledevs-framework")).not.toBeNull();
@@ -631,6 +634,19 @@ describe("Array", function () {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../Imports.ts"/>
+describe("Date", function () {
+    var wrongDateError = "String is not recognized as a valid ISO 8601 date.";
+    it("should be able to parse iso string with positive timezone", function () { return expect(function () { return Date.fromIso8601("2012-10-10T12:00:00+300"); }).not.toThrow(); });
+    it("should be able to parse iso string with negative timezone", function () { return expect(function () { return Date.fromIso8601("2012-10-10T12:00:00-300"); }).not.toThrow(); });
+    it("should be able to parse iso string without timezone", function () { return expect(function () { return Date.fromIso8601("2012-10-10T12:00:00"); }).not.toThrow(); });
+    it("shouldnt parse wrong formatted strings", function () { return expect(function () { return Date.fromIso8601("hello world"); }).toThrow(wrongDateError); });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Imports.ts" />
 describe("Dictionary", function () {
     var firstLastError = "The source sequence is empty.";
@@ -942,7 +958,102 @@ describe("Dictionary", function () {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 ///<reference path="../Imports.ts"/>
-//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
+describe("File Mime Type", function () {
+    it("should get mime type of video", function () { return expect(mimeType.get("video.mp4")).toBe("video/mp4"); });
+    it("should get mime type of audio", function () { return expect(mimeType.get("video.mp3")).toBe("audio/mpeg"); });
+    it("should get mime type of pdf", function () { return expect(mimeType.get("video.pdf")).toBe("application/pdf"); });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts"/>
+describe("Function", function () {
+    describe("get function name", function () {
+        it("should get function name of number", function () { return expect(Number.getFunctionName()).toBe("Number"); });
+        it("should get function name of string", function () { return expect(String.getFunctionName()).toBe("String"); });
+        it("should get function name of boolean", function () { return expect(Boolean.getFunctionName()).toBe("Boolean"); });
+        it("should get function name of date", function () { return expect(Date.getFunctionName()).toBe("Date"); });
+        it("should get function name of object", function () { return expect(Object.getFunctionName()).toBe("Object"); });
+        it("should get function name of FrameworkModule", function () { return expect(FrameworkModule.getFunctionName()).toBe("FrameworkModule"); });
+        it("should get function name of DialogControllerBase", function () { return expect(DialogControllerBase.getFunctionName()).toBe("DialogControllerBase"); });
+    });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts"/>
+describe("Local Storage", function () {
+    it("should store and retrieve booleans", function () {
+        expect(function () { return LocalStorage.set("boolean", true); }).not.toThrow();
+        expect(LocalStorage.get(Boolean, "boolean")).toBe(true);
+        expect(LocalStorage.getBoolean("boolean")).toBe(true);
+    });
+    it("should store and retrieve numbers", function () {
+        expect(function () { return LocalStorage.set("number", 1.1); }).not.toThrow();
+        expect(LocalStorage.get(Number, "number")).toBe(1.1);
+        expect(LocalStorage.getNumber("number")).toBe(1.1);
+    });
+    it("should store and retrieve integer", function () {
+        expect(function () { return LocalStorage.set("int", 1); }).not.toThrow();
+        expect(LocalStorage.getInt("int")).toBe(1);
+    });
+    it("should store and retrieve dates", function () {
+        expect(function () { return LocalStorage.set("date", new Date(12, 12, 12)); }).not.toThrow();
+        expect(LocalStorage.get(Date, "date").getTime()).toBe(new Date(12, 12, 12).getTime());
+        expect(LocalStorage.getDate("date").getTime()).toBe(new Date(12, 12, 12).getTime());
+    });
+    it("should get all content", function () {
+        expect(function () { return LocalStorage.clear(); }).not.toThrow();
+        LocalStorage.set("element 1", "value 1");
+        LocalStorage.set("element 2", "value 2");
+        LocalStorage.set("element 3", "value 3");
+        var allContent = LocalStorage.getAllContent();
+        expect(allContent).not.toBeNull();
+        expect(allContent.count()).toBe(3);
+        expect(allContent.get("element 1")).toBe("value 1");
+        expect(allContent.get("element 2")).toBe("value 2");
+        expect(allContent.get("element 3")).toBe("value 3");
+    });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts"/>
+describe("MD5", function () {
+    it("should get MD5 for 'hello world'", function () { return expect(Md5.computeHash("hello world")).toBe("5eb63bbbe01eeed093cb22bb8f5acdc3"); });
+    it("should get MD5 for 'password1234admin'", function () { return expect(Md5.computeHash("password1234admin")).toBe("d43a469e1e7440e49149df5b2b1206fe"); });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts"/>
+describe("Number", function () {
+    describe("is number", function () {
+        it("should be true if number", function () { return expect(Number.isNumber(1)).toBe(true); });
+        it("should be false if NaN", function () { return expect(Number.isNumber(NaN)).toBe(false); });
+        it("should be false if Infinite", function () { return expect(Number.isNumber(Infinity)).toBe(false); });
+        it("should be false if string", function () { return expect(Number.isNumber("hello")).toBe(false); });
+        it("should be false if boolean", function () { return expect(Number.isNumber(true)).toBe(false); });
+        it("should be false if date", function () { return expect(Number.isNumber(new Date(12, 12, 12))).toBe(false); });
+        it("should be false if null", function () { return expect(Number.isNumber(null)).toBe(false); });
+        it("should be false if array", function () { return expect(Number.isNumber([1, 2, 3])).toBe(false); });
+        it("should be false if object", function () { return expect(Number.isNumber({})).toBe(false); });
+    });
+});
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts"/>
 describe("Object", function () {
     var objectNullError = "Object can not be null.";
     describe("get type name", function () {
@@ -994,7 +1105,7 @@ describe("Object", function () {
         it("should be false for two equal arrays with different length", function () { return expect(Object.isEqualTo([1, 2, 3, 4, 5], [1, 2, 3, 4])).toBe(false); });
         it("should be true for two equal complex objects", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } })).toBe(true); });
         it("should be false for two equal complex objects whith different values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 1" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 2" } })).toBe(false); });
-        it("should be false for two equal complex objects whith different values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
+        it("should be false for two equal complex objects whith different child values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
         it("should be false for two equal complex objects whith different childs", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
     });
     describe("clone object", function () {
@@ -1030,28 +1141,27 @@ describe("Object", function () {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 ///<reference path="../Imports.ts"/>
-//import FrameworkModule = MiracleDevs.Angular.FrameworkModule;
 describe("String", function () {
     var formatNullError = "Format string can not be null.";
     describe("is string", function () {
-        it("should be true if string literal", function () { return expect(String.isString("hello world")).not.toBeNull(); });
-        it("should be false if number", function () { return expect(String.isString(45)).not.toBeNull(); });
-        it("should be false if number array", function () { return expect(String.isString([])).not.toBeNull(); });
-        it("should be false if number boolean", function () { return expect(String.isString(true)).not.toBeNull(); });
-        it("should be false if number date", function () { return expect(String.isString(new Date())).not.toBeNull(); });
+        it("should be true if string literal", function () { return expect(String.isString("hello world")).toBe(true); });
+        it("should be false if number", function () { return expect(String.isString(45)).toBe(false); });
+        it("should be false if number array", function () { return expect(String.isString([])).toBe(false); });
+        it("should be false if number boolean", function () { return expect(String.isString(true)).toBe(false); });
+        it("should be false if number date", function () { return expect(String.isString(new Date())).toBe(false); });
     });
     describe("is null or empty", function () {
-        it("should be true if empty", function () { return expect(String.isNullOrEmpty("")); });
-        it("should be true if null", function () { return expect(String.isNullOrEmpty(null)); });
-        it("should be true if undefined", function () { return expect(String.isNullOrEmpty(undefined)); });
-        it("should be false if string isn't null nor empty", function () { return expect(String.isNullOrEmpty("hello world")); });
+        it("should be true if empty", function () { return expect(String.isNullOrEmpty("")).toBe(true); });
+        it("should be true if null", function () { return expect(String.isNullOrEmpty(null)).toBe(true); });
+        it("should be true if undefined", function () { return expect(String.isNullOrEmpty(undefined)).toBe(true); });
+        it("should be false if string isn't null nor empty", function () { return expect(String.isNullOrEmpty("hello world")).toBe(false); });
     });
     describe("is null or white space", function () {
-        it("should be true if white spaces", function () { return expect(String.isNullOrEmpty("    ")); });
-        it("should be true if empty", function () { return expect(String.isNullOrEmpty("")); });
-        it("should be true if null", function () { return expect(String.isNullOrEmpty(null)); });
-        it("should be true if undefined", function () { return expect(String.isNullOrEmpty(undefined)); });
-        it("should be false if string isn't null nor empty", function () { return expect(String.isNullOrEmpty("hello world")); });
+        it("should be true if white spaces", function () { return expect(String.isNullOrWhiteSpace("    ")).toBe(true); });
+        it("should be true if empty", function () { return expect(String.isNullOrWhiteSpace("")).toBe(true); });
+        it("should be true if null", function () { return expect(String.isNullOrWhiteSpace(null)).toBe(true); });
+        it("should be true if undefined", function () { return expect(String.isNullOrWhiteSpace(undefined)).toBe(true); });
+        it("should be false if string isn't null nor empty", function () { return expect(String.isNullOrWhiteSpace("hello world")).toBe(false); });
     });
     describe("format string", function () {
         it("should format strings", function () { return expect(String.format("{0} {1}", "hello", "world")).toBe("hello world"); });

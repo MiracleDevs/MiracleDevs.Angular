@@ -156,7 +156,7 @@ module MiracleDevs.Angular.Core
 
             for (i = 0; i < value.length; i++)
             {
-                var innerValue = value[i];
+                const innerValue = value[i];
 
                 if (Object.isNull(innerValue))
                     throw new Error("Item can not be null");
