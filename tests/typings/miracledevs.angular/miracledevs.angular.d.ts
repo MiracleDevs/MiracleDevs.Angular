@@ -422,7 +422,7 @@ declare module MiracleDevs.Angular.Controllers {
     import IHttpPromise = angular.IHttpPromise;
     import IPromise = angular.IPromise;
     import IModalInstance = Services.IModalInstance;
-    class ControllerBase {
+    abstract class ControllerBase {
         protected scope: IScope;
         protected injector: IInjectorService;
         protected alertService: IAlertService;
@@ -433,8 +433,8 @@ declare module MiracleDevs.Angular.Controllers {
         protected dispose(): void;
         protected getService<T>(service: string): T;
         protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
-        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (error: Error) => void): void;
-        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: Error) => void, showLoading?: boolean): void;
+        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
+        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
         protected showErrors(messages: string[]): void;
         protected showWarnings(messages: string[]): void;
         protected showError(message: string): void;
@@ -1703,7 +1703,7 @@ declare module MiracleDevs.Angular.Controllers.Dialogs {
     import IInjectorService = angular.auto.IInjectorService;
     import IModalInstance = Services.IModalInstance;
     import IScope = angular.IScope;
-    class DialogControllerBase extends ControllerBase {
+    abstract class DialogControllerBase extends ControllerBase {
         protected modalInstance: IModalInstance;
         constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
         cancel(): void;

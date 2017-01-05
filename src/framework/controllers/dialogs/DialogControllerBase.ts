@@ -12,7 +12,7 @@ module MiracleDevs.Angular.Controllers.Dialogs
     import IModalInstance = Services.IModalInstance;
     import IScope = angular.IScope;
 
-    export class DialogControllerBase extends ControllerBase 
+    export abstract class DialogControllerBase extends ControllerBase 
     {
         protected modalInstance: IModalInstance;
 

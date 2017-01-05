@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -13,7 +18,10 @@ var Guid = MiracleDevs.Angular.Core.Guid;
 var LocalStorage = MiracleDevs.Angular.Core.LocalStorage;
 var mimeType = MiracleDevs.Angular.Core.mimeType;
 var Md5 = MiracleDevs.Angular.Core.Md5;
+var ControllerBase = MiracleDevs.Angular.Controllers.ControllerBase;
 var DialogControllerBase = MiracleDevs.Angular.Controllers.Dialogs.DialogControllerBase;
+var ServiceBase = MiracleDevs.Angular.Services.ServiceBase;
+var AngularServices = MiracleDevs.Angular.Services.AngularServices;
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -31,6 +39,239 @@ describe("Framework Module", function () {
         expect(FrameworkModule.instance.getModuleName()).not.toBeNull();
     });
 });
+///<reference path="../Imports.ts" />
+var TestLoggingService = (function (_super) {
+    __extends(TestLoggingService, _super);
+    function TestLoggingService() {
+        var _this = _super.call(this) || this;
+        _this.messageWritten = 0;
+        _this.warningWritten = 0;
+        _this.errorWritten = 0;
+        return _this;
+    }
+    TestLoggingService.prototype.writeMessage = function (message) {
+        this.messageWritten++;
+    };
+    TestLoggingService.prototype.writeWarning = function (message) {
+        this.warningWritten++;
+    };
+    TestLoggingService.prototype.writeError = function (message) {
+        this.errorWritten++;
+    };
+    return TestLoggingService;
+}(ServiceBase));
+var TestLoadingService = (function (_super) {
+    __extends(TestLoadingService, _super);
+    function TestLoadingService() {
+        return _super.apply(this, arguments) || this;
+    }
+    TestLoadingService.prototype.show = function () {
+        this.loadingVisible = true;
+    };
+    TestLoadingService.prototype.hide = function () {
+        this.loadingVisible = false;
+    };
+    return TestLoadingService;
+}(ServiceBase));
+var TestPromiseService = (function (_super) {
+    __extends(TestPromiseService, _super);
+    function TestPromiseService(q, timeout) {
+        var _this = _super.call(this) || this;
+        _this.q = q;
+        _this.timeout = timeout;
+        _this.delay = 500;
+        _this.numberResult = 1;
+        _this.booleanResult = true;
+        _this.stringResult = "hello world";
+        _this.dateResult = new Date(12, 12, 12);
+        _this.objectResult = { name: "custom object" };
+        _this.arrayResult = [1, 2, 3, 4];
+        _this.rejectionReason = "Testing promise rejection";
+        return _this;
+    }
+    TestPromiseService.prototype.numberPromise = function () {
+        return this.q.resolve(this.numberResult);
+    };
+    TestPromiseService.prototype.booleanPromise = function () {
+        return this.q.resolve(this.booleanResult);
+    };
+    TestPromiseService.prototype.stringPromise = function () {
+        return this.q.resolve(this.stringResult);
+    };
+    TestPromiseService.prototype.datePromise = function () {
+        return this.q.resolve(this.dateResult);
+    };
+    TestPromiseService.prototype.objectPromise = function () {
+        return this.q.resolve(this.objectResult);
+    };
+    TestPromiseService.prototype.arrayPromise = function () {
+        return this.q.resolve(this.arrayResult);
+    };
+    TestPromiseService.prototype.rejectPromise = function () {
+        return this.q.reject(this.rejectionReason);
+    };
+    TestPromiseService.factory = function (q, timeout) {
+        return new TestPromiseService(q, timeout);
+    };
+    return TestPromiseService;
+}(ServiceBase));
+TestPromiseService.register = {
+    name: "TestPromiseService",
+    factory: TestPromiseService.factory,
+    dependencies: [AngularServices.q, AngularServices.timeout]
+};
+FrameworkModule.instance.registerService(TestPromiseService.register);
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../Imports.ts" />
+///<reference path="../services/TestServices.ts" />
+describe("TestController", function () {
+    var rootScopeService;
+    var controllerService;
+    var injector;
+    var testService;
+    var alertService;
+    var logger = new TestLoggingService();
+    beforeEach(function () {
+        // create a new framework module with all the configuration.
+        angular.mock.module(FrameworkModule.instance.getModuleName());
+        // inject a dummy logging service to prevent undesired logging.
+        angular.mock.module(function ($provide) {
+            $provide.value(FrameworkServices.loggingService, logger);
+        });
+    });
+    // prepare base services and classes.
+    beforeEach(inject(function ($injector) {
+        injector = $injector;
+        rootScopeService = injector.get(AngularServices.rootScope);
+        controllerService = injector.get(AngularServices.controller);
+        alertService = injector.get(FrameworkServices.alertService);
+        testService = injector.get(TestPromiseService.register.name);
+    }));
+    function getController() {
+        return controllerService(TestController, { scope: rootScopeService.$new(false, rootScopeService), injector: injector, testService: testService });
+    }
+    describe("controller construction", function () {
+        it("shuld instantiate test controller", function () {
+            var controller = getController();
+            expect(controller).not.toBeNull();
+            expect(controller.numberResult).toBe(0);
+            expect(controller.booleanResult).toBe(false);
+            expect(controller.stringResult).toBe(String.empty);
+            expect(controller.dateResult).toBe(null);
+            expect(controller.objectResult).toBe(null);
+            expect(controller.arrayResult).toBe(null);
+            expect(controller.rejectionReason).toBe(String.empty);
+            expect(controller.loading).toBe(false);
+        });
+    });
+    describe("base methods", function () {
+        it("should get services", function () { return expect(Object.getTypeName(getController().retrieveService(TestPromiseService.register.name))).toBe(TestPromiseService.getFunctionName()); });
+    });
+    describe("promise methods", function () {
+        it("should respond number promises", function () {
+            var controller = getController();
+            controller.testNumbers();
+            rootScopeService.$apply();
+            expect(controller.numberResult).toBe(testService.numberResult);
+        });
+        it("should respond boolean promises", function () {
+            var controller = getController();
+            controller.testBooleans();
+            rootScopeService.$apply();
+            expect(controller.booleanResult).toBe(testService.booleanResult);
+        });
+        it("should respond string promises", function () {
+            var controller = getController();
+            controller.testStrings();
+            rootScopeService.$apply();
+            expect(controller.stringResult).toBe(testService.stringResult);
+        });
+        it("should respond date promises", function () {
+            var controller = getController();
+            controller.testDates();
+            rootScopeService.$apply();
+            expect(controller.dateResult).toBe(testService.dateResult);
+        });
+        it("should respond object promises", function () {
+            var controller = getController();
+            controller.testObjects();
+            rootScopeService.$apply();
+            expect(Object.isEqualTo(controller.objectResult, testService.objectResult)).toBe(true);
+        });
+        it("should respond array promises", function () {
+            var controller = getController();
+            controller.testArrays();
+            rootScopeService.$apply();
+            expect(Object.isEqualTo(controller.arrayResult, testService.arrayResult)).toBe(true);
+        });
+        it("should reject promises", function () {
+            var controller = getController();
+            controller.testRejection();
+            rootScopeService.$apply();
+            expect(controller.rejectionReason).toBe(testService.rejectionReason);
+        });
+    });
+});
+var TestController = (function (_super) {
+    __extends(TestController, _super);
+    function TestController(scope, injector, testService) {
+        var _this = _super.call(this, scope, injector) || this;
+        _this.service = testService;
+        _this.numberResult = 0;
+        _this.booleanResult = false;
+        _this.stringResult = String.empty;
+        _this.dateResult = null;
+        _this.objectResult = null;
+        _this.arrayResult = null;
+        _this.rejectionReason = String.empty;
+        _this.loading = false;
+        return _this;
+    }
+    TestController.prototype.retrieveService = function (name) {
+        return this.getService(name);
+    };
+    TestController.prototype.testNumbers = function () {
+        var _this = this;
+        this.call(function () { return _this.service.numberPromise(); }, function (x) { return _this.numberResult = x; });
+    };
+    TestController.prototype.testBooleans = function () {
+        var _this = this;
+        this.call(function () { return _this.service.booleanPromise(); }, function (x) { return _this.booleanResult = x; });
+    };
+    TestController.prototype.testStrings = function () {
+        var _this = this;
+        this.call(function () { return _this.service.stringPromise(); }, function (x) { return _this.stringResult = x; });
+    };
+    TestController.prototype.testDates = function () {
+        var _this = this;
+        this.call(function () { return _this.service.datePromise(); }, function (x) { return _this.dateResult = x; });
+    };
+    TestController.prototype.testObjects = function () {
+        var _this = this;
+        this.call(function () { return _this.service.objectPromise(); }, function (x) { return _this.objectResult = x; });
+    };
+    TestController.prototype.testArrays = function () {
+        var _this = this;
+        this.call(function () { return _this.service.arrayPromise(); }, function (x) { return _this.arrayResult = x; });
+    };
+    TestController.prototype.testRejection = function () {
+        var _this = this;
+        this.numberResult = 0;
+        this.call(function () { return _this.service.rejectPromise(); }, function (x) { return _this.numberResult = x; }, null, function (x) { return _this.rejectionReason = x; });
+    };
+    TestController.prototype.testLoading = function () {
+        var _this = this;
+        this.call(function () { return _this.service.numberPromise(); }, function (x) { return _this.numberResult = x; }, function (x) { return _this.isLoading(x); });
+    };
+    TestController.prototype.isLoading = function (loading) {
+        this.loading = loading;
+    };
+    return TestController;
+}(ControllerBase));
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -1188,15 +1429,17 @@ describe("String", function () {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 ///<reference path="../Imports.ts" />
+///<reference path="TestServices.ts"/>
 describe("AlertService", function () {
     var injector;
     var alertService;
+    var logger = new TestLoggingService();
     beforeEach(function () {
         // create a new framework module with all the configuration.
         angular.mock.module(FrameworkModule.instance.getModuleName());
         // inject a dummy logging service to prevent undesired logging.
         angular.mock.module(function ($provide) {
-            $provide.value(FrameworkServices.loggingService, new DummyLoggingService());
+            $provide.value(FrameworkServices.loggingService, logger);
         });
     });
     // prepare base services and classes.
@@ -1217,57 +1460,60 @@ describe("AlertService", function () {
         });
     });
     describe("working with messages", function () {
-        it("should add a Message", function () {
-            alertService.addMessage("testing Message");
+        it("should add a message", function () {
+            alertService.addMessage("testing message");
             expect(alertService.getAlerts().count()).toBe(1);
+            expect(logger.messageWritten).toBe(1);
         });
-        it("should remove a Message", function () {
-            alertService.addMessage("testing Message");
+        it("should remove a message", function () {
+            alertService.addMessage("testing message");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
-        it("should get a Message", function () {
-            alertService.addMessage("testing Message");
+        it("should get a message", function () {
+            alertService.addMessage("testing message");
             var alert = alertService.get(0);
             alertService.remove(0);
             expect(alert.type).toBe(AlertType.Message);
-            expect(alert.message).toBe("testing Message");
+            expect(alert.message).toBe("testing message");
         });
     });
     describe("working with warnings", function () {
-        it("should add a Warning", function () {
-            alertService.addWarning("testing Warning");
+        it("should add a warning", function () {
+            alertService.addWarning("testing warning");
             expect(alertService.getAlerts().count()).toBe(1);
+            expect(logger.warningWritten).toBe(1);
         });
-        it("should remove a Warning", function () {
+        it("should remove a warning", function () {
             alertService.addWarning("testing Warning");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
-        it("should get a Warning", function () {
-            alertService.addWarning("testing Warning");
+        it("should get a warning", function () {
+            alertService.addWarning("testing warning");
             var alert = alertService.get(0);
             alertService.remove(0);
             expect(alert.type).toBe(AlertType.Warning);
-            expect(alert.message).toBe("testing Warning");
+            expect(alert.message).toBe("testing warning");
         });
     });
     describe("working with errors", function () {
-        it("should add an Error", function () {
-            alertService.addError("testing Error");
+        it("should add an error", function () {
+            alertService.addError("testing error");
             expect(alertService.getAlerts().count()).toBe(1);
+            expect(logger.errorWritten).toBe(1);
         });
-        it("should remove an Error", function () {
-            alertService.addError("testing Error");
+        it("should remove an error", function () {
+            alertService.addError("testing error");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
-        it("should get an Error", function () {
-            alertService.addError("testing Error");
+        it("should get an error", function () {
+            alertService.addError("testing error");
             var alert = alertService.get(0);
             alertService.remove(0);
             expect(alert.type).toBe(AlertType.Error);
-            expect(alert.message).toBe("testing Error");
+            expect(alert.message).toBe("testing error");
         });
     });
 });

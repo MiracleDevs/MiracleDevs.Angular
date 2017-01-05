@@ -20,7 +20,7 @@ module MiracleDevs.Angular.Controllers
     import FrameworkServices = Services.FrameworkServices;
     import IModalInstance = Services.IModalInstance;
 
-    export class ControllerBase
+    export abstract class ControllerBase
     {
         protected scope: IScope;
 
@@ -63,7 +63,7 @@ module MiracleDevs.Angular.Controllers
             call: () => IPromise<T>,
             success?: (result: T) => void,
             loading?: (loading: boolean) => void,
-            fail?: (error: Error) => void)
+            fail?: (reason: any) => void)
         {
             if (!Object.isNull(loading))
                 loading(true);
@@ -94,7 +94,7 @@ module MiracleDevs.Angular.Controllers
         protected callEx<T>(
             call: () => IHttpPromise<T>,
             success?: (t: T) => void,
-            fail?: (e: Error) => void,
+            fail?: (e: any) => void,
             showLoading: boolean = false)
         {
             if (showLoading)

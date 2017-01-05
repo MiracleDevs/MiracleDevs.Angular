@@ -5,12 +5,14 @@
  */
 
 ///<reference path="../Imports.ts" />
+///<reference path="TestServices.ts"/>
 
 describe("AlertService", () =>
 {
     var injector: IInjectorService;
     var alertService: IAlertService;
-    
+    var logger = new TestLoggingService();
+
     beforeEach(() =>
     {
         // create a new framework module with all the configuration.
@@ -19,7 +21,7 @@ describe("AlertService", () =>
         // inject a dummy logging service to prevent undesired logging.
         angular.mock.module($provide =>
         {
-            $provide.value(FrameworkServices.loggingService, new DummyLoggingService());
+            $provide.value(FrameworkServices.loggingService, logger);
         });
     });
 
@@ -30,98 +32,100 @@ describe("AlertService", () =>
         alertService = injector.get<IAlertService>(FrameworkServices.alertService);
     }));
 
-
     describe("creating the service", () => 
     {
         it("should initialize correctly", () =>
         {
             expect(alertService).toBeDefined();
         });
-        
+
         it("alert collection shouldn't be null", () =>
         {
             expect(alertService.getAlerts()).not.toBeNull();
             expect(alertService.getAlerts().getInnerArray()).not.toBeNull();
         });
-        
+
         it("alert collection should be empty", () =>
         {
             expect(alertService.getAlerts().count()).toBe(0);
-        });      
+        });
     });
-    
+
     describe("working with messages", () =>
     {
-        it("should add a Message", () =>
+        it("should add a message", () =>
         {
-            alertService.addMessage("testing Message");
+            alertService.addMessage("testing message");
             expect(alertService.getAlerts().count()).toBe(1);
+            expect(logger.messageWritten).toBe(1);
         });
 
-        it("should remove a Message", () =>
+        it("should remove a message", () =>
         {
-            alertService.addMessage("testing Message");
+            alertService.addMessage("testing message");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
 
-        it("should get a Message", () =>
+        it("should get a message", () =>
         {
-            alertService.addMessage("testing Message");
+            alertService.addMessage("testing message");
             var alert = alertService.get(0);
             alertService.remove(0);
             expect(alert.type).toBe(AlertType.Message);
-            expect(alert.message).toBe("testing Message");
+            expect(alert.message).toBe("testing message");
         });
     });
 
     describe("working with warnings", () =>
     {
-        it("should add a Warning", () =>
+        it("should add a warning", () =>
         {
-            alertService.addWarning("testing Warning");
+            alertService.addWarning("testing warning");
             expect(alertService.getAlerts().count()).toBe(1);
+            expect(logger.warningWritten).toBe(1);
         });
 
-        it("should remove a Warning", () =>
+        it("should remove a warning", () =>
         {
             alertService.addWarning("testing Warning");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
 
-        it("should get a Warning", () =>
+        it("should get a warning", () =>
         {
-            alertService.addWarning("testing Warning");
+            alertService.addWarning("testing warning");
             var alert = alertService.get(0);
             alertService.remove(0);
             expect(alert.type).toBe(AlertType.Warning);
-            expect(alert.message).toBe("testing Warning");
+            expect(alert.message).toBe("testing warning");
         });
     });
-
+    
     describe("working with errors", () =>
     {
-        it("should add an Error", () =>
+        it("should add an error", () =>
         {
-            alertService.addError("testing Error");
+            alertService.addError("testing error");
             expect(alertService.getAlerts().count()).toBe(1);
+            expect(logger.errorWritten).toBe(1);
         });
 
-        it("should remove an Error", () =>
+        it("should remove an error", () =>
         {
-            alertService.addError("testing Error");
+            alertService.addError("testing error");
             alertService.remove(0);
             expect(alertService.getAlerts().count()).toBe(0);
         });
 
-        it("should get an Error", () =>
+        it("should get an error", () =>
         {
-            alertService.addError("testing Error");
+            alertService.addError("testing error");
             var alert = alertService.get(0);
             alertService.remove(0);
             expect(alert.type).toBe(AlertType.Error);
-            expect(alert.message).toBe("testing Error");
+            expect(alert.message).toBe("testing error");
         });
     });
 });

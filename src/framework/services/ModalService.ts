@@ -91,7 +91,7 @@ module MiracleDevs.Angular.Services
             $(modal).modal("hide");
             modalInstance.deferred.reject(reason);
         }
-
+        
         resolve<T>(modalInstance: IModalInstance, result: T)
         {
             const modal = this.modals.get(modalInstance);
