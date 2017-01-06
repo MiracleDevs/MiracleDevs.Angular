@@ -25,8 +25,32 @@ var compileTask = "compile-test";
 var watchCodeTask = "watch-code";
 var watchScriptTask = "watch-scripts";
 var serverTask = "server-test";
-var testTask = "run-test";
+var singleRunServerTask = "single-server-test";
+var runTestTask = "run-test";
+var testTask = "test";
 var defaultTask = "default";
+
+var testConfig = "karma.conf.js";
+var testDependencies = [
+            bowerFolder + "jquery/dist/jquery.js",
+            bowerFolder + "angular/angular.js",
+            bowerFolder + "angular-animate/angular-animate.js",
+            bowerFolder + "angular-sanitize/angular-sanitize.js",
+            bowerFolder + "angular-ui-router/release/angular-ui-router.js",
+            bowerFolder + "angular-translate/angular-translate.js",
+            bowerFolder + "angular-translate-loader-url/angular-translate-loader-url.js",
+            bowerFolder + "angular-translate-loader-static-files/angular-translate-loader-static-files.js",
+            bowerFolder + "tooltipster/dist/js/tooltipster.bundle.js",
+            bowerFolder + "moment/min/moment.min.js",
+            bowerFolder + "eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
+            bowerFolder + "ng-pattern-restrict/src/ng-pattern-restrict.min.js",
+            bowerFolder + "angular-ui-select/dist/select.js",
+            nodeFolder + "angular-mocks/angular-mocks.js",
+            scriptsFolder + "miracledevs.angular.js",
+            scriptsFolder + "buildinfo.release.js",
+            scriptsFolder + "miracledevs.angular.test.js"];
+
+
 
 gulp.task(copyFilesTask, function () {
     gulp.src([sourceJavascriptFile]).pipe(gulp.dest(scriptsFolder));
@@ -49,30 +73,19 @@ gulp.task(compileTask, [copyFilesTask], function () {
 });
 
 gulp.task(serverTask, function () {
+    return gulp
+      .src(testDependencies, { "read": false })
+      .pipe(karma.server({ configFile: testConfig }))
+      .on("error", function (err) {
+          util.log("ERROR RUNNING TESTS: " + err);
+          this.emit("end");
+      });
+});
 
-    return gulp.src([
-            bowerFolder + "jquery/dist/jquery.js",
-            bowerFolder + "angular/angular.js",
-            bowerFolder + "angular-animate/angular-animate.js",
-            bowerFolder + "angular-sanitize/angular-sanitize.js",
-            bowerFolder + "angular-ui-router/release/angular-ui-router.js",
-            bowerFolder + "angular-translate/angular-translate.js",
-            bowerFolder + "angular-translate-loader-url/angular-translate-loader-url.js",
-            bowerFolder + "angular-translate-loader-static-files/angular-translate-loader-static-files.js",
-            bowerFolder + "tooltipster/dist/js/tooltipster.bundle.js",
-            bowerFolder + "moment/min/moment.min.js",
-            bowerFolder + "eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
-            bowerFolder + "ng-pattern-restrict/src/ng-pattern-restrict.min.js",
-            bowerFolder + "angular-ui-select/dist/select.js",
-            nodeFolder + "angular-mocks/angular-mocks.js",
-            scriptsFolder + "miracledevs.angular.js",
-            scriptsFolder + "buildinfo.release.js",
-            scriptsFolder + "miracledevs.angular.test.js"], { "read": false })
-      .pipe(karma.server({
-          quiet: true,
-
-          configFile: "karma.conf.js"
-      }))
+gulp.task(singleRunServerTask, function () {
+    return gulp
+      .src(testDependencies, { "read": false })
+      .pipe(karma.server({ configFile: testConfig, singleRun: true }))
       .on("error", function (err) {
           util.log("ERROR RUNNING TESTS: " + err);
           this.emit("end");
@@ -80,43 +93,25 @@ gulp.task(serverTask, function () {
 });
 
 
-gulp.task(testTask, function () {
-
-    return gulp.src([
-            bowerFolder + "jquery/dist/jquery.js",
-            bowerFolder + "angular/angular.js",
-            bowerFolder + "angular-animate/angular-animate.js",
-            bowerFolder + "angular-sanitize/angular-sanitize.js",
-            bowerFolder + "angular-ui-router/release/angular-ui-router.js",
-            bowerFolder + "angular-translate/angular-translate.js",
-            bowerFolder + "angular-translate-loader-url/angular-translate-loader-url.js",
-            bowerFolder + "angular-translate-loader-static-files/angular-translate-loader-static-files.js",
-            bowerFolder + "tooltipster/dist/js/tooltipster.bundle.js",
-            bowerFolder + "moment/min/moment.min.js",
-            bowerFolder + "eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
-            bowerFolder + "ng-pattern-restrict/src/ng-pattern-restrict.min.js",
-            bowerFolder + "angular-ui-select/dist/select.js",
-            nodeFolder + "angular-mocks/angular-mocks.js",          
-            scriptsFolder + "miracledevs.angular.js",
-            scriptsFolder + "buildinfo.release.js",
-            scriptsFolder + "miracledevs.angular.test.js"], { "read": false })
-      .pipe(karma.runner({
-          configFile: "karma.conf.js"
-      }))
+gulp.task(runTestTask, function () {
+    return gulp
+      .src(testDependencies, { "read": false })
+      .pipe(karma.runner({ configFile: testConfig }))
       .on("error", function (err) {
           util.log("ERROR RUNNING TESTS: " + err);
-          this.emit("end"); 
+          this.emit("end");
       });
 });
+
+gulp.task(testTask, [singleRunServerTask, runTestTask]);
 
 gulp.task(watchCodeTask, function () {
     return gulp.watch([fixturesFolder + allFiles], [compileTask]).on("change", function (e) { util.log(e.path + " has been changed."); });
 });
 
-
 gulp.task(watchScriptTask, [serverTask, watchCodeTask], function ()
 {
-    return gulp.watch([scriptsFolder + allFiles], [testTask]).on("change", function (e) { util.log(e.path + " has been changed."); });
+    return gulp.watch([scriptsFolder + allFiles], [runTestTask]).on("change", function (e) { util.log(e.path + " has been changed."); });
 });
 
 gulp.task(defaultTask, [watchScriptTask]);
