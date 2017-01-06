@@ -45,7 +45,7 @@ module MiracleDevs.Angular.Directives
         {
             var control = $(instanceElement);
             const alertType = scope["alertType"];
-            const timeout = scope["timeout"];
+            const timeout = parseInt(scope["timeout"]);
 
             control.addClass("alert");
 

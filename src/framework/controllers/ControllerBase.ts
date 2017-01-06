@@ -173,6 +173,11 @@ module MiracleDevs.Angular.Controllers
             if (Object.isNull(ex))
                 return;
 
+            // if ex.data is not null, it's probably a 
+            // an http promise exception.
+            if (!Object.isNull(ex.data))
+                ex = ex.data;
+
             if (!Object.isNull(ex.message))
             {
                 this.showError(ex.message);

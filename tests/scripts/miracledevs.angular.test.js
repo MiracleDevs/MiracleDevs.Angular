@@ -1465,9 +1465,30 @@ describe("AlertService", function () {
             expect(alertService.getAlerts().count()).toBe(1);
             expect(logger.messageWritten).toBe(1);
         });
-        it("should remove a message", function () {
+        it("should remove a message by index", function () {
             alertService.addMessage("testing message");
             alertService.remove(0);
+            expect(alertService.getAlerts().count()).toBe(0);
+        });
+        it("should remove a message by alert", function () {
+            alertService.addMessage("testing message");
+            var alert = alertService.get(0);
+            alertService.remove(alert);
+            expect(alertService.getAlerts().count()).toBe(0);
+        });
+        it("should remove several messages", function () {
+            alertService.addMessage("testing message 1");
+            alertService.addMessage("testing message 2");
+            alertService.addMessage("testing message 3");
+            alertService.addMessage("testing message 4");
+            var alert1 = alertService.get(0);
+            var alert2 = alertService.get(1);
+            var alert3 = alertService.get(2);
+            var alert4 = alertService.get(3);
+            alertService.remove(alert1);
+            alertService.remove(alert2);
+            alertService.remove(alert3);
+            alertService.remove(alert4);
             expect(alertService.getAlerts().count()).toBe(0);
         });
         it("should get a message", function () {
@@ -1484,9 +1505,15 @@ describe("AlertService", function () {
             expect(alertService.getAlerts().count()).toBe(1);
             expect(logger.warningWritten).toBe(1);
         });
-        it("should remove a warning", function () {
-            alertService.addWarning("testing Warning");
+        it("should remove a warning by index", function () {
+            alertService.addWarning("testing warning");
             alertService.remove(0);
+            expect(alertService.getAlerts().count()).toBe(0);
+        });
+        it("should remove a warning by alert", function () {
+            alertService.addWarning("testing warning");
+            var alert = alertService.get(0);
+            alertService.remove(alert);
             expect(alertService.getAlerts().count()).toBe(0);
         });
         it("should get a warning", function () {
@@ -1503,9 +1530,15 @@ describe("AlertService", function () {
             expect(alertService.getAlerts().count()).toBe(1);
             expect(logger.errorWritten).toBe(1);
         });
-        it("should remove an error", function () {
+        it("should remove a error by index", function () {
             alertService.addError("testing error");
             alertService.remove(0);
+            expect(alertService.getAlerts().count()).toBe(0);
+        });
+        it("should remove a error by alert", function () {
+            alertService.addError("testing error");
+            var alert = alertService.get(0);
+            alertService.remove(alert);
             expect(alertService.getAlerts().count()).toBe(0);
         });
         it("should get an error", function () {

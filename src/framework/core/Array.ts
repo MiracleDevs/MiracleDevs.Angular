@@ -225,7 +225,7 @@ Array.remove = <T>(array: Array<T>, element: T): boolean =>
 {
     try
     {
-        Array.removeAt(array, array.indexOf(element, 0));  
+        Array.removeAt(array, array.indexOf(element));  
         return true;  
     }
     catch (e)

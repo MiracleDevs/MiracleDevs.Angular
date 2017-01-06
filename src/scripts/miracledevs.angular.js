@@ -123,7 +123,7 @@ Array.orderByDesc = function (array, predicate) {
 };
 Array.remove = function (array, element) {
     try {
-        Array.removeAt(array, array.indexOf(element, 0));
+        Array.removeAt(array, array.indexOf(element));
         return true;
     }
     catch (e) {
@@ -1414,6 +1414,10 @@ var MiracleDevs;
                 ControllerBase.prototype.handleException = function (ex) {
                     if (Object.isNull(ex))
                         return;
+                    // if ex.data is not null, it's probably a 
+                    // an http promise exception.
+                    if (!Object.isNull(ex.data))
+                        ex = ex.data;
                     if (!Object.isNull(ex.message)) {
                         this.showError(ex.message);
                     }
@@ -2763,7 +2767,7 @@ var MiracleDevs;
                 Alert.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
                     var alertType = scope["alertType"];
-                    var timeout = scope["timeout"];
+                    var timeout = parseInt(scope["timeout"]);
                     control.addClass("alert");
                     if (!Object.isNull(alertType))
                         control.addClass(alertType);
