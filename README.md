@@ -1,4 +1,6 @@
-﻿Miracle Devs
+﻿[![Build Status](https://travis-ci.org/MiracleDevs/MiracleDevs.Angular.svg?branch=master)](https://travis-ci.org/MiracleDevs/MiracleDevs.Angular)
+
+Miracle Devs
 ============
 
 Angular Wrapper
