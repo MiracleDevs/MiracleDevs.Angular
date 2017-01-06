@@ -13,80 +13,80 @@ Array.forEach = function (array, action) {
         action(array[index]);
     }
 };
-Array.where = function (array, func) {
+Array.where = function (array, predicate) {
     var temp = Array();
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             temp.push(array[index]);
     }
     return temp;
 };
-Array.select = function (array, func) {
+Array.select = function (array, predicate) {
     var temp = Array();
     for (var index = 0; index < array.length; index++) {
-        temp.push(func(array[index]));
+        temp.push(predicate(array[index]));
     }
     return temp;
 };
-Array.firstOrDefault = function (array, func) {
-    if (func == null) {
+Array.firstOrDefault = function (array, predicate) {
+    if (predicate == null) {
         if (array.length > 0)
             return array[0];
         return null;
     }
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             return array[index];
     }
     return null;
 };
-Array.lastOrDefault = function (array, func) {
-    if (func == null) {
+Array.lastOrDefault = function (array, predicate) {
+    if (predicate == null) {
         if (array.length > 0)
             return array[array.length - 1];
         return null;
     }
     for (var index = array.length - 1; index >= 0; index--) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             return array[index];
     }
     return null;
 };
-Array.first = function (array, func) {
-    var element = Array.firstOrDefault(array, func);
+Array.first = function (array, predicate) {
+    var element = Array.firstOrDefault(array, predicate);
     if (Object.isNull(element))
         throw new Error("The source sequence is empty.");
     return element;
 };
-Array.last = function (array, func) {
-    var element = Array.lastOrDefault(array, func);
+Array.last = function (array, predicate) {
+    var element = Array.lastOrDefault(array, predicate);
     if (Object.isNull(element))
         throw new Error("The source sequence is empty.");
     return element;
 };
-Array.any = function (array, func) {
-    if (func == null)
+Array.any = function (array, predicate) {
+    if (predicate == null)
         return array.length > 0;
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             return true;
     }
     return false;
 };
-Array.count = function (array, func) {
-    if (func == null)
+Array.count = function (array, predicate) {
+    if (predicate == null)
         return array.length;
     var count = 0;
     for (var index = 0; index < array.length; index++) {
-        if (func(array[index]))
+        if (predicate(array[index]))
             count++;
     }
     return count;
 };
-Array.sum = function (array, func) {
+Array.sum = function (array, predicate) {
     var sum = null;
     for (var index = 0; index < array.length; index++) {
-        var value = Object.isNull(func) ? array[index] : func(array[index]);
+        var value = Object.isNull(predicate) ? array[index] : predicate(array[index]);
         if (sum == null)
             sum = value;
         else
@@ -103,24 +103,49 @@ Array.contains = function (array, value) {
     }
     return false;
 };
-Array.orderBy = function (array, func) {
-    return array.sort(function (a, b) { return func(a) > func(b) ? 1 : func(a) < func(b) ? -1 : 0; });
+Array.orderBy = function (array, predicate) {
+    var onlyValues = Object.isNull(predicate);
+    var newArray = array.slice();
+    return newArray.sort(function (a, b) {
+        var valueA = onlyValues ? a : predicate(a);
+        var valueB = onlyValues ? b : predicate(b);
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+    });
 };
-Array.orderByDesc = function (array, func) {
-    return array.sort(function (a, b) { return func(a) > func(b) ? -1 : func(a) < func(b) ? 1 : 0; });
+Array.orderByDesc = function (array, predicate) {
+    var onlyValues = Object.isNull(predicate);
+    var newArray = array.slice();
+    return newArray.sort(function (a, b) {
+        var valueA = onlyValues ? a : predicate(a);
+        var valueB = onlyValues ? b : predicate(b);
+        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+    });
 };
 Array.remove = function (array, element) {
-    Array.removeAt(array, array.indexOf(element, 0));
+    try {
+        Array.removeAt(array, array.indexOf(element, 0));
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
 };
 Array.removeAt = function (array, index) {
+    if (index < 0)
+        throw new Error("index is less than 0.");
+    if (index >= array.length)
+        throw new Error("index is equal to or greater than length.");
     delete array[index];
     array.splice(index, 1);
 };
-Array.removeAll = function (array, func) {
-    var elements = Array.where(array, func);
+Array.removeAll = function (array, predicate) {
+    var elements = Object.isNull(predicate) ? array.slice() : Array.where(array, predicate);
+    var count = 0;
     for (var i = 0; i < elements.length; i++) {
         Array.remove(array, elements[i]);
+        count++;
     }
+    return count;
 };
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -136,84 +161,91 @@ var MiracleDevs;
         (function (Core) {
             var ArrayList = (function () {
                 function ArrayList(array) {
-                    this.innerList = array || new Array();
+                    this.innerArray = array || new Array();
                 }
                 ArrayList.prototype.forEach = function (action) {
-                    Array.forEach(this.innerList, action);
+                    Array.forEach(this.innerArray, action);
                 };
-                ArrayList.prototype.where = function (func) {
-                    return new ArrayList(Array.where(this.innerList, func));
+                ArrayList.prototype.where = function (predicate) {
+                    return new ArrayList(Array.where(this.innerArray, predicate));
                 };
-                ArrayList.prototype.select = function (func) {
-                    return new ArrayList(Array.select(this.innerList, func));
+                ArrayList.prototype.select = function (predicate) {
+                    return new ArrayList(Array.select(this.innerArray, predicate));
                 };
-                ArrayList.prototype.firstOrDefault = function (func) {
-                    return Array.firstOrDefault(this.innerList, func);
+                ArrayList.prototype.firstOrDefault = function (predicate) {
+                    return Array.firstOrDefault(this.innerArray, predicate);
                 };
-                ArrayList.prototype.lastOrDefault = function (func) {
-                    return Array.lastOrDefault(this.innerList, func);
+                ArrayList.prototype.lastOrDefault = function (predicate) {
+                    return Array.lastOrDefault(this.innerArray, predicate);
                 };
-                ArrayList.prototype.first = function (func) {
-                    return Array.first(this.innerList, func);
+                ArrayList.prototype.first = function (predicate) {
+                    return Array.first(this.innerArray, predicate);
                 };
-                ArrayList.prototype.last = function (func) {
-                    return Array.last(this.innerList, func);
+                ArrayList.prototype.last = function (predicate) {
+                    return Array.last(this.innerArray, predicate);
                 };
-                ArrayList.prototype.any = function (func) {
-                    return Array.any(this.innerList, func);
+                ArrayList.prototype.any = function (predicate) {
+                    return Array.any(this.innerArray, predicate);
                 };
-                ArrayList.prototype.count = function (func) {
-                    return Array.count(this.innerList, func);
+                ArrayList.prototype.count = function (predicate) {
+                    return Array.count(this.innerArray, predicate);
                 };
-                ArrayList.prototype.sum = function (func) {
-                    return Array.sum(this.innerList, func);
+                ArrayList.prototype.sum = function (predicate) {
+                    return Array.sum(this.innerArray, predicate);
                 };
                 ArrayList.prototype.contains = function (value) {
-                    return Array.contains(this.innerList, value);
+                    return Array.contains(this.innerArray, value);
                 };
-                ArrayList.prototype.orderBy = function (func) {
-                    return new ArrayList(Array.orderBy(this.innerList, func));
+                ArrayList.prototype.orderBy = function (predicate) {
+                    return new ArrayList(Array.orderBy(this.innerArray, predicate));
                 };
-                ArrayList.prototype.orderByDesc = function (func) {
-                    return new ArrayList(Array.orderByDesc(this.innerList, func));
+                ArrayList.prototype.orderByDesc = function (predicate) {
+                    return new ArrayList(Array.orderByDesc(this.innerArray, predicate));
                 };
-                ArrayList.prototype.values = function () {
-                    return this.innerList;
+                ArrayList.prototype.getInnerArray = function () {
+                    return this.innerArray;
                 };
                 ArrayList.prototype.get = function (index) {
-                    return this.innerList[index];
+                    if (index < 0)
+                        throw new Error("index is less than 0.");
+                    if (index >= this.innerArray.length)
+                        throw new Error("index is equal to or greater than length.");
+                    return this.innerArray[index];
                 };
                 ArrayList.prototype.add = function (value) {
-                    this.innerList.push(value);
+                    this.innerArray.push(value);
                 };
                 ArrayList.prototype.addRange = function (value) {
                     var i;
                     if (value instanceof ArrayList) {
                         for (i = 0; i < value.count(); i++)
-                            this.innerList.push(value.get(i));
+                            this.innerArray.push(value.get(i));
                     }
                     else if (value instanceof Array) {
                         for (i = 0; i < value.length; i++)
-                            this.innerList.push(value[i]);
+                            this.innerArray.push(value[i]);
                     }
                 };
                 ArrayList.prototype.pop = function () {
-                    return this.innerList.pop();
+                    return this.innerArray.pop();
                 };
                 ArrayList.prototype.indexOf = function (element) {
-                    return this.innerList.indexOf(element);
+                    return this.innerArray.indexOf(element);
                 };
                 ArrayList.prototype.remove = function (element) {
-                    Array.remove(this.innerList, element);
+                    return Array.remove(this.innerArray, element);
                 };
                 ArrayList.prototype.removeAt = function (index) {
-                    Array.removeAt(this.innerList, index);
+                    Array.removeAt(this.innerArray, index);
                 };
-                ArrayList.prototype.removeAll = function (func) {
-                    Array.removeAll(this.innerList, func);
+                ArrayList.prototype.removeAll = function (predicate) {
+                    return Array.removeAll(this.innerArray, predicate);
                 };
                 ArrayList.prototype.clear = function () {
-                    this.innerList = new Array();
+                    // we prefer to execute remove all and not create a new array, to
+                    // preserve the reference to the original array, if someone used the
+                    // getInnerArray method.
+                    this.removeAll();
                 };
                 return ArrayList;
             }());
@@ -234,37 +266,116 @@ var MiracleDevs;
         var Core;
         (function (Core) {
             var Dictionary = (function () {
-                function Dictionary(init) {
-                    this.dictionary = (init != null) ? new Core.ArrayList(init) : new Core.ArrayList();
+                function Dictionary(array) {
+                    this.innerArray = new Array();
+                    if (!Object.isNull(array)) {
+                        this.addRange(array);
+                    }
                 }
-                Dictionary.prototype.getKeys = function () {
-                    return this.dictionary.select(function (x) { return x.key; });
-                };
                 Dictionary.prototype.getValues = function () {
-                    return this.dictionary.select(function (x) { return x.value; });
+                    return this.select(function (x) { return x.value; });
                 };
-                Dictionary.prototype.add = function (key, value) {
-                    if (this.containsKey(key))
-                        throw new Error("The dictionary already contains the key '" + key + "'");
-                    this.dictionary.add({ key: key, value: value });
-                };
-                Dictionary.prototype.remove = function (key) {
-                    if (!this.containsKey(key))
-                        throw new Error("The dictionary does not contains the key '" + key + "'");
-                    this.dictionary.remove(this.dictionary.firstOrDefault(function (x) { return x.key === key; }));
-                };
-                Dictionary.prototype.removeAll = function (func) {
-                    this.dictionary.removeAll(func);
-                };
-                Dictionary.prototype.get = function (key) {
-                    var pair = this.dictionary.firstOrDefault(function (x) { return x.key === key; });
-                    return (pair != null) ? pair.value : null;
+                Dictionary.prototype.getKeys = function () {
+                    return this.select(function (x) { return x.key; });
                 };
                 Dictionary.prototype.containsKey = function (key) {
-                    return this.dictionary.any(function (x) { return x.key === key; });
+                    return this.any(function (x) { return x.key === key; });
+                };
+                Dictionary.prototype.forEach = function (action) {
+                    Array.forEach(this.innerArray, action);
+                };
+                Dictionary.prototype.where = function (predicate) {
+                    return new Dictionary(Array.where(this.innerArray, predicate));
+                };
+                Dictionary.prototype.select = function (predicate) {
+                    return new Core.ArrayList(Array.select(this.innerArray, predicate));
+                };
+                Dictionary.prototype.firstOrDefault = function (predicate) {
+                    return Array.firstOrDefault(this.innerArray, predicate);
+                };
+                Dictionary.prototype.lastOrDefault = function (predicate) {
+                    return Array.lastOrDefault(this.innerArray, predicate);
+                };
+                Dictionary.prototype.first = function (predicate) {
+                    return Array.first(this.innerArray, predicate);
+                };
+                Dictionary.prototype.last = function (predicate) {
+                    return Array.last(this.innerArray, predicate);
+                };
+                Dictionary.prototype.any = function (predicate) {
+                    return Array.any(this.innerArray, predicate);
+                };
+                Dictionary.prototype.count = function (predicate) {
+                    return Array.count(this.innerArray, predicate);
+                };
+                Dictionary.prototype.sum = function (predicate) {
+                    if (Object.isNull(predicate))
+                        throw new Error("Predicate can not be null.");
+                    return Array.sum(this.innerArray, predicate);
+                };
+                Dictionary.prototype.orderBy = function (predicate) {
+                    if (Object.isNull(predicate))
+                        throw new Error("Predicate can not be null.");
+                    return new Dictionary(Array.orderBy(this.innerArray, predicate));
+                };
+                Dictionary.prototype.orderByDesc = function (predicate) {
+                    if (Object.isNull(predicate))
+                        throw new Error("Predicate can not be null.");
+                    return new Dictionary(Array.orderByDesc(this.innerArray, predicate));
+                };
+                Dictionary.prototype.getInnerArray = function () {
+                    return this.innerArray;
+                };
+                Dictionary.prototype.get = function (key) {
+                    var pair = this.firstOrDefault(function (x) { return x.key === key; });
+                    if (Object.isNull(pair))
+                        throw new Error("The given key was not present in the dictionary.");
+                    return pair.value;
+                };
+                Dictionary.prototype.keyOf = function (value) {
+                    var pair = this.firstOrDefault(function (x) { return x.value === value; });
+                    if (Object.isNull(pair))
+                        throw new Error("The given value was not present in the dictionary.");
+                    return pair.key;
+                };
+                Dictionary.prototype.add = function (key, value) {
+                    if (Object.isNull(key))
+                        throw new Error("Key can not be null.");
+                    if (this.containsKey(key))
+                        throw new Error("An element with the same key already exists in the Dictionary<TKey, TValue>.");
+                    this.innerArray.push({ key: key, value: value });
+                };
+                Dictionary.prototype.addRange = function (value) {
+                    var i;
+                    if (!Object.isNull(value) && !Object.isNull(value.getInnerArray))
+                        value = value.getInnerArray();
+                    if (!(value instanceof Array))
+                        throw new Error("value is must be an array or an IEnumerable class.");
+                    for (i = 0; i < value.length; i++) {
+                        var innerValue = value[i];
+                        if (Object.isNull(innerValue))
+                            throw new Error("Item can not be null");
+                        this.add(innerValue.key, innerValue.value);
+                    }
+                    ;
+                };
+                Dictionary.prototype.pop = function () {
+                    return this.innerArray.pop();
+                };
+                Dictionary.prototype.remove = function (key) {
+                    var pair = this.firstOrDefault(function (x) { return x.key === key; });
+                    if (Object.isNull(pair))
+                        throw new Error("The given key was not present in the dictionary.");
+                    Array.remove(this.innerArray, pair);
+                };
+                Dictionary.prototype.removeAll = function (predicate) {
+                    return Array.removeAll(this.innerArray, predicate);
                 };
                 Dictionary.prototype.clear = function () {
-                    this.dictionary.clear();
+                    // we prefer to execute remove all and not create a new array, to
+                    // preserve the reference to the original array, if someone used the
+                    // getInnerArray method.
+                    this.removeAll();
                 };
                 return Dictionary;
             }());
@@ -349,24 +460,29 @@ Function.prototype.getFunctionName = function () {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 Object.getTypeName = function (obj) {
+    if (Object.isNull(obj))
+        throw new Error("Object can not be null.");
     var funcNameRegex = /function (.{1,})\(/;
     var results = (funcNameRegex).exec((obj).constructor.toString());
     return (results && results.length > 1) ? results[1] : "";
 };
 Object.isEqualTo = function (source, other, ignore) {
+    if (Object.isNull(source) && Object.isNull(other))
+        return true;
+    if ((!Object.isNull(source) && Object.isNull(other)) ||
+        (Object.isNull(source) && !Object.isNull(other)))
+        return false;
     if (other == null)
         return false;
-    if ((source instanceof Number && (typeof (other) == "number" || other instanceof Number)) ||
-        (source instanceof String && (typeof (other) == "string" || other instanceof String)) ||
-        (source instanceof Boolean && (typeof (other) == "boolean" || other instanceof Boolean))) {
-        if (source !== other)
-            console.debug("IsEqualTo: Property value is different: " + source + " - " + other);
+    if (Object.getTypeName(source) !== Object.getTypeName(other))
+        return false;
+    if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
+        (Object.getTypeName(source) === "String" && Object.getTypeName(other) === "String") ||
+        (Object.getTypeName(source) === "Boolean" && Object.getTypeName(other) === "Boolean")) {
         return (source === other);
     }
-    if (source instanceof Date && other instanceof Date) {
-        if (source.valueOf() !== other.valueOf())
-            console.debug("IsEqualTo: Property value is different: " + source + " - " + other);
-        return (source.valueOf() === other.valueOf());
+    if (Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") {
+        return source.getTime() === other.getTime();
     }
     var sourceKeys = Object.keys(source);
     var otherKeys = Object.keys(other);
@@ -379,7 +495,6 @@ Object.isEqualTo = function (source, other, ignore) {
             if (!Object.isNull(ignore) && Array.contains(ignore, key))
                 continue;
             if (key !== otherKey) {
-                console.debug("IsEqualTo: Keys do not match: " + key + " != " + otherKey);
                 return false;
             }
             var sourceValue = source[key];
@@ -387,48 +502,41 @@ Object.isEqualTo = function (source, other, ignore) {
             if (sourceValue == null && otherValue == null)
                 continue;
             if ((sourceValue == null && otherValue != null) ||
-                (sourceValue != null && otherValue == null)) {
-                console.debug("IsEqualTo: One of the opearands is null [" + key + "]: " + sourceValue + " - " + otherValue);
+                (sourceValue != null && otherValue == null))
                 return false;
-            }
-            if (((typeof (sourceValue) == "number" || sourceValue instanceof Number) && (typeof (otherValue) == "number" || otherValue instanceof Number)) ||
-                ((typeof (sourceValue) == "string" || sourceValue instanceof String) && (typeof (otherValue) == "string" || otherValue instanceof String)) ||
-                ((typeof (sourceValue) == "boolean" || sourceValue instanceof Boolean) && (typeof (otherValue) == "boolean" || otherValue instanceof Boolean))) {
-                if (sourceValue !== otherValue) {
-                    console.debug("IsEqualTo: Property value is different [" + key + "]: " + sourceValue + " != " + otherValue);
-                    return false;
-                }
-            }
-            else if (sourceValue instanceof Date && otherValue instanceof Date) {
-                if (sourceValue.valueOf() !== otherValue.valueOf()) {
-                    console.debug("IsEqualTo: Property value is different [" + key + "]: " + sourceValue + " != " + otherValue);
-                    return false;
-                }
-            }
+            if (((Object.getTypeName(sourceValue) === "Number" && Object.getTypeName(otherValue) === "Number") ||
+                (Object.getTypeName(sourceValue) === "String" && Object.getTypeName(otherValue) === "String") ||
+                (Object.getTypeName(sourceValue) === "Boolean" && Object.getTypeName(otherValue) === "Boolean")) &&
+                (sourceValue !== otherValue))
+                return false;
+            else if ((Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") && (source.getTime() !== other.getTime()))
+                return false;
             else if (sourceValue instanceof Array && otherValue instanceof Array) {
-                if (sourceValue.length !== otherValue.length) {
-                    console.debug("IsEqualTo: Array length is different [" + key + "]: " + sourceValue.length + " != " + otherValue.length);
+                if (sourceValue.length !== otherValue.length)
                     return false;
-                }
                 for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++) {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex])) {
-                        console.debug("IsEqualTo: Array value is different [" + key + "]: " + sourceValue[arrayIndex] + " != " + otherValue[arrayIndex]);
+                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex]))
                         return false;
-                    }
                 }
             }
             else {
-                if (!Object.isEqualTo(sourceValue, otherValue)) {
-                    console.debug("IsEqualTo: Object value is different [" + key + "]: " + sourceValue + " != " + otherValue);
+                if (!Object.isEqualTo(sourceValue, otherValue))
                     return false;
-                }
             }
         }
     }
     return true;
 };
 Object.clone = function (object, ignore) {
-    var newObject = {};
+    if (Object.getTypeName(object) === "Number" ||
+        Object.getTypeName(object) === "String" ||
+        Object.getTypeName(object) === "Boolean") {
+        return object;
+    }
+    if (Object.getTypeName(object) === "Date") {
+        return new Date(object.getTime());
+    }
+    var newObject = object instanceof Array ? [] : {};
     function clone(source, destination) {
         var isArray = source instanceof Array;
         var sourceKeys = (isArray) ? source : Object.keys(source);
@@ -1123,7 +1231,7 @@ var MiracleDevs;
             var DummyLoggingService = (function (_super) {
                 __extends(DummyLoggingService, _super);
                 function DummyLoggingService() {
-                    return _super.apply(this, arguments) || this;
+                    _super.apply(this, arguments);
                 }
                 DummyLoggingService.prototype.writeMessage = function (message) { };
                 DummyLoggingService.prototype.writeWarning = function (message) { };
@@ -1134,7 +1242,7 @@ var MiracleDevs;
             var LoggingService = (function (_super) {
                 __extends(LoggingService, _super);
                 function LoggingService() {
-                    return _super.apply(this, arguments) || this;
+                    _super.apply(this, arguments);
                 }
                 LoggingService.prototype.writeMessage = function (message) {
                     console.info(message);
@@ -1148,12 +1256,12 @@ var MiracleDevs;
                 LoggingService.factory = function () {
                     return Angular.BuildInfo.instance.isDebug ? new LoggingService() : new DummyLoggingService();
                 };
+                LoggingService.register = {
+                    name: Services.FrameworkServices.loggingService,
+                    factory: LoggingService.factory
+                };
                 return LoggingService;
             }(Services.ServiceBase));
-            LoggingService.register = {
-                name: Services.FrameworkServices.loggingService,
-                factory: LoggingService.factory
-            };
             Services.LoggingService = LoggingService;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
@@ -1173,13 +1281,11 @@ var MiracleDevs;
         var FrameworkModule = (function (_super) {
             __extends(FrameworkModule, _super);
             function FrameworkModule() {
-                var _this;
                 if (FrameworkModule.internalInstance != null)
                     throw new Error("The program does not allow more than one instance of the ModuleBase.");
-                _this = _super.call(this) || this;
-                FrameworkModule.internalInstance = _this;
-                _this.logger.writeMessage("creating application");
-                return _this;
+                _super.call(this);
+                FrameworkModule.internalInstance = this;
+                this.logger.writeMessage("creating application");
             }
             Object.defineProperty(FrameworkModule, "instance", {
                 get: function () { return FrameworkModule.internalInstance; },
@@ -1199,9 +1305,9 @@ var MiracleDevs;
             FrameworkModule.prototype.getModuleDependencies = function () {
                 return ["ui.router", "ngAnimate", "pascalprecht.translate", "ngPatternRestrict", "ui.select", "ngSanitize"];
             };
+            FrameworkModule.internalInstance = new FrameworkModule();
             return FrameworkModule;
         }(Angular.ModuleBase));
-        FrameworkModule.internalInstance = new FrameworkModule();
         Angular.FrameworkModule = FrameworkModule;
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
@@ -1331,37 +1437,42 @@ var MiracleDevs;
         })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-Date.prototype.fromIso8601 = function (string) {
-    var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
-        "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
-        "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
-    var d = string.match(new RegExp(regexp));
-    var date = new Date(parseInt(d[1]), 0, 1);
-    var offset = 0;
-    if (d[3])
-        date.setMonth(parseInt(d[3]) - 1);
-    if (d[5])
-        date.setDate(parseInt(d[5]));
-    if (d[7])
-        date.setHours(parseInt(d[7]));
-    if (d[8])
-        date.setMinutes(parseInt(d[8]));
-    if (d[10])
-        date.setSeconds(parseInt(d[10]));
-    if (d[12])
-        date.setMilliseconds(Number("0." + d[12]) * 1000);
-    if (d[14]) {
-        offset = (Number(d[16]) * 60) + Number(d[17]);
-        offset *= ((d[15] === "-") ? 1 : -1);
+Date.fromIso8601 = function (value) {
+    var date = new Date();
+    date.fromIso8601(value);
+    return date;
+};
+Date.prototype.fromIso8601 = function (value) {
+    try {
+        var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+            "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
+            "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
+        var d = value.match(new RegExp(regexp));
+        var date = new Date(parseInt(d[1]), 0, 1);
+        var offset = 0;
+        if (d[3])
+            date.setMonth(parseInt(d[3]) - 1);
+        if (d[5])
+            date.setDate(parseInt(d[5]));
+        if (d[7])
+            date.setHours(parseInt(d[7]));
+        if (d[8])
+            date.setMinutes(parseInt(d[8]));
+        if (d[10])
+            date.setSeconds(parseInt(d[10]));
+        if (d[12])
+            date.setMilliseconds(Number("0." + d[12]) * 1000);
+        if (d[14]) {
+            offset = (Number(d[16]) * 60) + Number(d[17]);
+            offset *= ((d[15] === "-") ? 1 : -1);
+        }
+        offset -= date.getTimezoneOffset();
+        var time = (Number(date) + (offset * 60 * 1000));
+        this.setTime(Number(time));
     }
-    offset -= date.getTimezoneOffset();
-    var time = (Number(date) + (offset * 60 * 1000));
-    this.setTime(Number(time));
+    catch (e) {
+        throw new Error("String is not recognized as a valid ISO 8601 date.");
+    }
 };
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -2258,6 +2369,14 @@ var MiracleDevs;
                 LocalStorage.remove = function (name) {
                     localStorage.removeItem(name);
                 };
+                LocalStorage.getAllContent = function () {
+                    var dictionary = new Core.Dictionary();
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var key = localStorage.key(i);
+                        dictionary.add(key, localStorage.getItem(key));
+                    }
+                    return dictionary;
+                };
                 LocalStorage.clear = function () {
                     localStorage.clear();
                 };
@@ -2481,6 +2600,8 @@ String.format = function (format) {
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
     }
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
     return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
         index = parseInt(index, 10);
         if (index < 0 || index >= args.length) {
@@ -2489,248 +2610,17 @@ String.format = function (format) {
         return args[index];
     });
 };
-String.formatArray = function (format, args) { return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
-    index = parseInt(index, 10);
-    if (index < 0 || index >= args.length) {
-        throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-    }
-    return args[index];
-}); };
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var AngularFilters = (function () {
-                function AngularFilters() {
-                }
-                Object.defineProperty(AngularFilters, "currency", {
-                    get: function () { return "currency"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "number", {
-                    get: function () { return "number"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "date", {
-                    get: function () { return "date"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "json", {
-                    get: function () { return "json"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "limitTo", {
-                    get: function () { return "limitTo"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "orderBy", {
-                    get: function () { return "orderBy"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return AngularFilters;
-            }());
-            Filters.AngularFilters = AngularFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var FrameworkFilters = (function () {
-                function FrameworkFilters() {
-                }
-                Object.defineProperty(FrameworkFilters, "reverse", {
-                    get: function () { return "reverse"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "trim", {
-                    get: function () { return "trim"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return FrameworkFilters;
-            }());
-            Filters.FrameworkFilters = FrameworkFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var LowercaseFilter = (function () {
-                function LowercaseFilter() {
-                }
-                LowercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
-                };
-                return LowercaseFilter;
-            }());
-            LowercaseFilter.register = {
-                name: Filters.FrameworkFilters.lowercase,
-                factory: LowercaseFilter.factory
-            };
-            Filters.LowercaseFilter = LowercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var ReverseFilter = (function () {
-                function ReverseFilter() {
-                }
-                ReverseFilter.factory = function () {
-                    return function (items) { return items.slice().reverse(); };
-                };
-                return ReverseFilter;
-            }());
-            ReverseFilter.register = {
-                name: Filters.FrameworkFilters.reverse,
-                factory: ReverseFilter.factory
-            };
-            Filters.ReverseFilter = ReverseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var TrimFilter = (function () {
-                function TrimFilter() {
-                }
-                TrimFilter.trim = function (value, maxChars) {
-                    if (Object.isNull(value))
-                        return null;
-                    if (value.length < maxChars)
-                        return value;
-                    return value.substr(0, maxChars) + "...";
-                };
-                TrimFilter.factory = function () {
-                    return TrimFilter.trim;
-                };
-                return TrimFilter;
-            }());
-            TrimFilter.register = {
-                name: Filters.FrameworkFilters.trim,
-                factory: TrimFilter.factory
-            };
-            Filters.TrimFilter = TrimFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var UppercaseFilter = (function () {
-                function UppercaseFilter() {
-                }
-                UppercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
-                };
-                return UppercaseFilter;
-            }());
-            UppercaseFilter.register = {
-                name: Filters.FrameworkFilters.uppercase,
-                factory: UppercaseFilter.factory
-            };
-            Filters.UppercaseFilter = UppercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
+String.formatArray = function (format, args) {
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
+        index = parseInt(index, 10);
+        if (index < 0 || index >= args.length) {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+        return args[index];
+    });
+};
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -2810,9 +2700,8 @@ var MiracleDevs;
             var AddClass = (function (_super) {
                 __extends(AddClass, _super);
                 function AddClass() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 AddClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -2830,12 +2719,12 @@ var MiracleDevs;
                 AddClass.factory = function () {
                     return new AddClass();
                 };
+                AddClass.register = {
+                    name: "addClass",
+                    factory: AddClass.factory
+                };
                 return AddClass;
             }(Directives.DirectiveBase));
-            AddClass.register = {
-                name: "addClass",
-                factory: AddClass.factory
-            };
             Directives.AddClass = AddClass;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -2862,15 +2751,14 @@ var MiracleDevs;
             var Alert = (function (_super) {
                 __extends(Alert, _super);
                 function Alert(timeout) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.scope = {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.scope = {
                         alertType: "@",
                         timeout: "@",
                         close: "&"
                     };
-                    _this.timeout = timeout;
-                    return _this;
+                    this.timeout = timeout;
                 }
                 Alert.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -2886,13 +2774,13 @@ var MiracleDevs;
                 Alert.factory = function (timeout) {
                     return new Alert(timeout);
                 };
+                Alert.register = {
+                    name: "alert",
+                    factory: Alert.factory,
+                    dependencies: [AngularServices.timeout]
+                };
                 return Alert;
             }(Directives.DirectiveBase));
-            Alert.register = {
-                name: "alert",
-                factory: Alert.factory,
-                dependencies: [AngularServices.timeout]
-            };
             Directives.Alert = Alert;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -2919,9 +2807,8 @@ var MiracleDevs;
             var BackgroundImage = (function (_super) {
                 __extends(BackgroundImage, _super);
                 function BackgroundImage() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 BackgroundImage.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var element = $(instanceElement);
@@ -2935,13 +2822,13 @@ var MiracleDevs;
                 BackgroundImage.factory = function () {
                     return new BackgroundImage();
                 };
+                BackgroundImage.register = {
+                    name: "backgroundImage",
+                    factory: BackgroundImage.factory,
+                    dependencies: [AngularServices.interpolate]
+                };
                 return BackgroundImage;
             }(Directives.DirectiveBase));
-            BackgroundImage.register = {
-                name: "backgroundImage",
-                factory: BackgroundImage.factory,
-                dependencies: [AngularServices.interpolate]
-            };
             Directives.BackgroundImage = BackgroundImage;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -2968,12 +2855,11 @@ var MiracleDevs;
             var CommentArea = (function (_super) {
                 __extends(CommentArea, _super);
                 function CommentArea() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    _this.scope = {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.scope = {
                         ngModel: "="
                     };
-                    return _this;
                 }
                 CommentArea.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var _this = this;
@@ -3059,12 +2945,12 @@ var MiracleDevs;
                 CommentArea.factory = function () {
                     return new CommentArea();
                 };
+                CommentArea.register = {
+                    name: "commentArea",
+                    factory: CommentArea.factory
+                };
                 return CommentArea;
             }(Directives.DirectiveBase));
-            CommentArea.register = {
-                name: "commentArea",
-                factory: CommentArea.factory
-            };
             Directives.CommentArea = CommentArea;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3091,10 +2977,9 @@ var MiracleDevs;
             var ConvertToNumber = (function (_super) {
                 __extends(ConvertToNumber, _super);
                 function ConvertToNumber() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    _this.require = "ngModel";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.require = "ngModel";
                 }
                 ConvertToNumber.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     controller.$parsers.push(function (val) { return Object.isNull(val) ? parseInt(val, 10) : null; });
@@ -3105,12 +2990,12 @@ var MiracleDevs;
                 ConvertToNumber.factory = function () {
                     return new ConvertToNumber();
                 };
+                ConvertToNumber.register = {
+                    name: "convertToNumber",
+                    factory: ConvertToNumber.factory
+                };
                 return ConvertToNumber;
             }(Directives.DirectiveBase));
-            ConvertToNumber.register = {
-                name: "convertToNumber",
-                factory: ConvertToNumber.factory
-            };
             Directives.ConvertToNumber = ConvertToNumber;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3137,11 +3022,10 @@ var MiracleDevs;
             var DateTimePicker = (function (_super) {
                 __extends(DateTimePicker, _super);
                 function DateTimePicker(filter) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.require = "ngModel";
-                    _this.filter = filter;
-                    return _this;
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.require = "ngModel";
+                    this.filter = filter;
                 }
                 DateTimePicker.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var _this = this;
@@ -3199,13 +3083,13 @@ var MiracleDevs;
                 DateTimePicker.factory = function (filter) {
                     return new DateTimePicker(filter);
                 };
+                DateTimePicker.register = {
+                    name: "dateTimePicker",
+                    factory: DateTimePicker.factory,
+                    dependencies: ["$filter"]
+                };
                 return DateTimePicker;
             }(Directives.DirectiveBase));
-            DateTimePicker.register = {
-                name: "dateTimePicker",
-                factory: DateTimePicker.factory,
-                dependencies: ["$filter"]
-            };
             Directives.DateTimePicker = DateTimePicker;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3232,9 +3116,9 @@ var MiracleDevs;
             var FileButton = (function (_super) {
                 __extends(FileButton, _super);
                 function FileButton(timeout) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "E";
-                    _this.scope = {
+                    _super.call(this);
+                    this.restrict = "E";
+                    this.scope = {
                         title: "@",
                         ariaLabel: "@",
                         accept: "@",
@@ -3242,10 +3126,9 @@ var MiracleDevs;
                         cssClass: "@",
                         fileSelected: "&"
                     };
-                    _this.template = '<input type="file" style="display: none" title="{{title}}" accept="{{accept}}" aria-label="{{ariaLabel}}" />' +
+                    this.template = '<input type="file" style="display: none" title="{{title}}" accept="{{accept}}" aria-label="{{ariaLabel}}" />' +
                         '<button class="{{cssClass}}">{{caption}}</button>';
-                    _this.timeout = timeout;
-                    return _this;
+                    this.timeout = timeout;
                 }
                 FileButton.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var _this = this;
@@ -3265,13 +3148,13 @@ var MiracleDevs;
                 FileButton.factory = function (timeout) {
                     return new FileButton(timeout);
                 };
+                FileButton.register = {
+                    name: "fileButton",
+                    factory: FileButton.factory,
+                    dependencies: [AngularServices.timeout]
+                };
                 return FileButton;
             }(Directives.DirectiveBase));
-            FileButton.register = {
-                name: "fileButton",
-                factory: FileButton.factory,
-                dependencies: [AngularServices.timeout]
-            };
             Directives.FileButton = FileButton;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3297,12 +3180,11 @@ var MiracleDevs;
             var FileDragAndDrop = (function (_super) {
                 __extends(FileDragAndDrop, _super);
                 function FileDragAndDrop() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    _this.scope = {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.scope = {
                         fileSelected: "&"
                     };
-                    return _this;
                 }
                 FileDragAndDrop.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var element = $(instanceElement);
@@ -3324,12 +3206,12 @@ var MiracleDevs;
                 FileDragAndDrop.factory = function () {
                     return new FileDragAndDrop();
                 };
+                FileDragAndDrop.register = {
+                    name: "fileDragAndDrop",
+                    factory: FileDragAndDrop.factory
+                };
                 return FileDragAndDrop;
             }(Directives.DirectiveBase));
-            FileDragAndDrop.register = {
-                name: "fileDragAndDrop",
-                factory: FileDragAndDrop.factory
-            };
             Directives.FileDragAndDrop = FileDragAndDrop;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3355,9 +3237,8 @@ var MiracleDevs;
             var FocusInvalidField = (function (_super) {
                 __extends(FocusInvalidField, _super);
                 function FocusInvalidField() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 FocusInvalidField.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -3372,12 +3253,12 @@ var MiracleDevs;
                 FocusInvalidField.factory = function () {
                     return new FocusInvalidField();
                 };
+                FocusInvalidField.register = {
+                    name: "focusInvalidField",
+                    factory: FocusInvalidField.factory
+                };
                 return FocusInvalidField;
             }(Directives.DirectiveBase));
-            FocusInvalidField.register = {
-                name: "focusInvalidField",
-                factory: FocusInvalidField.factory
-            };
             Directives.FocusInvalidField = FocusInvalidField;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3404,10 +3285,9 @@ var MiracleDevs;
             var HorizontalScroller = (function (_super) {
                 __extends(HorizontalScroller, _super);
                 function HorizontalScroller(interpolate) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.interpolate = interpolate;
-                    return _this;
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.interpolate = interpolate;
                 }
                 HorizontalScroller.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var options = {};
@@ -3434,13 +3314,13 @@ var MiracleDevs;
                 HorizontalScroller.factory = function (interpolate) {
                     return new HorizontalScroller(interpolate);
                 };
+                HorizontalScroller.register = {
+                    name: "horizontalScroller",
+                    factory: HorizontalScroller.factory,
+                    dependencies: [AngularServices.interpolate]
+                };
                 return HorizontalScroller;
             }(Directives.DirectiveBase));
-            HorizontalScroller.register = {
-                name: "horizontalScroller",
-                factory: HorizontalScroller.factory,
-                dependencies: [AngularServices.interpolate]
-            };
             Directives.HorizontalScroller = HorizontalScroller;
             var HorizontalScrollerInstance = (function () {
                 function HorizontalScrollerInstance(options) {
@@ -3569,11 +3449,10 @@ var MiracleDevs;
             var MdUiSrefActive = (function (_super) {
                 __extends(MdUiSrefActive, _super);
                 function MdUiSrefActive(interpolate, state) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.interpolate = interpolate;
-                    _this.state = state;
-                    return _this;
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.interpolate = interpolate;
+                    this.state = state;
                 }
                 MdUiSrefActive.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -3596,13 +3475,13 @@ var MiracleDevs;
                 MdUiSrefActive.factory = function (interpolate, state) {
                     return new MdUiSrefActive(interpolate, state);
                 };
+                MdUiSrefActive.register = {
+                    name: "mdUiSrefActive",
+                    factory: MdUiSrefActive.factory,
+                    dependencies: [AngularServices.interpolate, AngularServices.state]
+                };
                 return MdUiSrefActive;
             }(Directives.DirectiveBase));
-            MdUiSrefActive.register = {
-                name: "mdUiSrefActive",
-                factory: MdUiSrefActive.factory,
-                dependencies: [AngularServices.interpolate, AngularServices.state]
-            };
             Directives.MdUiSrefActive = MdUiSrefActive;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3631,10 +3510,9 @@ var MiracleDevs;
             var OnKeyboard = (function (_super) {
                 __extends(OnKeyboard, _super);
                 function OnKeyboard(parse) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.parse = parse;
-                    return _this;
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.parse = parse;
                 }
                 OnKeyboard.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var _this = this;
@@ -3709,13 +3587,13 @@ var MiracleDevs;
                 OnKeyboard.factory = function (parse) {
                     return new OnKeyboard(parse);
                 };
+                OnKeyboard.register = {
+                    name: "onKeyboard",
+                    factory: OnKeyboard.factory,
+                    dependencies: [AngularServices.parse]
+                };
                 return OnKeyboard;
             }(Directives.DirectiveBase));
-            OnKeyboard.register = {
-                name: "onKeyboard",
-                factory: OnKeyboard.factory,
-                dependencies: [AngularServices.parse]
-            };
             Directives.OnKeyboard = OnKeyboard;
             var KeyAction = (function () {
                 function KeyAction() {
@@ -3747,10 +3625,10 @@ var MiracleDevs;
             var PaginationBar = (function (_super) {
                 __extends(PaginationBar, _super);
                 function PaginationBar() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "E";
-                    _this.template = '<div class="pagination-bar" ng-controller="PaginationBarController as controller"><ul class="pagination"><li ng-repeat="link in links" ng-class="{ \'active\': link.selected }"><a ng-click="link.enabled && controller.navigate(link)" tooltip title="Go to page {{link.tag}}" ng-bind-html="link.name"></a></li></ul></div>';
-                    _this.scope = {
+                    _super.apply(this, arguments);
+                    this.restrict = "E";
+                    this.template = '<div class="pagination-bar" ng-controller="PaginationBarController as controller"><ul class="pagination"><li ng-repeat="link in links" ng-class="{ \'active\': link.selected }"><a ng-click="link.enabled && controller.navigate(link)" tooltip title="Go to page {{link.tag}}" ng-bind-html="link.name"></a></li></ul></div>';
+                    this.scope = {
                         cssClass: "@",
                         firstText: "@",
                         previousText: "@",
@@ -3763,7 +3641,6 @@ var MiracleDevs;
                         itemClicked: "&",
                         autoScroll: "@"
                     };
-                    return _this;
                 }
                 PaginationBar.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -3772,12 +3649,12 @@ var MiracleDevs;
                 PaginationBar.factory = function () {
                     return new PaginationBar();
                 };
+                PaginationBar.register = {
+                    name: "paginationBar",
+                    factory: PaginationBar.factory
+                };
                 return PaginationBar;
             }(Directives.DirectiveBase));
-            PaginationBar.register = {
-                name: "paginationBar",
-                factory: PaginationBar.factory
-            };
             Directives.PaginationBar = PaginationBar;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3804,14 +3681,13 @@ var MiracleDevs;
             var PreventEventIf = (function (_super) {
                 __extends(PreventEventIf, _super);
                 function PreventEventIf(timeout) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.scope = {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.scope = {
                         preventEventIf: "&",
                         preventEvent: "@"
                     };
-                    _this.timeout = timeout;
-                    return _this;
+                    this.timeout = timeout;
                 }
                 PreventEventIf.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -3826,13 +3702,13 @@ var MiracleDevs;
                 PreventEventIf.factory = function (timeout) {
                     return new PreventEventIf(timeout);
                 };
+                PreventEventIf.register = {
+                    name: "preventEventIf",
+                    factory: PreventEventIf.factory,
+                    dependencies: [AngularServices.timeout]
+                };
                 return PreventEventIf;
             }(Directives.DirectiveBase));
-            PreventEventIf.register = {
-                name: "preventEventIf",
-                factory: PreventEventIf.factory,
-                dependencies: [AngularServices.timeout]
-            };
             Directives.PreventEventIf = PreventEventIf;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3858,9 +3734,8 @@ var MiracleDevs;
             var RemoveClass = (function (_super) {
                 __extends(RemoveClass, _super);
                 function RemoveClass() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 RemoveClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -3877,12 +3752,12 @@ var MiracleDevs;
                 RemoveClass.factory = function () {
                     return new RemoveClass();
                 };
+                RemoveClass.register = {
+                    name: "removeClass",
+                    factory: RemoveClass.factory
+                };
                 return RemoveClass;
             }(Directives.DirectiveBase));
-            RemoveClass.register = {
-                name: "removeClass",
-                factory: RemoveClass.factory
-            };
             Directives.RemoveClass = RemoveClass;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3909,10 +3784,9 @@ var MiracleDevs;
             var ScrollToBottom = (function (_super) {
                 __extends(ScrollToBottom, _super);
                 function ScrollToBottom(rootScope) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.rootScope = rootScope;
-                    return _this;
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.rootScope = rootScope;
                 }
                 ScrollToBottom.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -3934,13 +3808,13 @@ var MiracleDevs;
                 ScrollToBottom.factory = function (rootScope) {
                     return new ScrollToBottom(rootScope);
                 };
+                ScrollToBottom.register = {
+                    name: "scrollToBottom",
+                    factory: ScrollToBottom.factory,
+                    dependencies: [AngularServices.rootScope]
+                };
                 return ScrollToBottom;
             }(Directives.DirectiveBase));
-            ScrollToBottom.register = {
-                name: "scrollToBottom",
-                factory: ScrollToBottom.factory,
-                dependencies: [AngularServices.rootScope]
-            };
             Directives.ScrollToBottom = ScrollToBottom;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -3966,9 +3840,8 @@ var MiracleDevs;
             var ScrollToggleClass = (function (_super) {
                 __extends(ScrollToggleClass, _super);
                 function ScrollToggleClass() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 ScrollToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var element = $(instanceElement);
@@ -3999,12 +3872,12 @@ var MiracleDevs;
                 ScrollToggleClass.factory = function () {
                     return new ScrollToggleClass();
                 };
+                ScrollToggleClass.register = {
+                    name: "scrollToggleClass",
+                    factory: ScrollToggleClass.factory
+                };
                 return ScrollToggleClass;
             }(Directives.DirectiveBase));
-            ScrollToggleClass.register = {
-                name: "scrollToggleClass",
-                factory: ScrollToggleClass.factory
-            };
             Directives.ScrollToggleClass = ScrollToggleClass;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -4031,10 +3904,9 @@ var MiracleDevs;
             var ScrollToTop = (function (_super) {
                 __extends(ScrollToTop, _super);
                 function ScrollToTop(rootScope) {
-                    var _this = _super.call(this) || this;
-                    _this.restrict = "A";
-                    _this.rootScope = rootScope;
-                    return _this;
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.rootScope = rootScope;
                 }
                 ScrollToTop.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var _this = this;
@@ -4067,13 +3939,13 @@ var MiracleDevs;
                 ScrollToTop.factory = function (rootScope) {
                     return new ScrollToTop(rootScope);
                 };
+                ScrollToTop.register = {
+                    name: "scrollToTop",
+                    factory: ScrollToTop.factory,
+                    dependencies: [AngularServices.rootScope]
+                };
                 return ScrollToTop;
             }(Directives.DirectiveBase));
-            ScrollToTop.register = {
-                name: "scrollToTop",
-                factory: ScrollToTop.factory,
-                dependencies: [AngularServices.rootScope]
-            };
             Directives.ScrollToTop = ScrollToTop;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -4099,9 +3971,8 @@ var MiracleDevs;
             var SelectToggleClass = (function (_super) {
                 __extends(SelectToggleClass, _super);
                 function SelectToggleClass() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 SelectToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var element = $(instanceElement);
@@ -4122,12 +3993,12 @@ var MiracleDevs;
                 SelectToggleClass.factory = function () {
                     return new SelectToggleClass();
                 };
+                SelectToggleClass.register = {
+                    name: "selectToggleClass",
+                    factory: SelectToggleClass.factory
+                };
                 return SelectToggleClass;
             }(Directives.DirectiveBase));
-            SelectToggleClass.register = {
-                name: "selectToggleClass",
-                factory: SelectToggleClass.factory
-            };
             Directives.SelectToggleClass = SelectToggleClass;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -4153,9 +4024,8 @@ var MiracleDevs;
             var ToggleClass = (function (_super) {
                 __extends(ToggleClass, _super);
                 function ToggleClass() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 ToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -4174,12 +4044,12 @@ var MiracleDevs;
                 ToggleClass.factory = function () {
                     return new ToggleClass();
                 };
+                ToggleClass.register = {
+                    name: "toggleClass",
+                    factory: ToggleClass.factory
+                };
                 return ToggleClass;
             }(Directives.DirectiveBase));
-            ToggleClass.register = {
-                name: "toggleClass",
-                factory: ToggleClass.factory
-            };
             Directives.ToggleClass = ToggleClass;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -4205,9 +4075,8 @@ var MiracleDevs;
             var ToggleClassOnClick = (function (_super) {
                 __extends(ToggleClassOnClick, _super);
                 function ToggleClassOnClick() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    return _this;
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
                 }
                 ToggleClassOnClick.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var element = $(instanceElement);
@@ -4219,12 +4088,12 @@ var MiracleDevs;
                 ToggleClassOnClick.factory = function () {
                     return new ToggleClassOnClick();
                 };
+                ToggleClassOnClick.register = {
+                    name: "toggleClassOnClick",
+                    factory: ToggleClassOnClick.factory
+                };
                 return ToggleClassOnClick;
             }(Directives.DirectiveBase));
-            ToggleClassOnClick.register = {
-                name: "toggleClassOnClick",
-                factory: ToggleClassOnClick.factory
-            };
             Directives.ToggleClassOnClick = ToggleClassOnClick;
             ////////////////////////////////////////////////////////////
             // Register directive
@@ -4251,14 +4120,13 @@ var MiracleDevs;
             var Tooltip = (function (_super) {
                 __extends(Tooltip, _super);
                 function Tooltip() {
-                    var _this = _super.apply(this, arguments) || this;
-                    _this.restrict = "A";
-                    _this.scope = {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.scope = {
                         tooltipOptions: "@",
                         tooltipCose: "&",
                         tooltipParameter: "="
                     };
-                    return _this;
                 }
                 Tooltip.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var control = $(instanceElement);
@@ -4283,18 +4151,253 @@ var MiracleDevs;
                 Tooltip.factory = function () {
                     return new Tooltip();
                 };
+                Tooltip.register = {
+                    name: "tooltip",
+                    factory: Tooltip.factory
+                };
                 return Tooltip;
             }(Directives.DirectiveBase));
-            Tooltip.register = {
-                name: "tooltip",
-                factory: Tooltip.factory
-            };
             Directives.Tooltip = Tooltip;
             ////////////////////////////////////////////////////////////
             // Register directive
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerDirective(Tooltip.register);
         })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var AngularFilters = (function () {
+                function AngularFilters() {
+                }
+                Object.defineProperty(AngularFilters, "currency", {
+                    get: function () { return "currency"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "number", {
+                    get: function () { return "number"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "date", {
+                    get: function () { return "date"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "json", {
+                    get: function () { return "json"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "limitTo", {
+                    get: function () { return "limitTo"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "orderBy", {
+                    get: function () { return "orderBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return AngularFilters;
+            }());
+            Filters.AngularFilters = AngularFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var FrameworkFilters = (function () {
+                function FrameworkFilters() {
+                }
+                Object.defineProperty(FrameworkFilters, "reverse", {
+                    get: function () { return "reverse"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "trim", {
+                    get: function () { return "trim"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return FrameworkFilters;
+            }());
+            Filters.FrameworkFilters = FrameworkFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var LowercaseFilter = (function () {
+                function LowercaseFilter() {
+                }
+                LowercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
+                };
+                LowercaseFilter.register = {
+                    name: Filters.FrameworkFilters.lowercase,
+                    factory: LowercaseFilter.factory
+                };
+                return LowercaseFilter;
+            }());
+            Filters.LowercaseFilter = LowercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var ReverseFilter = (function () {
+                function ReverseFilter() {
+                }
+                ReverseFilter.factory = function () {
+                    return function (items) { return items.slice().reverse(); };
+                };
+                ReverseFilter.register = {
+                    name: Filters.FrameworkFilters.reverse,
+                    factory: ReverseFilter.factory
+                };
+                return ReverseFilter;
+            }());
+            Filters.ReverseFilter = ReverseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var TrimFilter = (function () {
+                function TrimFilter() {
+                }
+                TrimFilter.trim = function (value, maxChars) {
+                    if (Object.isNull(value))
+                        return null;
+                    if (value.length < maxChars)
+                        return value;
+                    return value.substr(0, maxChars) + "...";
+                };
+                TrimFilter.factory = function () {
+                    return TrimFilter.trim;
+                };
+                TrimFilter.register = {
+                    name: Filters.FrameworkFilters.trim,
+                    factory: TrimFilter.factory
+                };
+                return TrimFilter;
+            }());
+            Filters.TrimFilter = TrimFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var UppercaseFilter = (function () {
+                function UppercaseFilter() {
+                }
+                UppercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
+                };
+                UppercaseFilter.register = {
+                    name: Filters.FrameworkFilters.uppercase,
+                    factory: UppercaseFilter.factory
+                };
+                return UppercaseFilter;
+            }());
+            Filters.UppercaseFilter = UppercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -4380,12 +4483,12 @@ var MiracleDevs;
     (function (Angular) {
         var Services;
         (function (Services) {
-            var AlertType;
             (function (AlertType) {
                 AlertType[AlertType["Message"] = 0] = "Message";
                 AlertType[AlertType["Warning"] = 1] = "Warning";
                 AlertType[AlertType["Error"] = 2] = "Error";
-            })(AlertType = Services.AlertType || (Services.AlertType = {}));
+            })(Services.AlertType || (Services.AlertType = {}));
+            var AlertType = Services.AlertType;
             var Alert = (function () {
                 function Alert(alertType, message) {
                     this.alertType = alertType;
@@ -4443,10 +4546,9 @@ var MiracleDevs;
             var AlertService = (function (_super) {
                 __extends(AlertService, _super);
                 function AlertService(logger) {
-                    var _this = _super.call(this) || this;
-                    _this.logger = logger;
-                    _this.alerts = new ArrayList();
-                    return _this;
+                    _super.call(this);
+                    this.logger = logger;
+                    this.alerts = new ArrayList();
                 }
                 AlertService.prototype.add = function (alertType, message) {
                     this.alerts.add(new Services.Alert(alertType, message));
@@ -4478,13 +4580,13 @@ var MiracleDevs;
                 AlertService.factory = function (logger) {
                     return new AlertService(logger);
                 };
+                AlertService.register = {
+                    name: Services.FrameworkServices.alertService,
+                    factory: AlertService.factory,
+                    dependencies: [Services.FrameworkServices.loggingService]
+                };
                 return AlertService;
             }(Services.ServiceBase));
-            AlertService.register = {
-                name: Services.FrameworkServices.alertService,
-                factory: AlertService.factory,
-                dependencies: [Services.FrameworkServices.loggingService]
-            };
             Services.AlertService = AlertService;
             Angular.FrameworkModule.instance.registerService(AlertService.register);
         })(Services = Angular.Services || (Angular.Services = {}));
@@ -4501,7 +4603,6 @@ var MiracleDevs;
     (function (Angular) {
         var Services;
         (function (Services) {
-            var DateRange;
             (function (DateRange) {
                 DateRange[DateRange["Unknown"] = 0] = "Unknown";
                 DateRange[DateRange["Seconds"] = 1] = "Seconds";
@@ -4510,8 +4611,8 @@ var MiracleDevs;
                 DateRange[DateRange["Days"] = 4] = "Days";
                 DateRange[DateRange["Months"] = 5] = "Months";
                 DateRange[DateRange["Years"] = 6] = "Years";
-            })(DateRange = Services.DateRange || (Services.DateRange = {}));
-            var MonthName;
+            })(Services.DateRange || (Services.DateRange = {}));
+            var DateRange = Services.DateRange;
             (function (MonthName) {
                 MonthName[MonthName["January"] = 0] = "January";
                 MonthName[MonthName["February"] = 1] = "February";
@@ -4525,8 +4626,8 @@ var MiracleDevs;
                 MonthName[MonthName["October"] = 9] = "October";
                 MonthName[MonthName["November"] = 10] = "November";
                 MonthName[MonthName["December"] = 11] = "December";
-            })(MonthName = Services.MonthName || (Services.MonthName = {}));
-            var DayName;
+            })(Services.MonthName || (Services.MonthName = {}));
+            var MonthName = Services.MonthName;
             (function (DayName) {
                 DayName[DayName["Sunday"] = 0] = "Sunday";
                 DayName[DayName["Monday"] = 1] = "Monday";
@@ -4535,7 +4636,8 @@ var MiracleDevs;
                 DayName[DayName["Thursday"] = 4] = "Thursday";
                 DayName[DayName["Friday"] = 5] = "Friday";
                 DayName[DayName["Saturday"] = 6] = "Saturday";
-            })(DayName = Services.DayName || (Services.DayName = {}));
+            })(Services.DayName || (Services.DayName = {}));
+            var DayName = Services.DayName;
             var DateRangeValue = (function () {
                 function DateRangeValue(value, range) {
                     this.value = value;
@@ -4569,7 +4671,7 @@ var MiracleDevs;
             var DateService = (function (_super) {
                 __extends(DateService, _super);
                 function DateService() {
-                    return _super.apply(this, arguments) || this;
+                    _super.apply(this, arguments);
                 }
                 DateService.prototype.getDate = function (value) {
                     if (value instanceof Date)
@@ -4639,12 +4741,12 @@ var MiracleDevs;
                 DateService.factory = function () {
                     return new DateService();
                 };
+                DateService.register = {
+                    name: Services.FrameworkServices.dateService,
+                    factory: DateService.factory
+                };
                 return DateService;
             }(Services.ServiceBase));
-            DateService.register = {
-                name: Services.FrameworkServices.dateService,
-                factory: DateService.factory
-            };
             Services.DateService = DateService;
             ////////////////////////////////////////////////////////////
             // Register service
@@ -4670,10 +4772,9 @@ var MiracleDevs;
             var ExceptionService = (function (_super) {
                 __extends(ExceptionService, _super);
                 function ExceptionService(alertService, logger) {
-                    var _this = _super.call(this) || this;
-                    _this.alertService = alertService;
-                    _this.logger = logger;
-                    return _this;
+                    _super.call(this);
+                    this.alertService = alertService;
+                    this.logger = logger;
                 }
                 ExceptionService.prototype.processException = function (exception, cause) {
                     this.alertService.addError(exception.message);
@@ -4683,13 +4784,13 @@ var MiracleDevs;
                 ExceptionService.factory = function (alertService, logger) {
                     return function (exception, cause) { return new ExceptionService(alertService, logger).processException(exception, cause); };
                 };
+                ExceptionService.register = {
+                    name: Services.AngularServices.exceptionHandler,
+                    factory: ExceptionService.factory,
+                    dependencies: [Services.FrameworkServices.alertService, Services.FrameworkServices.loggingService]
+                };
                 return ExceptionService;
             }(Services.ServiceBase));
-            ExceptionService.register = {
-                name: Services.AngularServices.exceptionHandler,
-                factory: ExceptionService.factory,
-                dependencies: [Services.FrameworkServices.alertService, Services.FrameworkServices.loggingService]
-            };
             Services.ExceptionService = ExceptionService;
             ////////////////////////////////////////////////////////////
             // Register service
@@ -4714,7 +4815,7 @@ var MiracleDevs;
             var FileManagementService = (function (_super) {
                 __extends(FileManagementService, _super);
                 function FileManagementService() {
-                    return _super.apply(this, arguments) || this;
+                    _super.apply(this, arguments);
                 }
                 FileManagementService.prototype.read = function (file, completed, progress, error) {
                     var _this = this;
@@ -4780,12 +4881,12 @@ var MiracleDevs;
                 FileManagementService.factory = function () {
                     return new FileManagementService();
                 };
+                FileManagementService.register = {
+                    name: Services.FrameworkServices.fileManagementService,
+                    factory: FileManagementService.factory
+                };
                 return FileManagementService;
             }(Services.ServiceBase));
-            FileManagementService.register = {
-                name: Services.FrameworkServices.fileManagementService,
-                factory: FileManagementService.factory
-            };
             Services.FileManagementService = FileManagementService;
             ////////////////////////////////////////////////////////////
             // Register service
@@ -4810,7 +4911,7 @@ var MiracleDevs;
             var GeolocationService = (function (_super) {
                 __extends(GeolocationService, _super);
                 function GeolocationService() {
-                    return _super.apply(this, arguments) || this;
+                    _super.apply(this, arguments);
                 }
                 GeolocationService.prototype.getPosition = function (callback, onError, options) {
                     if (!this.isAvailable())
@@ -4836,12 +4937,12 @@ var MiracleDevs;
                 GeolocationService.factory = function () {
                     return new GeolocationService();
                 };
+                GeolocationService.register = {
+                    name: Services.FrameworkServices.geolocationService,
+                    factory: GeolocationService.factory
+                };
                 return GeolocationService;
             }(Services.ServiceBase));
-            GeolocationService.register = {
-                name: Services.FrameworkServices.geolocationService,
-                factory: GeolocationService.factory
-            };
             Services.GeolocationService = GeolocationService;
             ////////////////////////////////////////////////////////////
             // Register service
@@ -4864,10 +4965,9 @@ var MiracleDevs;
             var HttpServiceBase = (function (_super) {
                 __extends(HttpServiceBase, _super);
                 function HttpServiceBase($http, host) {
-                    var _this = _super.call(this) || this;
-                    _this.$http = $http;
-                    _this.host = host;
-                    return _this;
+                    _super.call(this);
+                    this.$http = $http;
+                    this.host = host;
                 }
                 HttpServiceBase.prototype.post = function (url, params, data) {
                     return this.$http.post(this.host + url, data, { headers: this.getHeaders(), params: params });
@@ -5003,9 +5103,8 @@ var MiracleDevs;
             var MessageBus = (function (_super) {
                 __extends(MessageBus, _super);
                 function MessageBus() {
-                    var _this = _super.call(this) || this;
-                    _this.handlers = new Dictionary();
-                    return _this;
+                    _super.call(this);
+                    this.handlers = new Dictionary();
                 }
                 MessageBus.prototype.register = function (messageType, handler) {
                     var type = messageType["messageType"];
@@ -5044,12 +5143,12 @@ var MiracleDevs;
                 MessageBus.factory = function () {
                     return new MessageBus();
                 };
+                MessageBus.register = {
+                    name: Services.FrameworkServices.messageBus,
+                    factory: MessageBus.factory
+                };
                 return MessageBus;
             }(Services.ServiceBase));
-            MessageBus.register = {
-                name: Services.FrameworkServices.messageBus,
-                factory: MessageBus.factory
-            };
             Services.MessageBus = MessageBus;
             ////////////////////////////////////////////////////////////
             // Register service
@@ -5082,15 +5181,14 @@ var MiracleDevs;
             var ModalService = (function (_super) {
                 __extends(ModalService, _super);
                 function ModalService($rootScope, $q, $http, $templateCache, $compile, $controller) {
-                    var _this = _super.call(this) || this;
-                    _this.$rootScope = $rootScope;
-                    _this.$q = $q;
-                    _this.$http = $http;
-                    _this.$templateCache = $templateCache;
-                    _this.$compile = $compile;
-                    _this.$controller = $controller;
-                    _this.modals = new Dictionary();
-                    return _this;
+                    _super.call(this);
+                    this.$rootScope = $rootScope;
+                    this.$q = $q;
+                    this.$http = $http;
+                    this.$templateCache = $templateCache;
+                    this.$compile = $compile;
+                    this.$controller = $controller;
+                    this.modals = new Dictionary();
                 }
                 ModalService.prototype.open = function (dialog, parameters, staticDialog, keyboard) {
                     var _this = this;
@@ -5172,13 +5270,13 @@ var MiracleDevs;
                 ModalService.factory = function ($rootScope, $q, $http, $templateCache, $compile, $controller) {
                     return new ModalService($rootScope, $q, $http, $templateCache, $compile, $controller);
                 };
+                ModalService.register = {
+                    name: Services.FrameworkServices.modalService,
+                    factory: ModalService.factory,
+                    dependencies: [Services.AngularServices.rootScope, Services.AngularServices.q, Services.AngularServices.http, Services.AngularServices.templateCache, Services.AngularServices.compile, Services.AngularServices.controller]
+                };
                 return ModalService;
             }(Services.ServiceBase));
-            ModalService.register = {
-                name: Services.FrameworkServices.modalService,
-                factory: ModalService.factory,
-                dependencies: [Services.AngularServices.rootScope, Services.AngularServices.q, Services.AngularServices.http, Services.AngularServices.templateCache, Services.AngularServices.compile, Services.AngularServices.controller]
-            };
             Services.ModalService = ModalService;
             var ModalInstance = (function () {
                 function ModalInstance(modalService, deferred) {
@@ -5220,9 +5318,8 @@ var MiracleDevs;
             var UrlService = (function (_super) {
                 __extends(UrlService, _super);
                 function UrlService(sce) {
-                    var _this = _super.call(this) || this;
-                    _this.sce = sce;
-                    return _this;
+                    _super.call(this);
+                    this.sce = sce;
                 }
                 UrlService.prototype.getParsedUrl = function (url) {
                     if (String.isNullOrEmpty(url))
@@ -5234,13 +5331,13 @@ var MiracleDevs;
                 UrlService.factory = function (sce) {
                     return new UrlService(sce);
                 };
+                UrlService.register = {
+                    name: Services.FrameworkServices.urlService,
+                    factory: UrlService.factory,
+                    dependencies: [Services.AngularServices.sce]
+                };
                 return UrlService;
             }(Services.ServiceBase));
-            UrlService.register = {
-                name: Services.FrameworkServices.urlService,
-                factory: UrlService.factory,
-                dependencies: [Services.AngularServices.sce]
-            };
             Services.UrlService = UrlService;
             ////////////////////////////////////////////////////////////
             // Register service
@@ -5301,9 +5398,8 @@ var MiracleDevs;
                 var DialogControllerBase = (function (_super) {
                     __extends(DialogControllerBase, _super);
                     function DialogControllerBase(scope, modalInstance, injector) {
-                        var _this = _super.call(this, scope, injector) || this;
-                        _this.modalInstance = modalInstance;
-                        return _this;
+                        _super.call(this, scope, injector);
+                        this.modalInstance = modalInstance;
                     }
                     DialogControllerBase.prototype.cancel = function () {
                         this.modalInstance.close();
@@ -5465,9 +5561,9 @@ var MiracleDevs;
                             }
                         }
                     };
+                    AutoMapper.types = new Core.Dictionary();
                     return AutoMapper;
                 }());
-                AutoMapper.types = new Core.Dictionary();
                 Mapping.AutoMapper = AutoMapper;
             })(Mapping = Core.Mapping || (Core.Mapping = {}));
         })(Core = Angular.Core || (Angular.Core = {}));
@@ -5532,11 +5628,11 @@ var MiracleDevs;
                     var PaginationBarController = (function (_super) {
                         __extends(PaginationBarController, _super);
                         function PaginationBarController(scope, injector) {
-                            var _this = _super.call(this, scope, injector) || this;
-                            _this.logger.writeMessage("Starting Pagination Bar Controller..");
+                            var _this = this;
+                            _super.call(this, scope, injector);
+                            this.logger.writeMessage("Starting Pagination Bar Controller..");
                             scope.$watch(function () { return scope.pages; }, function () { return _this.create(); });
                             scope.$watch(function () { return scope.currentPage; }, function () { return _this.create(); });
-                            return _this;
                         }
                         PaginationBarController.prototype.create = function () {
                             if (Object.isNull(this.scope.pages) || this.scope.pages <= 1) {
@@ -5581,13 +5677,13 @@ var MiracleDevs;
                                 return;
                             this.scope["itemClicked"]({ tag: link.tag });
                         };
+                        PaginationBarController.register = {
+                            name: "PaginationBarController",
+                            controller: PaginationBarController,
+                            dependencies: [AngularServices.scope, AngularServices.injector]
+                        };
                         return PaginationBarController;
                     }(Controllers.ControllerBase));
-                    PaginationBarController.register = {
-                        name: "PaginationBarController",
-                        controller: PaginationBarController,
-                        dependencies: [AngularServices.scope, AngularServices.injector]
-                    };
                     PaginationBar.PaginationBarController = PaginationBarController;
                     ////////////////////////////////////////////////////////////
                     // Register controller

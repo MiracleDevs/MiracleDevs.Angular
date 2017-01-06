@@ -10,21 +10,21 @@
  */
 interface ArrayConstructor {
     forEach<T>(array: Array<T>, action: (element: T) => void): void;
-    where<T>(array: Array<T>, func: (element: T) => boolean): Array<T>;
-    select<T, TR>(array: Array<T>, func: (element: T) => TR): Array<TR>;
-    firstOrDefault<T>(array: Array<T>, func?: (element: T) => boolean): T;
-    lastOrDefault<T>(array: Array<T>, func?: (element: T) => boolean): T;
-    first<T>(array: Array<T>, func?: (element: T) => boolean): T;
-    last<T>(array: Array<T>, func?: (element: T) => boolean): T;
-    any<T>(array: Array<T>, func?: (element: T) => boolean): boolean;
-    count<T>(array: Array<T>, func?: (element: T) => boolean): number;
-    sum<T, TI>(array: Array<T>, func?: (element: T) => TI): TI;
+    where<T>(array: Array<T>, predicate: (element: T) => boolean): Array<T>;
+    select<T, TR>(array: Array<T>, predicate: (element: T) => TR): Array<TR>;
+    firstOrDefault<T>(array: Array<T>, predicate?: (element: T) => boolean): T;
+    lastOrDefault<T>(array: Array<T>, predicate?: (element: T) => boolean): T;
+    first<T>(array: Array<T>, predicate?: (element: T) => boolean): T;
+    last<T>(array: Array<T>, predicate?: (element: T) => boolean): T;
+    any<T>(array: Array<T>, predicate?: (element: T) => boolean): boolean;
+    count<T>(array: Array<T>, predicate?: (element: T) => boolean): number;
+    sum<T, TI>(array: Array<T>, predicate?: (element: T) => TI): TI;
     contains<T>(array: Array<T>, value: T): boolean;
-    orderBy<T, TR>(array: Array<T>, func: (element: T) => TR): Array<T>;
-    orderByDesc<T, TR>(array: Array<T>, func: (element: T) => TR): Array<T>;
-    remove<T>(array: Array<T>, element: T): any;
-    removeAt<T>(array: Array<T>, index: number): any;
-    removeAll<T>(array: Array<T>, func: (element: T) => boolean): void;
+    orderBy<T, TR>(array: Array<T>, predicate?: (element: T) => TR): Array<T>;
+    orderByDesc<T, TR>(array: Array<T>, predicate?: (element: T) => TR): Array<T>;
+    remove<T>(array: Array<T>, element: T): boolean;
+    removeAt<T>(array: Array<T>, index: number): void;
+    removeAll<T>(array: Array<T>, predicate?: (element: T) => boolean): number;
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -32,32 +32,32 @@ interface ArrayConstructor {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Core {
-    class ArrayList<T> {
-        private innerList;
+    class ArrayList<T> implements IEnumerable<T> {
+        protected innerArray: Array<T>;
         constructor(array?: Array<T>);
         forEach(action: (element: T) => void): void;
-        where(func: (element: T) => boolean): ArrayList<T>;
-        select<TR>(func: (element: T) => TR): ArrayList<TR>;
-        firstOrDefault(func?: (element: T) => boolean): T;
-        lastOrDefault(func?: (element: T) => boolean): T;
-        first(func?: (element: T) => boolean): T;
-        last(func?: (element: T) => boolean): T;
-        any(func?: (element: T) => boolean): boolean;
-        count(func?: (element: T) => boolean): number;
-        sum<TI>(func?: (element: T) => TI): TI;
+        where(predicate: (element: T) => boolean): ArrayList<T>;
+        select<TR>(predicate: (element: T) => TR): ArrayList<TR>;
+        firstOrDefault(predicate?: (element: T) => boolean): T;
+        lastOrDefault(predicate?: (element: T) => boolean): T;
+        first(predicate?: (element: T) => boolean): T;
+        last(predicate?: (element: T) => boolean): T;
+        any(predicate?: (element: T) => boolean): boolean;
+        count(predicate?: (element: T) => boolean): number;
+        sum<TI>(predicate?: (element: T) => TI): TI;
         contains(value: T): boolean;
-        orderBy<TR>(func: (element: T) => TR): ArrayList<T>;
-        orderByDesc<TR>(func: (element: T) => TR): ArrayList<T>;
-        values(): Array<T>;
+        orderBy<TR>(predicate?: (element: T) => TR): ArrayList<T>;
+        orderByDesc<TR>(predicate?: (element: T) => TR): ArrayList<T>;
+        getInnerArray(): Array<T>;
         get(index: number): T;
         add(value: T): void;
         addRange(value: Array<T>): any;
         addRange(value: ArrayList<T>): any;
         pop(): T;
         indexOf(element: T): number;
-        remove(element: T): void;
+        remove(element: T): boolean;
         removeAt(index: number): void;
-        removeAll(func: (element: T) => boolean): void;
+        removeAll(predicate?: (element: T) => boolean): number;
         clear(): void;
     }
 }
@@ -67,28 +67,33 @@ declare module MiracleDevs.Angular.Core {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Core {
-    interface IDictionary<TKey, TValue> {
-        getKeys(): ArrayList<TKey>;
-        getValues(): ArrayList<TValue>;
-        add(key: TKey, value: TValue): any;
-        remove(key: TKey): any;
-        get(key: TKey): any;
-        containsKey(key: TKey): any;
-    }
-    interface IKeyValuePair<TKey, TValue> {
-        key: TKey;
-        value: TValue;
-    }
-    class Dictionary<TKey, TValue> implements IDictionary<TKey, TValue> {
-        private dictionary;
-        constructor(init?: Array<IKeyValuePair<TKey, TValue>>);
-        getKeys(): ArrayList<TKey>;
-        getValues(): ArrayList<TValue>;
-        add(key: TKey, value: TValue): void;
-        remove(key: TKey): void;
-        removeAll(func: (element: IKeyValuePair<TKey, TValue>) => boolean): void;
-        get(key: TKey): TValue;
+    class Dictionary<TKey, TValue> implements IEnumerable<IKeyValuePair<TKey, TValue>> {
+        protected innerArray: Array<IKeyValuePair<TKey, TValue>>;
+        constructor(array?: Array<IKeyValuePair<TKey, TValue>>);
+        getValues(): IEnumerable<TValue>;
+        getKeys(): IEnumerable<TKey>;
         containsKey(key: TKey): boolean;
+        forEach(action: (element: IKeyValuePair<TKey, TValue>) => void): void;
+        where(predicate: (element: IKeyValuePair<TKey, TValue>) => boolean): IEnumerable<IKeyValuePair<TKey, TValue>>;
+        select<TR>(predicate: (element: IKeyValuePair<TKey, TValue>) => TR): IEnumerable<TR>;
+        firstOrDefault(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): IKeyValuePair<TKey, TValue>;
+        lastOrDefault(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): IKeyValuePair<TKey, TValue>;
+        first(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): IKeyValuePair<TKey, TValue>;
+        last(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): IKeyValuePair<TKey, TValue>;
+        any(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): boolean;
+        count(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): number;
+        sum<TI>(predicate: (element: IKeyValuePair<TKey, TValue>) => TI): TI;
+        orderBy<TR>(predicate: (element: IKeyValuePair<TKey, TValue>) => TR): Dictionary<TKey, TValue>;
+        orderByDesc<TR>(predicate: (element: IKeyValuePair<TKey, TValue>) => TR): Dictionary<TKey, TValue>;
+        getInnerArray(): Array<IKeyValuePair<TKey, TValue>>;
+        get(key: TKey): TValue;
+        keyOf(value: TValue): TKey;
+        add(key: TKey, value: TValue): void;
+        addRange(value: Array<IKeyValuePair<TKey, TValue>>): void;
+        addRange(value: IEnumerable<IKeyValuePair<TKey, TValue>>): void;
+        pop(): IKeyValuePair<TKey, TValue>;
+        remove(key: TKey): void;
+        removeAll(predicate?: (element: IKeyValuePair<TKey, TValue>) => boolean): number;
         clear(): void;
     }
 }
@@ -417,7 +422,7 @@ declare module MiracleDevs.Angular.Controllers {
     import IHttpPromise = angular.IHttpPromise;
     import IPromise = angular.IPromise;
     import IModalInstance = Services.IModalInstance;
-    class ControllerBase {
+    abstract class ControllerBase {
         protected scope: IScope;
         protected injector: IInjectorService;
         protected alertService: IAlertService;
@@ -428,8 +433,8 @@ declare module MiracleDevs.Angular.Controllers {
         protected dispose(): void;
         protected getService<T>(service: string): T;
         protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
-        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (error: Error) => void): void;
-        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: Error) => void, showLoading?: boolean): void;
+        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
+        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
         protected showErrors(messages: string[]): void;
         protected showWarnings(messages: string[]): void;
         protected showError(message: string): void;
@@ -441,11 +446,9 @@ declare module MiracleDevs.Angular.Controllers {
         protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
     }
 }
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
+interface DateConstructor {
+    fromIso8601(value: string): Date;
+}
 interface Date {
     fromIso8601(value: string): void;
 }
@@ -475,6 +478,27 @@ declare module MiracleDevs.Angular.Core {
         static new(): Guid;
     }
 }
+declare module MiracleDevs.Angular.Core {
+    interface IKeyValuePair<TKey, TValue> {
+        key: TKey;
+        value: TValue;
+    }
+    interface IEnumerable<TElement> {
+        forEach(action: (element: TElement) => void): void;
+        where(predicate: (element: TElement) => boolean): IEnumerable<TElement>;
+        select<TR>(predicate: (element: TElement) => TR): IEnumerable<TR>;
+        firstOrDefault(predicate?: (element: TElement) => boolean): TElement;
+        lastOrDefault(predicate?: (element: TElement) => boolean): TElement;
+        first(predicate?: (element: TElement) => boolean): TElement;
+        last(predicate?: (element: TElement) => boolean): TElement;
+        any(predicate?: (element: TElement) => boolean): boolean;
+        count(predicate?: (element: TElement) => boolean): number;
+        sum<TI>(predicate?: (element: TElement) => TI): TI;
+        orderBy<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
+        orderByDesc<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
+        getInnerArray(): Array<TElement>;
+    }
+}
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -491,6 +515,7 @@ declare module MiracleDevs.Angular.Core {
         static getBoolean(name: string): Boolean;
         static getDate(name: string): Date;
         static remove(name: string): void;
+        static getAllContent(): Dictionary<string, string>;
         static clear(): void;
     }
 }
@@ -524,85 +549,6 @@ interface StringConstructor {
     format(format: string, ...args: any[]): string;
     formatArray(format: string, arguments: any[]): string;
     empty: string;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class AngularFilters {
-        static readonly currency: string;
-        static readonly number: string;
-        static readonly date: string;
-        static readonly json: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-        static readonly limitTo: string;
-        static readonly orderBy: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class FrameworkFilters {
-        static readonly reverse: string;
-        static readonly trim: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class LowercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class ReverseFilter {
-        static register: FilterRegister;
-        static factory(): (items: any[]) => any[];
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class TrimFilter {
-        static register: FilterRegister;
-        private static trim(value, maxChars);
-        static factory(): (value: string, maxChars: number) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class UppercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -1229,6 +1175,85 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Filters {
+    class AngularFilters {
+        static readonly currency: string;
+        static readonly number: string;
+        static readonly date: string;
+        static readonly json: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+        static readonly limitTo: string;
+        static readonly orderBy: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class FrameworkFilters {
+        static readonly reverse: string;
+        static readonly trim: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class LowercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class ReverseFilter {
+        static register: FilterRegister;
+        static factory(): (items: any[]) => any[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class TrimFilter {
+        static register: FilterRegister;
+        private static trim(value, maxChars);
+        static factory(): (value: string, maxChars: number) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class UppercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interceptors {
     import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
     import IPromise = angular.IPromise;
@@ -1678,7 +1703,7 @@ declare module MiracleDevs.Angular.Controllers.Dialogs {
     import IInjectorService = angular.auto.IInjectorService;
     import IModalInstance = Services.IModalInstance;
     import IScope = angular.IScope;
-    class DialogControllerBase extends ControllerBase {
+    abstract class DialogControllerBase extends ControllerBase {
         protected modalInstance: IModalInstance;
         constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
         cancel(): void;
