@@ -7,11 +7,12 @@
 
         reporters: ["spec"],
 
-        browsers: ["Chrome", "Firefox", "IE"],
+        browsers: ["Chrome", "Firefox", "IE", "PhantomJS"],
 
         plugins: [
             "karma-spec-reporter",
             "karma-jasmine",
+            "karma-phantomjs-launcher",
             "karma-chrome-launcher",
             "karma-firefox-launcher",
             "karma-ie-launcher"
