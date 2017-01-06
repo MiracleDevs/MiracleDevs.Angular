@@ -85,7 +85,7 @@ gulp.task(serverTask, function () {
 gulp.task(singleRunServerTask, function () {
     return gulp
       .src(testDependencies, { "read": false })
-      .pipe(karma.server({ configFile: testConfig, singleRun: true }))
+      .pipe(karma.server({ configFile: testConfig, singleRun: true, browsers: ["PhantomJS"] }))
       .on("error", function (err) {
           util.log("ERROR RUNNING TESTS: " + err);
           this.emit("end");
