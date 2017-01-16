@@ -33,6 +33,9 @@ module MiracleDevs.Angular.Services
 
         getParsedUrl(url: string): string
         {        
+            if (!String.isString(url))
+                return url;
+
             if (String.isNullOrEmpty(url))
                 return url;
 

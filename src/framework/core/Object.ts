@@ -99,13 +99,13 @@ Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
 
                 for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++)
                 {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex]))
+                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex], ignore))
                         return false;
                 }
             }
             else
             {
-                if (!Object.isEqualTo(sourceValue, otherValue))
+                if (!Object.isEqualTo(sourceValue, otherValue, ignore))
                     return false;
             }
         }

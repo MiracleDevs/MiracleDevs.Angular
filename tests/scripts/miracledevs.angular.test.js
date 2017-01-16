@@ -881,6 +881,9 @@ describe("Date", function () {
     it("should be able to parse iso string with positive timezone", function () { return expect(function () { return Date.fromIso8601("2012-10-10T12:00:00+300"); }).not.toThrow(); });
     it("should be able to parse iso string with negative timezone", function () { return expect(function () { return Date.fromIso8601("2012-10-10T12:00:00-300"); }).not.toThrow(); });
     it("should be able to parse iso string without timezone", function () { return expect(function () { return Date.fromIso8601("2012-10-10T12:00:00"); }).not.toThrow(); });
+    it("should be able to parse iso string with one month char", function () { return expect(function () { return Date.fromIso8601("2012-1-10"); }).not.toThrow(); });
+    it("should be able to parse iso string with one day char", function () { return expect(function () { return Date.fromIso8601("2012-01-1"); }).not.toThrow(); });
+    it("should be able to parse iso string with two year chars", function () { return expect(function () { return Date.fromIso8601("12-1-10"); }).not.toThrow(); });
     it("shouldnt parse wrong formatted strings", function () { return expect(function () { return Date.fromIso8601("hello world"); }).toThrow(wrongDateError); });
 });
 /*!
@@ -1348,6 +1351,8 @@ describe("Object", function () {
         it("should be false for two equal complex objects whith different values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 1" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 2" } })).toBe(false); });
         it("should be false for two equal complex objects whith different child values", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
         it("should be false for two equal complex objects whith different childs", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false); });
+        it("should ignore properties", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } }, ["childs"])).toBe(true); });
+        it("should ignore child properties", function () { return expect(Object.isEqualTo({ name: "object", childs: [{ name: "child1" }, { name: "child2", id: 1 }], parent: { name: "parent" } }, { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 2 }], parent: { name: "parent" } }, ["id"])).toBe(true); });
     });
     describe("clone object", function () {
         it("should clone numbers", function () { return expect(Object.clone(1)).toBe(1); });

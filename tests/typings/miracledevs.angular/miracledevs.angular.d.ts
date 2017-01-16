@@ -1175,6 +1175,30 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Interceptors {
+    import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
+    import IPromise = angular.IPromise;
+    import IRequestConfig = angular.IRequestConfig;
+    import IHttpInterceptor = angular.IHttpInterceptor;
+    import IqService = angular.IQService;
+    class InterceptorBase implements IHttpInterceptor {
+        request: (config: IRequestConfig) => IRequestConfig;
+        response: (response: IHttpPromiseCallbackArg<any>) => IPromise<any>;
+        requestError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
+        responseError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
+        protected q: IqService;
+        constructor(q: IqService);
+        onRequest(config: IRequestConfig): IRequestConfig;
+        onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
+        onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
+        onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     class AngularFilters {
         static readonly currency: string;
@@ -1247,30 +1271,6 @@ declare module MiracleDevs.Angular.Filters {
     class UppercaseFilter {
         static register: FilterRegister;
         static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Interceptors {
-    import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
-    import IPromise = angular.IPromise;
-    import IRequestConfig = angular.IRequestConfig;
-    import IHttpInterceptor = angular.IHttpInterceptor;
-    import IqService = angular.IQService;
-    class InterceptorBase implements IHttpInterceptor {
-        request: (config: IRequestConfig) => IRequestConfig;
-        response: (response: IHttpPromiseCallbackArg<any>) => IPromise<any>;
-        requestError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
-        responseError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
-        protected q: IqService;
-        constructor(q: IqService);
-        onRequest(config: IRequestConfig): IRequestConfig;
-        onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
-        onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
-        onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
     }
 }
 /*!

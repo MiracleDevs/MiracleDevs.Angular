@@ -515,12 +515,12 @@ Object.isEqualTo = function (source, other, ignore) {
                 if (sourceValue.length !== otherValue.length)
                     return false;
                 for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++) {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex]))
+                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex], ignore))
                         return false;
                 }
             }
             else {
-                if (!Object.isEqualTo(sourceValue, otherValue))
+                if (!Object.isEqualTo(sourceValue, otherValue, ignore))
                     return false;
             }
         }
@@ -1303,7 +1303,7 @@ var MiracleDevs;
             FrameworkModule.prototype.authorizeRoute = function (rootScope, state, injector) {
             };
             FrameworkModule.prototype.getModuleDependencies = function () {
-                return ["ui.router", "ngAnimate", "pascalprecht.translate", "ngPatternRestrict", "ui.select", "ngSanitize"];
+                return ["ui.router", "ngAnimate", "pascalprecht.translate"];
             };
             FrameworkModule.internalInstance = new FrameworkModule();
             return FrameworkModule;
@@ -1448,7 +1448,7 @@ Date.fromIso8601 = function (value) {
 };
 Date.prototype.fromIso8601 = function (value) {
     try {
-        var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+        var regexp = "([0-9]{2,4})(-([0-9]{1,2})(-([0-9]{1,2})" +
             "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
             "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
         var d = value.match(new RegExp(regexp));
@@ -2931,6 +2931,11 @@ var MiracleDevs;
                             this.checkSize(options, element);
                         }
                     }
+                    else {
+                        if (!Object.isNull(options.resize) && options.resize) {
+                            this.checkSize(options, element);
+                        }
+                    }
                 };
                 CommentArea.prototype.checkSize = function (options, element) {
                     var control = element[0];
@@ -3268,6 +3273,106 @@ var MiracleDevs;
             // Register directive
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerDirective(FocusInvalidField.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var FocusWhen = (function (_super) {
+                __extends(FocusWhen, _super);
+                function FocusWhen(timeout) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.timeout = timeout;
+                }
+                FocusWhen.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var control = $(instanceElement);
+                    var focusDelay = 100;
+                    if (instanceAttributes["focus-delay"])
+                        focusDelay = parseInt(instanceAttributes["focus-delay"]);
+                    scope.$watch(function () { return instanceAttributes[FocusWhen.register.name]; }, function (value) {
+                        try {
+                            var model = scope.$eval(value);
+                            if (model) {
+                                _this.timeout(function () { return control.focus(); }, focusDelay);
+                            }
+                        }
+                        catch (e) {
+                        }
+                    });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FocusWhen.factory = function (timeout) {
+                    return new FocusWhen(timeout);
+                };
+                FocusWhen.register = {
+                    name: "focusWhen",
+                    factory: FocusWhen.factory,
+                    dependencies: [AngularServices.timeout]
+                };
+                return FocusWhen;
+            }(Directives.DirectiveBase));
+            Directives.FocusWhen = FocusWhen;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FocusWhen.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FullSelect = (function (_super) {
+                __extends(FullSelect, _super);
+                function FullSelect() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                FullSelect.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    control.on("focus", function () { return instanceElement.select(); });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FullSelect.factory = function () {
+                    return new FullSelect();
+                };
+                FullSelect.register = {
+                    name: "fullSelect",
+                    factory: FullSelect.factory
+                };
+                return FullSelect;
+            }(Directives.DirectiveBase));
+            Directives.FullSelect = FullSelect;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FullSelect.register);
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
@@ -5326,6 +5431,8 @@ var MiracleDevs;
                     this.sce = sce;
                 }
                 UrlService.prototype.getParsedUrl = function (url) {
+                    if (!String.isString(url))
+                        return url;
                     if (String.isNullOrEmpty(url))
                         return url;
                     if (url.indexOf("http://") < 0 && url.indexOf("https://") < 0)

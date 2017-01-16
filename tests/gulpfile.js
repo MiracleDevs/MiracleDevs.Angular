@@ -103,7 +103,7 @@ gulp.task(runTestTask, function () {
       });
 });
 
-gulp.task(testTask, [singleRunServerTask, runTestTask]);
+gulp.task(testTask, [compileTask, singleRunServerTask, runTestTask]);
 
 gulp.task(watchCodeTask, function () {
     return gulp.watch([fixturesFolder + allFiles], [compileTask]).on("change", function (e) { util.log(e.path + " has been changed."); });

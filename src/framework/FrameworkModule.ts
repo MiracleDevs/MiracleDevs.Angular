@@ -54,7 +54,7 @@ module MiracleDevs.Angular
 
         protected getModuleDependencies()
         {
-            return ["ui.router", "ngAnimate", "pascalprecht.translate", "ngPatternRestrict", "ui.select", "ngSanitize"];
+            return ["ui.router", "ngAnimate", "pascalprecht.translate" ];
         }
     }
 }

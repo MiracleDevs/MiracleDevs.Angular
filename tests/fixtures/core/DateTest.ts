@@ -16,5 +16,11 @@ describe("Date", () =>
 
     it("should be able to parse iso string without timezone", () => expect(() => Date.fromIso8601("2012-10-10T12:00:00")).not.toThrow());
 
+    it("should be able to parse iso string with one month char", () => expect(() => Date.fromIso8601("2012-1-10")).not.toThrow());
+
+    it("should be able to parse iso string with one day char", () => expect(() => Date.fromIso8601("2012-01-1")).not.toThrow());
+    
+    it("should be able to parse iso string with two year chars", () => expect(() => Date.fromIso8601("12-1-10")).not.toThrow());
+
     it("shouldnt parse wrong formatted strings", () => expect(() => Date.fromIso8601("hello world")).toThrow(wrongDateError));
 });

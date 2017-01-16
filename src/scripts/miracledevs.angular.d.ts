@@ -794,6 +794,45 @@ declare module MiracleDevs.Angular.Directives {
     import IAttributes = angular.IAttributes;
     import ITranscludeFunction = angular.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import ITimeoutService = angular.ITimeoutService;
+    class FocusWhen extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private timeout;
+        constructor(timeout: ITimeoutService);
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(timeout: ITimeoutService): FocusWhen;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = angular.IScope;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    class FullSelect extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(): FullSelect;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = angular.IScope;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import IInterpolateService = angular.IInterpolateService;
     class HorizontalScroller extends DirectiveBase {
         static register: IDirectiveRegister;

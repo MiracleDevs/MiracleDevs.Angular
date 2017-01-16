@@ -123,6 +123,13 @@ module MiracleDevs.Angular.Directives
                     this.checkSize(options, element);
                 }
             }
+            else
+            {
+                if (!Object.isNull(options.resize) && options.resize)
+                {
+                    this.checkSize(options, element);
+                }                
+            }
         }
 
         private checkSize(options: ICommentAreaParameters, element: JQuery): void

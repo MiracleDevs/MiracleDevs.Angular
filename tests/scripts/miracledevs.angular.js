@@ -515,12 +515,12 @@ Object.isEqualTo = function (source, other, ignore) {
                 if (sourceValue.length !== otherValue.length)
                     return false;
                 for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++) {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex]))
+                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex], ignore))
                         return false;
                 }
             }
             else {
-                if (!Object.isEqualTo(sourceValue, otherValue))
+                if (!Object.isEqualTo(sourceValue, otherValue, ignore))
                     return false;
             }
         }
@@ -1303,7 +1303,7 @@ var MiracleDevs;
             FrameworkModule.prototype.authorizeRoute = function (rootScope, state, injector) {
             };
             FrameworkModule.prototype.getModuleDependencies = function () {
-                return ["ui.router", "ngAnimate", "pascalprecht.translate", "ngPatternRestrict", "ui.select", "ngSanitize"];
+                return ["ui.router", "ngAnimate", "pascalprecht.translate"];
             };
             FrameworkModule.internalInstance = new FrameworkModule();
             return FrameworkModule;
@@ -1448,7 +1448,7 @@ Date.fromIso8601 = function (value) {
 };
 Date.prototype.fromIso8601 = function (value) {
     try {
-        var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+        var regexp = "([0-9]{2,4})(-([0-9]{1,2})(-([0-9]{1,2})" +
             "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
             "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
         var d = value.match(new RegExp(regexp));
@@ -2931,6 +2931,11 @@ var MiracleDevs;
                             this.checkSize(options, element);
                         }
                     }
+                    else {
+                        if (!Object.isNull(options.resize) && options.resize) {
+                            this.checkSize(options, element);
+                        }
+                    }
                 };
                 CommentArea.prototype.checkSize = function (options, element) {
                     var control = element[0];
@@ -4174,6 +4179,45 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Interceptors;
+        (function (Interceptors) {
+            var InterceptorBase = (function () {
+                function InterceptorBase(q) {
+                    var _this = this;
+                    this.q = q;
+                    this.request = function (c) { return _this.onRequest(c); };
+                    this.response = function (r) { return _this.onResponse(r); };
+                    this.requestError = function (r) { return _this.onRequestError(r); };
+                    this.responseError = function (r) { return _this.onResponseError(r); };
+                }
+                InterceptorBase.prototype.onRequest = function (config) {
+                    return config;
+                };
+                InterceptorBase.prototype.onResponse = function (response) {
+                    return this.q.resolve(response);
+                };
+                InterceptorBase.prototype.onRequestError = function (rejection) {
+                    return this.q.reject(rejection);
+                };
+                InterceptorBase.prototype.onResponseError = function (rejection) {
+                    return this.q.reject(rejection);
+                };
+                return InterceptorBase;
+            }());
+            Interceptors.InterceptorBase = InterceptorBase;
+        })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -4402,45 +4446,6 @@ var MiracleDevs;
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
         })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Interceptors;
-        (function (Interceptors) {
-            var InterceptorBase = (function () {
-                function InterceptorBase(q) {
-                    var _this = this;
-                    this.q = q;
-                    this.request = function (c) { return _this.onRequest(c); };
-                    this.response = function (r) { return _this.onResponse(r); };
-                    this.requestError = function (r) { return _this.onRequestError(r); };
-                    this.responseError = function (r) { return _this.onResponseError(r); };
-                }
-                InterceptorBase.prototype.onRequest = function (config) {
-                    return config;
-                };
-                InterceptorBase.prototype.onResponse = function (response) {
-                    return this.q.resolve(response);
-                };
-                InterceptorBase.prototype.onRequestError = function (rejection) {
-                    return this.q.reject(rejection);
-                };
-                InterceptorBase.prototype.onResponseError = function (rejection) {
-                    return this.q.reject(rejection);
-                };
-                return InterceptorBase;
-            }());
-            Interceptors.InterceptorBase = InterceptorBase;
-        })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

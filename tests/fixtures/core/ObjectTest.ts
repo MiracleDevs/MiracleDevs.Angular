@@ -135,6 +135,18 @@ describe("Object", () =>
                 { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
                 { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } })).toBe(false));
 
+
+        it("should ignore properties",
+            () => expect(Object.isEqualTo(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } }, [ "childs" ])).toBe(true));
+
+        it("should ignore child properties",
+            () => expect(Object.isEqualTo(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 1 }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 2 }], parent: { name: "parent" } }, ["id"])).toBe(true));
+
+
     });
 
     describe("clone object", () =>
