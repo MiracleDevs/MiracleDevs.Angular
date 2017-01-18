@@ -139,14 +139,173 @@ describe("Object", () =>
         it("should ignore properties",
             () => expect(Object.isEqualTo(
                 { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
-                { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } }, [ "childs" ])).toBe(true));
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } }, ["childs"])).toBe(true));
 
         it("should ignore child properties",
             () => expect(Object.isEqualTo(
                 { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 1 }], parent: { name: "parent" } },
                 { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 2 }], parent: { name: "parent" } }, ["id"])).toBe(true));
+        
+        
+        it("should ignore object type",
+            () =>
+            {
+                var original = new PersonTest();
+                
+                original.name = "John";
+                original.lastName = "Smith";
+                original.age = 39;
+                original.isAlive = true;
+                original.children = [ new PersonTest() ];
+                
+                var copy = Object.clone(original);
+
+                expect(Object.isEqualTo(original, copy, null, false)).toBe(true);
+            });
+
+        it("should take object type in account",
+            () =>
+            {
+                var original = new PersonTest();
+
+                original.name = "John";
+                original.lastName = "Smith";
+                original.age = 39;
+                original.isAlive = true;
+                original.children = [new PersonTest()];
+
+                var copy = Object.clone(original);
+
+                expect(Object.isEqualTo(original, copy)).toBe(false);
+            });
+    });
+
+    describe("object get difference", () =>
+    {
+        it("should be null for two nulls", () => expect(Object.getDifference(null, null)).toBeNull());
+        it("should be null for two undefined", () => expect(Object.getDifference(undefined, undefined)).toBeNull());
+        it("should be null for null and undefined", () => expect(Object.getDifference(null, undefined)).toBeNull());
+        it("should get difference for null and any not null", () => expect(Object.getDifference(null, 1)).toBe("null object"));
+        it("should get difference for undefined and any not null", () => expect(Object.getDifference(undefined, 1)).toBe("null object"));
+
+        it("should be null for two equal numbers", () => expect(Object.getDifference(1, 1)).toBeNull());
+        it("should get difference for two different numbers", () => expect(Object.getDifference(1, 2)).toBe("different value"));
+        it("should get difference for a number and a bool", () => expect(Object.getDifference(1, true)).toBe("different type"));
+        it("should get difference for a number and a string", () => expect(Object.getDifference(1, "1")).toBe("different type"));
+
+        it("should be null for two equal strings", () => expect(Object.getDifference("hello", "hello")).toBeNull());
+        it("should get difference for two different strings", () => expect(Object.getDifference("hello", "world")).toBe("different value"));
+        it("should get difference for a string and a bool", () => expect(Object.getDifference("true", true)).toBe("different type"));
+
+        it("should be null for two equal booleans", () => expect(Object.getDifference(true, true)).toBeNull());
+        it("should get difference for two different booleans", () => expect(Object.getDifference(true, false)).toBe("different value"));
+
+        it("should be null for two equal dates", () => expect(Object.getDifference(new Date(2012, 12, 12, 12, 12, 12), new Date(2012, 12, 12, 12, 12, 12))).toBeNull());
+        it("should get difference for two different dates", () => expect(Object.getDifference(new Date(2014, 12, 12), new Date(2012, 12, 12))).toBe("different value"));
+
+        it("should be null for two equal objects",
+            () => expect(Object.getDifference(
+                { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) },
+                { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) })).toBeNull());
+
+        it("should get difference for two equal objects with different numbers",
+            () => expect(Object.getDifference(
+                { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) },
+                { number: 2, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe("different value in number"));
+
+        it("should get difference for two equal objects with different strings",
+            () => expect(Object.getDifference(
+                { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) },
+                { number: 1, text: "world", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe("different value in text"));
+
+        it("should get difference for two equal objects with different booleans",
+            () => expect(Object.getDifference(
+                { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) },
+                { number: 1, text: "hello", bool: false, date: new Date(2012, 12, 12, 12, 12, 12) })).toBe("different value in bool"));
+
+        it("should get difference for two equal objects with different dates",
+            () => expect(Object.getDifference(
+                { number: 1, text: "hello", bool: true, date: new Date(2012, 12, 12, 12, 12, 12) },
+                { number: 1, text: "hello", bool: true, date: new Date(2014, 12, 12, 12, 12, 12) })).toBe("different value in date"));
+
+        it("should be null for two equal arrays",
+            () => expect(Object.getDifference(
+                [1, 2, 3, 4, 5],
+                [1, 2, 3, 4, 5])).toBeNull());
+
+        it("should get difference for two equal arrays with different values",
+            () => expect(Object.getDifference(
+                [1, 2, 3, 4, 5],
+                [1, 2, 3, 4, 4])).toBe("different value for 5th element"));
+
+        it("should get difference for two equal arrays with different length",
+            () => expect(Object.getDifference(
+                [1, 2, 3, 4, 5],
+                [1, 2, 3, 4])).toBe("different lengths"));
+
+        it("should be null for two equal complex objects",
+            () => expect(Object.getDifference(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } })).toBeNull());
+
+        it("should get difference for two equal complex objects whith different values",
+            () => expect(Object.getDifference(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 1" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent 2" } })).toBe("different value in name in parent"));
+
+        it("should get difference for two equal complex objects whith different child values",
+            () => expect(Object.getDifference(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child3" }], parent: { name: "parent" } })).toBe("different value in name for 2th element in childs"));
+
+        it("should get difference for two equal complex objects whith different childs",
+            () => expect(Object.getDifference(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } })).toBe("different lengths in childs"));
 
 
+        it("should ignore properties",
+            () => expect(Object.getDifference(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2" }, { name: "child3" }], parent: { name: "parent" } }, ["childs"])).toBeNull());
+
+        it("should ignore child properties",
+            () => expect(Object.getDifference(
+                { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 1 }], parent: { name: "parent" } },
+                { name: "object", childs: [{ name: "child1" }, { name: "child2", id: 2 }], parent: { name: "parent" } }, ["id"])).toBeNull());
+
+
+        it("should ignore object type",
+            () =>
+            {
+                var original = new PersonTest();
+
+                original.name = "John";
+                original.lastName = "Smith";
+                original.age = 39;
+                original.isAlive = true;
+                original.children = [new PersonTest()];
+
+                var copy = Object.clone(original);
+
+                expect(Object.getDifference(original, copy, null, false)).toBeNull();
+            });
+
+        it("should take object type in account",
+            () =>
+            {
+                var original = new PersonTest();
+
+                original.name = "John";
+                original.lastName = "Smith";
+                original.age = 39;
+                original.isAlive = true;
+                original.children = [new PersonTest()];
+
+                var copy = Object.clone(original);
+
+                expect(Object.getDifference(original, copy)).toBe("different type");
+            });
     });
 
     describe("clone object", () =>

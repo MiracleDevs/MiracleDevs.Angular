@@ -131,7 +131,8 @@ interface Function {
  */
 interface ObjectConstructor {
     getTypeName(obj: any): string;
-    isEqualTo(source: any, other: any, ignore?: Array<string>): boolean;
+    isEqualTo(source: any, other: any, ignore?: Array<string>, checkObjectType?: boolean): boolean;
+    getDifference(source: any, other: any, ignore?: Array<string>, checkObjectType?: boolean): string;
     clone(object: any, ignore?: Array<string>): any;
     extendInstance<T>(object: any, classType: {
         new (): T;
@@ -549,85 +550,6 @@ interface StringConstructor {
     format(format: string, ...args: any[]): string;
     formatArray(format: string, arguments: any[]): string;
     empty: string;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class AngularFilters {
-        static readonly currency: string;
-        static readonly number: string;
-        static readonly date: string;
-        static readonly json: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-        static readonly limitTo: string;
-        static readonly orderBy: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class FrameworkFilters {
-        static readonly reverse: string;
-        static readonly trim: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class LowercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class ReverseFilter {
-        static register: FilterRegister;
-        static factory(): (items: any[]) => any[];
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class TrimFilter {
-        static register: FilterRegister;
-        private static trim(value, maxChars);
-        static factory(): (value: string, maxChars: number) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class UppercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -1286,6 +1208,85 @@ declare module MiracleDevs.Angular.Directives {
         updateAnimation: "fade" | "rotate" | "scale";
         viewportAware: boolean;
         zIndex: number;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class AngularFilters {
+        static readonly currency: string;
+        static readonly number: string;
+        static readonly date: string;
+        static readonly json: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+        static readonly limitTo: string;
+        static readonly orderBy: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class FrameworkFilters {
+        static readonly reverse: string;
+        static readonly trim: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class LowercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class ReverseFilter {
+        static register: FilterRegister;
+        static factory(): (items: any[]) => any[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class TrimFilter {
+        static register: FilterRegister;
+        private static trim(value, maxChars);
+        static factory(): (value: string, maxChars: number) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class UppercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
     }
 }
 /*!

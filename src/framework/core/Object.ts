@@ -7,7 +7,10 @@
 interface ObjectConstructor
 {
     getTypeName(obj: any): string;
-    isEqualTo(source: any, other: any, ignore?: Array<string>): boolean;
+
+    isEqualTo(source: any, other: any, ignore?: Array<string>, checkObjectType?: boolean): boolean;
+    getDifference(source: any, other: any, ignore?: Array<string>, checkObjectType?: boolean): string;
+
     clone(object: any, ignore?: Array<string>): any;
     extendInstance<T>(object: any, classType: { new (): T }): T;
     isNull(obj: any): boolean;
@@ -24,7 +27,7 @@ Object.getTypeName = (obj: any) =>
 };
 
 
-Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
+Object.isEqualTo = (source: any, other: any, ignore: Array<string> = null, checkObjectType: boolean = true): boolean =>
 {
     if (Object.isNull(source) && Object.isNull(other))
         return true;
@@ -33,10 +36,7 @@ Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
         (Object.isNull(source) && !Object.isNull(other)))
         return false;
 
-    if (other == null)
-        return false;
-
-    if (Object.getTypeName(source) !== Object.getTypeName(other))
+    if (checkObjectType && Object.getTypeName(source) !== Object.getTypeName(other))
         return false;
 
     if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
@@ -51,68 +51,123 @@ Object.isEqualTo = (source: any, other: any, ignore?: Array<string>): boolean =>
         return source.getTime() === other.getTime();
     }
 
-    var sourceKeys = Object.keys(source);
-    var otherKeys = Object.keys(other);
-
-    for (var index in sourceKeys)
+    if (source instanceof Array && other instanceof Array)
     {
-        if (sourceKeys.hasOwnProperty(index))
+        if (source.length !== other.length)
+            return false;
+
+        for (let arrayIndex = 0; arrayIndex < source.length; arrayIndex++)
         {
-            var key = sourceKeys[index];
-            var otherKey = otherKeys[index];
-
-
-            if (!source.hasOwnProperty(key))
-                continue;
-
-            if (!Object.isNull(ignore) && Array.contains(ignore, key))
-                continue;
-
-            if (key !== otherKey)
+            if (!Object.isEqualTo(source[arrayIndex], other[arrayIndex], ignore, checkObjectType))
             {
                 return false;
             }
+        }
+    }
+    else
+    {
+        const sourceKeys = Object.keys(source);
 
-            var sourceValue = source[key];
-            var otherValue = other[key];
-
-            if (sourceValue == null && otherValue == null)
-                continue;
-
-            if ((sourceValue == null && otherValue != null) ||
-                (sourceValue != null && otherValue == null))
-                return false;
-
-            if (((Object.getTypeName(sourceValue) === "Number" && Object.getTypeName(otherValue) === "Number") ||
-                (Object.getTypeName(sourceValue) === "String" && Object.getTypeName(otherValue) === "String") ||
-                (Object.getTypeName(sourceValue) === "Boolean" && Object.getTypeName(otherValue) === "Boolean")) &&
-                (sourceValue !== otherValue))
-                return false;
-
-            else if ((Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") && (source.getTime() !== other.getTime()))
-                return false;
-
-            else if (sourceValue instanceof Array && otherValue instanceof Array)
+        for (let index in sourceKeys)
+        {
+            if (sourceKeys.hasOwnProperty(index))
             {
-                if (sourceValue.length !== otherValue.length)
-                    return false;
+                const key = sourceKeys[index];
 
-                for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++)
+                if (!source.hasOwnProperty(key))
+                    continue;
+
+                if (!Object.isNull(ignore) && Array.contains(ignore, key))
+                    continue;
+
+                const sourceValue = source[key];
+                const otherValue = other[key];
+
+
+                if (!Object.isEqualTo(sourceValue, otherValue, ignore, checkObjectType))
                 {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex], ignore))
-                        return false;
-                }
-            }
-            else
-            {
-                if (!Object.isEqualTo(sourceValue, otherValue, ignore))
                     return false;
+                }
             }
         }
     }
 
     return true;
 };
+
+Object.getDifference = (source: any, other: any, ignore: Array<string> = null, checkObjectType: boolean = true): string =>
+{
+    var difference: string;
+
+    if (Object.isNull(source) && Object.isNull(other))
+        return null;
+
+    if ((!Object.isNull(source) && Object.isNull(other)) ||
+        (Object.isNull(source) && !Object.isNull(other)))
+        return "null object";
+
+    if (checkObjectType && Object.getTypeName(source) !== Object.getTypeName(other))
+        return "different type";
+
+    if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
+        (Object.getTypeName(source) === "String" && Object.getTypeName(other) === "String") ||
+        (Object.getTypeName(source) === "Boolean" && Object.getTypeName(other) === "Boolean"))
+    {
+        return source !== other ? "different value" : null;
+    }
+
+    if (Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date")
+    {
+        return source.getTime() !== other.getTime() ? "different value" : null;
+    }
+
+    if (source instanceof Array && other instanceof Array)
+    {
+        if (source.length !== other.length)
+            return "different lengths";
+
+        for (var arrayIndex = 0; arrayIndex < source.length; arrayIndex++)
+        {
+            difference = Object.getDifference(source[arrayIndex], other[arrayIndex], ignore, checkObjectType);
+
+            if (!String.isNullOrEmpty(difference))
+            {
+                return difference + " for " + (arrayIndex + 1) + "th element";
+            }
+        }
+    }
+    else
+    {
+        var sourceKeys = Object.keys(source);
+
+        for (var index in sourceKeys)
+        {
+            if (sourceKeys.hasOwnProperty(index))
+            {
+                var key = sourceKeys[index];
+
+                if (!source.hasOwnProperty(key))
+                    continue;
+
+                if (!Object.isNull(ignore) && Array.contains(ignore, key))
+                    continue;
+
+                var sourceValue = source[key];
+                var otherValue = other[key];
+
+                difference = Object.getDifference(sourceValue, otherValue, ignore, checkObjectType);
+
+                if (!String.isNullOrEmpty(difference))
+                {
+                    return difference + " in " + key;
+                }
+            }
+        }
+    }
+
+    return null;
+};
+
 
 Object.clone = (object: any, ignore?: Array<string>): any =>
 {

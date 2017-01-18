@@ -131,7 +131,7 @@ interface Function {
  */
 interface ObjectConstructor {
     getTypeName(obj: any): string;
-    isEqualTo(source: any, other: any, ignore?: Array<string>): boolean;
+    isEqualTo(source: any, other: any, ignore?: Array<string>, checkObjectType?: boolean): boolean;
     clone(object: any, ignore?: Array<string>): any;
     extendInstance<T>(object: any, classType: {
         new (): T;
@@ -446,189 +446,6 @@ declare module MiracleDevs.Angular.Controllers {
         protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
     }
 }
-interface DateConstructor {
-    fromIso8601(value: string): Date;
-}
-interface Date {
-    fromIso8601(value: string): void;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class FileMimeType {
-        private extensions;
-        constructor();
-        get(file: string): string;
-    }
-    var mimeType: FileMimeType;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class Guid {
-        value: string;
-        constructor(value: string);
-        private static s4();
-        static new(): Guid;
-    }
-}
-declare module MiracleDevs.Angular.Core {
-    interface IKeyValuePair<TKey, TValue> {
-        key: TKey;
-        value: TValue;
-    }
-    interface IEnumerable<TElement> {
-        forEach(action: (element: TElement) => void): void;
-        where(predicate: (element: TElement) => boolean): IEnumerable<TElement>;
-        select<TR>(predicate: (element: TElement) => TR): IEnumerable<TR>;
-        firstOrDefault(predicate?: (element: TElement) => boolean): TElement;
-        lastOrDefault(predicate?: (element: TElement) => boolean): TElement;
-        first(predicate?: (element: TElement) => boolean): TElement;
-        last(predicate?: (element: TElement) => boolean): TElement;
-        any(predicate?: (element: TElement) => boolean): boolean;
-        count(predicate?: (element: TElement) => boolean): number;
-        sum<TI>(predicate?: (element: TElement) => TI): TI;
-        orderBy<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
-        orderByDesc<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
-        getInnerArray(): Array<TElement>;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class LocalStorage {
-        static set<T>(name: string, value: T): void;
-        static get<T>(type: {
-            new (): T;
-        }, name: string): T;
-        static getInt(name: string): Number;
-        static getNumber(name: string): Number;
-        static getBoolean(name: string): Boolean;
-        static getDate(name: string): Date;
-        static remove(name: string): void;
-        static getAllContent(): Dictionary<string, string>;
-        static clear(): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class Md5 {
-        static computeHash(value: string): string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-interface NumberConstructor {
-    isNumber(value: any): boolean;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-interface StringConstructor {
-    isString(value: any): boolean;
-    isNullOrEmpty(value: string): boolean;
-    isNullOrWhiteSpace(value: string): boolean;
-    format(format: string, ...args: any[]): string;
-    formatArray(format: string, arguments: any[]): string;
-    empty: string;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class AngularFilters {
-        static readonly currency: string;
-        static readonly number: string;
-        static readonly date: string;
-        static readonly json: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-        static readonly limitTo: string;
-        static readonly orderBy: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class FrameworkFilters {
-        static readonly reverse: string;
-        static readonly trim: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class LowercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class ReverseFilter {
-        static register: FilterRegister;
-        static factory(): (items: any[]) => any[];
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class TrimFilter {
-        static register: FilterRegister;
-        private static trim(value, maxChars);
-        static factory(): (value: string, maxChars: number) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class UppercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -717,6 +534,19 @@ declare module MiracleDevs.Angular.Directives {
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
         static factory(): BackgroundImage;
     }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+interface StringConstructor {
+    isString(value: any): boolean;
+    isNullOrEmpty(value: string): boolean;
+    isNullOrWhiteSpace(value: string): boolean;
+    format(format: string, ...args: any[]): string;
+    formatArray(format: string, arguments: any[]): string;
+    empty: string;
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -1288,6 +1118,176 @@ declare module MiracleDevs.Angular.Directives {
         zIndex: number;
     }
 }
+interface DateConstructor {
+    fromIso8601(value: string): Date;
+}
+interface Date {
+    fromIso8601(value: string): void;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class FileMimeType {
+        private extensions;
+        constructor();
+        get(file: string): string;
+    }
+    var mimeType: FileMimeType;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class Guid {
+        value: string;
+        constructor(value: string);
+        private static s4();
+        static new(): Guid;
+    }
+}
+declare module MiracleDevs.Angular.Core {
+    interface IKeyValuePair<TKey, TValue> {
+        key: TKey;
+        value: TValue;
+    }
+    interface IEnumerable<TElement> {
+        forEach(action: (element: TElement) => void): void;
+        where(predicate: (element: TElement) => boolean): IEnumerable<TElement>;
+        select<TR>(predicate: (element: TElement) => TR): IEnumerable<TR>;
+        firstOrDefault(predicate?: (element: TElement) => boolean): TElement;
+        lastOrDefault(predicate?: (element: TElement) => boolean): TElement;
+        first(predicate?: (element: TElement) => boolean): TElement;
+        last(predicate?: (element: TElement) => boolean): TElement;
+        any(predicate?: (element: TElement) => boolean): boolean;
+        count(predicate?: (element: TElement) => boolean): number;
+        sum<TI>(predicate?: (element: TElement) => TI): TI;
+        orderBy<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
+        orderByDesc<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
+        getInnerArray(): Array<TElement>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class LocalStorage {
+        static set<T>(name: string, value: T): void;
+        static get<T>(type: {
+            new (): T;
+        }, name: string): T;
+        static getInt(name: string): Number;
+        static getNumber(name: string): Number;
+        static getBoolean(name: string): Boolean;
+        static getDate(name: string): Date;
+        static remove(name: string): void;
+        static getAllContent(): Dictionary<string, string>;
+        static clear(): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class Md5 {
+        static computeHash(value: string): string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+interface NumberConstructor {
+    isNumber(value: any): boolean;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class AngularFilters {
+        static readonly currency: string;
+        static readonly number: string;
+        static readonly date: string;
+        static readonly json: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+        static readonly limitTo: string;
+        static readonly orderBy: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class FrameworkFilters {
+        static readonly reverse: string;
+        static readonly trim: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class LowercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class ReverseFilter {
+        static register: FilterRegister;
+        static factory(): (items: any[]) => any[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class TrimFilter {
+        static register: FilterRegister;
+        private static trim(value, maxChars);
+        static factory(): (value: string, maxChars: number) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class UppercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -1324,6 +1324,18 @@ declare module MiracleDevs.Angular.Models {
         stopTracking(): void;
         isDirty(): boolean;
         isTracking(): boolean;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Session {
+    class ObjectSession {
+        static save<T>(name: string, data: T): void;
+        static restore<T>(name: string): T;
+        static clear(name: string): void;
     }
 }
 /*!
@@ -1719,18 +1731,6 @@ declare module MiracleDevs.Angular.Services {
         constructor(sce: ISCEService);
         getParsedUrl(url: string): string;
         static factory(sce: ISCEService): IUrlService;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Session {
-    class ObjectSession {
-        static save<T>(name: string, data: T): void;
-        static restore<T>(name: string): T;
-        static clear(name: string): void;
     }
 }
 /*!
