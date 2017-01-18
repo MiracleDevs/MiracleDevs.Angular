@@ -151,7 +151,7 @@ module MiracleDevs.Angular.Services
             code.css("z-index", zIndex);
             $(code[0].nextElementSibling).css("z-index", zIndex - 10);
 
-            $(code).on("hidden.bs.modal", () => this.removeModal(modalInstance, code));
+            $(code).on("hidden.bs.modal", () => this.close(modalInstance, "Cancelled"));
         }
 
         private removeModal(modalInstance: IModalInstance, modal: angular.IAugmentedJQuery)

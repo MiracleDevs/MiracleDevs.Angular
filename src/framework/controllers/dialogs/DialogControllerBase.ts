@@ -16,7 +16,7 @@ module MiracleDevs.Angular.Controllers.Dialogs
     {
         protected modalInstance: IModalInstance;
 
-        constructor(scope: IScope, modalInstance: IModalInstance,  injector: IInjectorService)
+        protected constructor(scope: IScope, modalInstance: IModalInstance,  injector: IInjectorService)
         {
             super(scope, injector);
 

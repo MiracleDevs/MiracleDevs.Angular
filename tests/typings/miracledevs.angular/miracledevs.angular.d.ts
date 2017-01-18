@@ -429,7 +429,7 @@ declare module MiracleDevs.Angular.Controllers {
         protected loadingService: ILoadingService;
         protected stateService: IStateService;
         protected logger: ILoggingService;
-        constructor(scope: IScope, injector: IInjectorService);
+        protected constructor(scope: IScope, injector: IInjectorService);
         protected dispose(): void;
         protected getService<T>(service: string): T;
         protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
@@ -549,6 +549,85 @@ interface StringConstructor {
     format(format: string, ...args: any[]): string;
     formatArray(format: string, arguments: any[]): string;
     empty: string;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class AngularFilters {
+        static readonly currency: string;
+        static readonly number: string;
+        static readonly date: string;
+        static readonly json: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+        static readonly limitTo: string;
+        static readonly orderBy: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class FrameworkFilters {
+        static readonly reverse: string;
+        static readonly trim: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class LowercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class ReverseFilter {
+        static register: FilterRegister;
+        static factory(): (items: any[]) => any[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class TrimFilter {
+        static register: FilterRegister;
+        private static trim(value, maxChars);
+        static factory(): (value: string, maxChars: number) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class UppercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -781,6 +860,45 @@ declare module MiracleDevs.Angular.Directives {
         restrict: string;
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
         static factory(): FocusInvalidField;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = angular.IScope;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import ITimeoutService = angular.ITimeoutService;
+    class FocusWhen extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private timeout;
+        constructor(timeout: ITimeoutService);
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(timeout: ITimeoutService): FocusWhen;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = angular.IScope;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    class FullSelect extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(): FullSelect;
     }
 }
 /*!
@@ -1192,85 +1310,6 @@ declare module MiracleDevs.Angular.Interceptors {
         onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
         onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
         onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class AngularFilters {
-        static readonly currency: string;
-        static readonly number: string;
-        static readonly date: string;
-        static readonly json: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-        static readonly limitTo: string;
-        static readonly orderBy: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class FrameworkFilters {
-        static readonly reverse: string;
-        static readonly trim: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class LowercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class ReverseFilter {
-        static register: FilterRegister;
-        static factory(): (items: any[]) => any[];
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class TrimFilter {
-        static register: FilterRegister;
-        private static trim(value, maxChars);
-        static factory(): (value: string, maxChars: number) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class UppercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
     }
 }
 /*!
@@ -1705,7 +1744,7 @@ declare module MiracleDevs.Angular.Controllers.Dialogs {
     import IScope = angular.IScope;
     abstract class DialogControllerBase extends ControllerBase {
         protected modalInstance: IModalInstance;
-        constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
+        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
         cancel(): void;
         protected close(result?: any): void;
     }

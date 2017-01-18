@@ -2630,6 +2630,241 @@ String.formatArray = function (format, args) {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var AngularFilters = (function () {
+                function AngularFilters() {
+                }
+                Object.defineProperty(AngularFilters, "currency", {
+                    get: function () { return "currency"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "number", {
+                    get: function () { return "number"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "date", {
+                    get: function () { return "date"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "json", {
+                    get: function () { return "json"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "limitTo", {
+                    get: function () { return "limitTo"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "orderBy", {
+                    get: function () { return "orderBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return AngularFilters;
+            }());
+            Filters.AngularFilters = AngularFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var FrameworkFilters = (function () {
+                function FrameworkFilters() {
+                }
+                Object.defineProperty(FrameworkFilters, "reverse", {
+                    get: function () { return "reverse"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "trim", {
+                    get: function () { return "trim"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return FrameworkFilters;
+            }());
+            Filters.FrameworkFilters = FrameworkFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var LowercaseFilter = (function () {
+                function LowercaseFilter() {
+                }
+                LowercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
+                };
+                LowercaseFilter.register = {
+                    name: Filters.FrameworkFilters.lowercase,
+                    factory: LowercaseFilter.factory
+                };
+                return LowercaseFilter;
+            }());
+            Filters.LowercaseFilter = LowercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var ReverseFilter = (function () {
+                function ReverseFilter() {
+                }
+                ReverseFilter.factory = function () {
+                    return function (items) { return items.slice().reverse(); };
+                };
+                ReverseFilter.register = {
+                    name: Filters.FrameworkFilters.reverse,
+                    factory: ReverseFilter.factory
+                };
+                return ReverseFilter;
+            }());
+            Filters.ReverseFilter = ReverseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var TrimFilter = (function () {
+                function TrimFilter() {
+                }
+                TrimFilter.trim = function (value, maxChars) {
+                    if (Object.isNull(value))
+                        return null;
+                    if (value.length < maxChars)
+                        return value;
+                    return value.substr(0, maxChars) + "...";
+                };
+                TrimFilter.factory = function () {
+                    return TrimFilter.trim;
+                };
+                TrimFilter.register = {
+                    name: Filters.FrameworkFilters.trim,
+                    factory: TrimFilter.factory
+                };
+                return TrimFilter;
+            }());
+            Filters.TrimFilter = TrimFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var UppercaseFilter = (function () {
+                function UppercaseFilter() {
+                }
+                UppercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
+                };
+                UppercaseFilter.register = {
+                    name: Filters.FrameworkFilters.uppercase,
+                    factory: UppercaseFilter.factory
+                };
+                return UppercaseFilter;
+            }());
+            Filters.UppercaseFilter = UppercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -3273,6 +3508,106 @@ var MiracleDevs;
             // Register directive
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerDirective(FocusInvalidField.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var FocusWhen = (function (_super) {
+                __extends(FocusWhen, _super);
+                function FocusWhen(timeout) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.timeout = timeout;
+                }
+                FocusWhen.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var control = $(instanceElement);
+                    var focusDelay = 100;
+                    if (instanceAttributes["focus-delay"])
+                        focusDelay = parseInt(instanceAttributes["focus-delay"]);
+                    scope.$watch(function () { return instanceAttributes[FocusWhen.register.name]; }, function (value) {
+                        try {
+                            var model = scope.$eval(value);
+                            if (model) {
+                                _this.timeout(function () { return control.focus(); }, focusDelay);
+                            }
+                        }
+                        catch (e) {
+                        }
+                    });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FocusWhen.factory = function (timeout) {
+                    return new FocusWhen(timeout);
+                };
+                FocusWhen.register = {
+                    name: "focusWhen",
+                    factory: FocusWhen.factory,
+                    dependencies: [AngularServices.timeout]
+                };
+                return FocusWhen;
+            }(Directives.DirectiveBase));
+            Directives.FocusWhen = FocusWhen;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FocusWhen.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FullSelect = (function (_super) {
+                __extends(FullSelect, _super);
+                function FullSelect() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                FullSelect.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    control.on("focus", function () { return instanceElement.select(); });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FullSelect.factory = function () {
+                    return new FullSelect();
+                };
+                FullSelect.register = {
+                    name: "fullSelect",
+                    factory: FullSelect.factory
+                };
+                return FullSelect;
+            }(Directives.DirectiveBase));
+            Directives.FullSelect = FullSelect;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FullSelect.register);
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
@@ -4222,241 +4557,6 @@ var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
     (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var AngularFilters = (function () {
-                function AngularFilters() {
-                }
-                Object.defineProperty(AngularFilters, "currency", {
-                    get: function () { return "currency"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "number", {
-                    get: function () { return "number"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "date", {
-                    get: function () { return "date"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "json", {
-                    get: function () { return "json"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "limitTo", {
-                    get: function () { return "limitTo"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "orderBy", {
-                    get: function () { return "orderBy"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return AngularFilters;
-            }());
-            Filters.AngularFilters = AngularFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var FrameworkFilters = (function () {
-                function FrameworkFilters() {
-                }
-                Object.defineProperty(FrameworkFilters, "reverse", {
-                    get: function () { return "reverse"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "trim", {
-                    get: function () { return "trim"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return FrameworkFilters;
-            }());
-            Filters.FrameworkFilters = FrameworkFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var LowercaseFilter = (function () {
-                function LowercaseFilter() {
-                }
-                LowercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
-                };
-                LowercaseFilter.register = {
-                    name: Filters.FrameworkFilters.lowercase,
-                    factory: LowercaseFilter.factory
-                };
-                return LowercaseFilter;
-            }());
-            Filters.LowercaseFilter = LowercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var ReverseFilter = (function () {
-                function ReverseFilter() {
-                }
-                ReverseFilter.factory = function () {
-                    return function (items) { return items.slice().reverse(); };
-                };
-                ReverseFilter.register = {
-                    name: Filters.FrameworkFilters.reverse,
-                    factory: ReverseFilter.factory
-                };
-                return ReverseFilter;
-            }());
-            Filters.ReverseFilter = ReverseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var TrimFilter = (function () {
-                function TrimFilter() {
-                }
-                TrimFilter.trim = function (value, maxChars) {
-                    if (Object.isNull(value))
-                        return null;
-                    if (value.length < maxChars)
-                        return value;
-                    return value.substr(0, maxChars) + "...";
-                };
-                TrimFilter.factory = function () {
-                    return TrimFilter.trim;
-                };
-                TrimFilter.register = {
-                    name: Filters.FrameworkFilters.trim,
-                    factory: TrimFilter.factory
-                };
-                return TrimFilter;
-            }());
-            Filters.TrimFilter = TrimFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var UppercaseFilter = (function () {
-                function UppercaseFilter() {
-                }
-                UppercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
-                };
-                UppercaseFilter.register = {
-                    name: Filters.FrameworkFilters.uppercase,
-                    factory: UppercaseFilter.factory
-                };
-                return UppercaseFilter;
-            }());
-            Filters.UppercaseFilter = UppercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
         var Models;
         (function (Models) {
             var ModelBase = (function () {
@@ -5262,7 +5362,7 @@ var MiracleDevs;
                     var zIndex = this.modals.getValues().count() * 1050;
                     code.css("z-index", zIndex);
                     $(code[0].nextElementSibling).css("z-index", zIndex - 10);
-                    $(code).on("hidden.bs.modal", function () { return _this.removeModal(modalInstance, code); });
+                    $(code).on("hidden.bs.modal", function () { return _this.close(modalInstance, "Cancelled"); });
                 };
                 ModalService.prototype.removeModal = function (modalInstance, modal) {
                     var scope = modal.scope();
@@ -5331,6 +5431,8 @@ var MiracleDevs;
                     this.sce = sce;
                 }
                 UrlService.prototype.getParsedUrl = function (url) {
+                    if (!String.isString(url))
+                        return url;
                     if (String.isNullOrEmpty(url))
                         return url;
                     if (url.indexOf("http://") < 0 && url.indexOf("https://") < 0)

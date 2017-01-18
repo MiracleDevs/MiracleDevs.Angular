@@ -34,7 +34,7 @@ module MiracleDevs.Angular.Controllers
 
         protected logger: ILoggingService;
 
-        constructor(scope: IScope, injector: IInjectorService)
+        protected constructor(scope: IScope, injector: IInjectorService)
         {
             this.scope = scope;
             this.injector = injector;
