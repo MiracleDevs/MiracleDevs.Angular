@@ -20,7 +20,7 @@ module MiracleDevs.Angular.Directives
     export class Tooltip extends DirectiveBase
     {
         static register: IDirectiveRegister = {
-            name: "tooltip",
+            name: "tooltipster",
             factory: Tooltip.factory
         };
 

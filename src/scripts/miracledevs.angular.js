@@ -3203,19 +3203,25 @@ var MiracleDevs;
                         actions = actions.substr(0, actions.length - 1);
                     var keyActions = this.keyProcessor.parseActions(actions);
                     var keyProcessor = this.keyProcessor;
-                    function evaluateKeyActions(e) {
+                    function evaluateKeyPress(e) {
                         keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e);
                     }
+                    function evaluateKeyDown(e) {
+                        keyProcessor.evaluateKeyActions(keyActions, "keydown", scope, e);
+                    }
+                    function evaluateKeyUp(e) {
+                        keyProcessor.evaluateKeyActions(keyActions, "keyup", scope, e);
+                    }
                     if (keyActions.any(function (x) { return x.eventType === "keypress"; }))
-                        mainDocument.on("keypress.documentKeyboard", evaluateKeyActions);
+                        mainDocument.on("keypress.documentKeyboard", evaluateKeyPress);
                     if (keyActions.any(function (x) { return x.eventType === "keydown"; }))
-                        mainDocument.on("keydown.documentKeyboard", evaluateKeyActions);
+                        mainDocument.on("keydown.documentKeyboard", evaluateKeyDown);
                     if (keyActions.any(function (x) { return x.eventType === "keyup"; }))
-                        mainDocument.on("keyup.documentKeyboard", evaluateKeyActions);
+                        mainDocument.on("keyup.documentKeyboard", evaluateKeyUp);
                     scope.$on("$destroy", function () {
-                        mainDocument.off("keypress.documentKeyboard", evaluateKeyActions);
-                        mainDocument.off("keydown.documentKeyboard", evaluateKeyActions);
-                        mainDocument.off("keyup.documentKeyboard", evaluateKeyActions);
+                        mainDocument.off("keypress.documentKeyboard", evaluateKeyPress);
+                        mainDocument.off("keydown.documentKeyboard", evaluateKeyDown);
+                        mainDocument.off("keyup.documentKeyboard", evaluateKeyUp);
                         control.remove();
                     });
                 };
@@ -4327,7 +4333,7 @@ var MiracleDevs;
                     return new Tooltip();
                 };
                 Tooltip.register = {
-                    name: "tooltip",
+                    name: "tooltipster",
                     factory: Tooltip.factory
                 };
                 return Tooltip;
@@ -4644,6 +4650,41 @@ var MiracleDevs;
             }());
             Models.ModelBase = ModelBase;
         })(Models = Angular.Models || (Angular.Models = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../core/Object.ts"/>
+///<reference path="../core/LocalStorage.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Session;
+        (function (Session) {
+            var LocalStorage = Angular.Core.LocalStorage;
+            var ObjectSession = (function () {
+                function ObjectSession() {
+                }
+                ObjectSession.save = function (name, data) {
+                    LocalStorage.set(name, JSON.stringify(data));
+                };
+                ObjectSession.restore = function (name) {
+                    var content = LocalStorage.get(String, name);
+                    if (Object.isNull(content))
+                        return null;
+                    return JSON.parse(content.valueOf());
+                };
+                ObjectSession.clear = function (name) {
+                    LocalStorage.remove(name);
+                };
+                return ObjectSession;
+            }());
+            Session.ObjectSession = ObjectSession;
+        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -5531,7 +5572,10 @@ var MiracleDevs;
                     var zIndex = this.modals.getValues().count() * 1050;
                     code.css("z-index", zIndex);
                     $(code[0].nextElementSibling).css("z-index", zIndex - 10);
-                    $(code).on("hidden.bs.modal", function () { return _this.close(modalInstance, "Cancelled"); });
+                    $(code).on("hidden.bs.modal", function () {
+                        modalInstance.deferred.reject("cancelled");
+                        _this.removeModal(modalInstance, $(code));
+                    });
                 };
                 ModalService.prototype.removeModal = function (modalInstance, modal) {
                     var scope = modal.scope();
@@ -5624,41 +5668,6 @@ var MiracleDevs;
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerService(UrlService.register);
         })(Services = Angular.Services || (Angular.Services = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../core/Object.ts"/>
-///<reference path="../core/LocalStorage.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Session;
-        (function (Session) {
-            var LocalStorage = Angular.Core.LocalStorage;
-            var ObjectSession = (function () {
-                function ObjectSession() {
-                }
-                ObjectSession.save = function (name, data) {
-                    LocalStorage.set(name, JSON.stringify(data));
-                };
-                ObjectSession.restore = function (name) {
-                    var content = LocalStorage.get(String, name);
-                    if (Object.isNull(content))
-                        return null;
-                    return JSON.parse(content.valueOf());
-                };
-                ObjectSession.clear = function (name) {
-                    LocalStorage.remove(name);
-                };
-                return ObjectSession;
-            }());
-            Session.ObjectSession = ObjectSession;
-        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

@@ -59,25 +59,35 @@ module MiracleDevs.Angular.Directives
             var keyActions = this.keyProcessor.parseActions(actions);
             var keyProcessor = this.keyProcessor;
 
-            function evaluateKeyActions(e: JQueryKeyEventObject): void
+            function evaluateKeyPress(e: JQueryKeyEventObject): void
             {
                 keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e);
             }
 
+            function evaluateKeyDown(e: JQueryKeyEventObject): void
+            {
+                keyProcessor.evaluateKeyActions(keyActions, "keydown", scope, e);
+            }
+
+            function evaluateKeyUp(e: JQueryKeyEventObject): void
+            {
+                keyProcessor.evaluateKeyActions(keyActions, "keyup", scope, e);
+            }
+
             if (keyActions.any(x => x.eventType === "keypress"))
-                mainDocument.on("keypress.documentKeyboard", evaluateKeyActions);
+                mainDocument.on("keypress.documentKeyboard", evaluateKeyPress);
             
             if (keyActions.any(x => x.eventType === "keydown"))
-                mainDocument.on("keydown.documentKeyboard", evaluateKeyActions);
+                mainDocument.on("keydown.documentKeyboard", evaluateKeyDown);
             
             if (keyActions.any(x => x.eventType === "keyup"))
-                mainDocument.on("keyup.documentKeyboard", evaluateKeyActions);    
+                mainDocument.on("keyup.documentKeyboard", evaluateKeyUp);    
 
             scope.$on("$destroy", () =>
             {
-                mainDocument.off("keypress.documentKeyboard", evaluateKeyActions);
-                mainDocument.off("keydown.documentKeyboard", evaluateKeyActions);
-                mainDocument.off("keyup.documentKeyboard", evaluateKeyActions);
+                mainDocument.off("keypress.documentKeyboard", evaluateKeyPress);
+                mainDocument.off("keydown.documentKeyboard", evaluateKeyDown);
+                mainDocument.off("keyup.documentKeyboard", evaluateKeyUp);
                 control.remove();
             });
         }

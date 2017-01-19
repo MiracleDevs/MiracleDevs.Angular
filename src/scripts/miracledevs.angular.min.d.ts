@@ -1366,6 +1366,18 @@ declare module MiracleDevs.Angular.Models {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Session {
+    class ObjectSession {
+        static save<T>(name: string, data: T): void;
+        static restore<T>(name: string): T;
+        static clear(name: string): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import ArrayList = Core.ArrayList;
     interface IAlertService {
@@ -1773,18 +1785,6 @@ declare module MiracleDevs.Angular.Services {
         constructor(sce: ISCEService);
         getParsedUrl(url: string): string;
         static factory(sce: ISCEService): IUrlService;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Session {
-    class ObjectSession {
-        static save<T>(name: string, data: T): void;
-        static restore<T>(name: string): T;
-        static clear(name: string): void;
     }
 }
 /*!
