@@ -104,7 +104,7 @@ Object.getDifference = (source: any, other: any, ignore: Array<string> = null, c
 
     if ((!Object.isNull(source) && Object.isNull(other)) ||
         (Object.isNull(source) && !Object.isNull(other)))
-        return "null object";
+        return "different value";
 
     if (checkObjectType && Object.getTypeName(source) !== Object.getTypeName(other))
         return "different type";

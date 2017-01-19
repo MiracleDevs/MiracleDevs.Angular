@@ -474,8 +474,6 @@ Object.isEqualTo = function (source, other, ignore, checkObjectType) {
     if ((!Object.isNull(source) && Object.isNull(other)) ||
         (Object.isNull(source) && !Object.isNull(other)))
         return false;
-    if (other == null)
-        return false;
     if (checkObjectType && Object.getTypeName(source) !== Object.getTypeName(other))
         return false;
     if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
@@ -486,48 +484,82 @@ Object.isEqualTo = function (source, other, ignore, checkObjectType) {
     if (Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") {
         return source.getTime() === other.getTime();
     }
-    var sourceKeys = Object.keys(source);
-    var otherKeys = Object.keys(other);
-    for (var index in sourceKeys) {
-        if (sourceKeys.hasOwnProperty(index)) {
-            var key = sourceKeys[index];
-            var otherKey = otherKeys[index];
-            if (!source.hasOwnProperty(key))
-                continue;
-            if (!Object.isNull(ignore) && Array.contains(ignore, key))
-                continue;
-            if (key !== otherKey) {
+    if (source instanceof Array && other instanceof Array) {
+        if (source.length !== other.length)
+            return false;
+        for (var arrayIndex = 0; arrayIndex < source.length; arrayIndex++) {
+            if (!Object.isEqualTo(source[arrayIndex], other[arrayIndex], ignore, checkObjectType)) {
                 return false;
             }
-            var sourceValue = source[key];
-            var otherValue = other[key];
-            if (sourceValue == null && otherValue == null)
-                continue;
-            if ((sourceValue == null && otherValue != null) ||
-                (sourceValue != null && otherValue == null))
-                return false;
-            if (((Object.getTypeName(sourceValue) === "Number" && Object.getTypeName(otherValue) === "Number") ||
-                (Object.getTypeName(sourceValue) === "String" && Object.getTypeName(otherValue) === "String") ||
-                (Object.getTypeName(sourceValue) === "Boolean" && Object.getTypeName(otherValue) === "Boolean")) &&
-                (sourceValue !== otherValue))
-                return false;
-            else if ((Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") && (source.getTime() !== other.getTime()))
-                return false;
-            else if (sourceValue instanceof Array && otherValue instanceof Array) {
-                if (sourceValue.length !== otherValue.length)
+        }
+    }
+    else {
+        var sourceKeys = Object.keys(source);
+        for (var index in sourceKeys) {
+            if (sourceKeys.hasOwnProperty(index)) {
+                var key = sourceKeys[index];
+                if (!source.hasOwnProperty(key))
+                    continue;
+                if (!Object.isNull(ignore) && Array.contains(ignore, key))
+                    continue;
+                var sourceValue = source[key];
+                var otherValue = other[key];
+                if (!Object.isEqualTo(sourceValue, otherValue, ignore, checkObjectType)) {
                     return false;
-                for (var arrayIndex = 0; arrayIndex < sourceValue.length; arrayIndex++) {
-                    if (!Object.isEqualTo(sourceValue[arrayIndex], otherValue[arrayIndex], ignore))
-                        return false;
                 }
-            }
-            else {
-                if (!Object.isEqualTo(sourceValue, otherValue, ignore))
-                    return false;
             }
         }
     }
     return true;
+};
+Object.getDifference = function (source, other, ignore, checkObjectType) {
+    if (ignore === void 0) { ignore = null; }
+    if (checkObjectType === void 0) { checkObjectType = true; }
+    var difference;
+    if (Object.isNull(source) && Object.isNull(other))
+        return null;
+    if ((!Object.isNull(source) && Object.isNull(other)) ||
+        (Object.isNull(source) && !Object.isNull(other)))
+        return "different value";
+    if (checkObjectType && Object.getTypeName(source) !== Object.getTypeName(other))
+        return "different type";
+    if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
+        (Object.getTypeName(source) === "String" && Object.getTypeName(other) === "String") ||
+        (Object.getTypeName(source) === "Boolean" && Object.getTypeName(other) === "Boolean")) {
+        return source !== other ? "different value" : null;
+    }
+    if (Object.getTypeName(source) === "Date" && Object.getTypeName(other) === "Date") {
+        return source.getTime() !== other.getTime() ? "different value" : null;
+    }
+    if (source instanceof Array && other instanceof Array) {
+        if (source.length !== other.length)
+            return "different lengths";
+        for (var arrayIndex = 0; arrayIndex < source.length; arrayIndex++) {
+            difference = Object.getDifference(source[arrayIndex], other[arrayIndex], ignore, checkObjectType);
+            if (!String.isNullOrEmpty(difference)) {
+                return difference + " for " + (arrayIndex + 1) + "th element";
+            }
+        }
+    }
+    else {
+        var sourceKeys = Object.keys(source);
+        for (var index in sourceKeys) {
+            if (sourceKeys.hasOwnProperty(index)) {
+                var key = sourceKeys[index];
+                if (!source.hasOwnProperty(key))
+                    continue;
+                if (!Object.isNull(ignore) && Array.contains(ignore, key))
+                    continue;
+                var sourceValue = source[key];
+                var otherValue = other[key];
+                difference = Object.getDifference(sourceValue, otherValue, ignore, checkObjectType);
+                if (!String.isNullOrEmpty(difference)) {
+                    return difference + " in " + key;
+                }
+            }
+        }
+    }
+    return null;
 };
 Object.clone = function (object, ignore) {
     if (Object.getTypeName(object) === "Number" ||
@@ -1211,6 +1243,11 @@ var MiracleDevs;
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(FrameworkServices, "keyProcessorService", {
+                    get: function () { return "KeyProcessorService"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return FrameworkServices;
             }());
             Services.FrameworkServices = FrameworkServices;
@@ -1441,1696 +1478,6 @@ var MiracleDevs;
             }());
             Controllers.ControllerBase = ControllerBase;
         })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var DirectiveBase = (function () {
-                function DirectiveBase() {
-                    var _this = this;
-                    this.link = function (s, e, a, c, t) { return _this.create(s, e, a, c, t); };
-                }
-                DirectiveBase.prototype.getOptions = function (instanceAttributes, optionsParameter) {
-                    if (String.isNullOrWhiteSpace(instanceAttributes[optionsParameter]))
-                        return null;
-                    return JSON.parse(instanceAttributes[optionsParameter]);
-                };
-                DirectiveBase.prototype.tryGetInt = function (options, instanceAttributes, optionFrom, optionTo) {
-                    optionTo = optionTo || optionFrom;
-                    if (!Object.isNull(instanceAttributes[optionFrom]))
-                        options[optionTo] = parseInt(instanceAttributes[optionFrom]);
-                    return options[optionTo];
-                };
-                DirectiveBase.prototype.tryGetNumber = function (options, instanceAttributes, optionFrom, optionTo) {
-                    optionTo = optionTo || optionFrom;
-                    if (!Object.isNull(instanceAttributes[optionFrom]))
-                        options[optionTo] = parseFloat(instanceAttributes[optionFrom]);
-                    return options[optionTo];
-                };
-                DirectiveBase.prototype.tryGetDate = function (options, instanceAttributes, optionFrom, optionTo) {
-                    optionTo = optionTo || optionFrom;
-                    if (!Object.isNull(instanceAttributes[optionFrom]))
-                        options[optionTo] = new Date(instanceAttributes[optionFrom]);
-                    return options[optionTo];
-                };
-                DirectiveBase.prototype.tryGetBoolean = function (options, instanceAttributes, optionFrom, optionTo) {
-                    optionTo = optionTo || optionFrom;
-                    if (!Object.isNull(instanceAttributes[optionFrom])) {
-                        var value = instanceAttributes[optionFrom].toLowerCase();
-                        options[optionTo] = value === "yes" ||
-                            value === "true" ||
-                            value === "1";
-                    }
-                    return options[optionTo];
-                };
-                DirectiveBase.prototype.tryGet = function (options, instanceAttributes, optionFrom, optionTo) {
-                    optionTo = optionTo || optionFrom;
-                    if (!Object.isNull(instanceAttributes[optionFrom]))
-                        options[optionTo] = instanceAttributes[optionFrom];
-                    return options[optionTo];
-                };
-                return DirectiveBase;
-            }());
-            Directives.DirectiveBase = DirectiveBase;
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AddClass = (function (_super) {
-                __extends(AddClass, _super);
-                function AddClass() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                AddClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var options = {};
-                    this.tryGet(options, instanceAttributes, "element");
-                    this.tryGet(options, instanceAttributes, "addClass");
-                    if (!Object.isNull(options.element)) {
-                        var element = $(options.element);
-                        if (!element.hasClass(options.addClass)) {
-                            element.addClass(options.addClass);
-                        }
-                    }
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                AddClass.factory = function () {
-                    return new AddClass();
-                };
-                AddClass.register = {
-                    name: "addClass",
-                    factory: AddClass.factory
-                };
-                return AddClass;
-            }(Directives.DirectiveBase));
-            Directives.AddClass = AddClass;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(AddClass.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var Alert = (function (_super) {
-                __extends(Alert, _super);
-                function Alert(timeout) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.scope = {
-                        alertType: "@",
-                        timeout: "@",
-                        close: "&"
-                    };
-                    this.timeout = timeout;
-                }
-                Alert.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var alertType = scope["alertType"];
-                    var timeout = parseInt(scope["timeout"]);
-                    control.addClass("alert");
-                    if (!Object.isNull(alertType))
-                        control.addClass(alertType);
-                    if (!Object.isNull(timeout))
-                        this.timeout(function () { return scope["close"](); }, timeout);
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                Alert.factory = function (timeout) {
-                    return new Alert(timeout);
-                };
-                Alert.register = {
-                    name: "alert",
-                    factory: Alert.factory,
-                    dependencies: [AngularServices.timeout]
-                };
-                return Alert;
-            }(Directives.DirectiveBase));
-            Directives.Alert = Alert;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(Alert.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var BackgroundImage = (function (_super) {
-                __extends(BackgroundImage, _super);
-                function BackgroundImage() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                BackgroundImage.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var element = $(instanceElement);
-                    scope.$watch(function () { return instanceAttributes[BackgroundImage.register.name]; }, function (newValue) {
-                        if (String.isNullOrWhiteSpace(newValue))
-                            return;
-                        element.css("background-image", String.format("url({0})", newValue));
-                    });
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                BackgroundImage.factory = function () {
-                    return new BackgroundImage();
-                };
-                BackgroundImage.register = {
-                    name: "backgroundImage",
-                    factory: BackgroundImage.factory,
-                    dependencies: [AngularServices.interpolate]
-                };
-                return BackgroundImage;
-            }(Directives.DirectiveBase));
-            Directives.BackgroundImage = BackgroundImage;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(BackgroundImage.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-String.empty = "";
-String.isString = function (value) {
-    return (typeof (value) === "string" || value instanceof String);
-};
-String.isNullOrEmpty = function (value) {
-    return value == null || value === "";
-};
-String.isNullOrWhiteSpace = function (value) {
-    return value == null || value.replace(/ /g, "") === "";
-};
-String.format = function (format) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-    }
-    if (Object.isNull(format))
-        throw new Error("Format string can not be null.");
-    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
-        index = parseInt(index, 10);
-        if (index < 0 || index >= args.length) {
-            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-        }
-        return args[index];
-    });
-};
-String.formatArray = function (format, args) {
-    if (Object.isNull(format))
-        throw new Error("Format string can not be null.");
-    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
-        index = parseInt(index, 10);
-        if (index < 0 || index >= args.length) {
-            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-        }
-        return args[index];
-    });
-};
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-///<reference path="../core/String.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var CommentArea = (function (_super) {
-                __extends(CommentArea, _super);
-                function CommentArea() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                    this.scope = {
-                        ngModel: "="
-                    };
-                }
-                CommentArea.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var _this = this;
-                    var element = $(instanceElement);
-                    var options = {};
-                    this.tryGetNumber(options, instanceAttributes, "defaultHeight");
-                    this.tryGetNumber(options, instanceAttributes, "maxSize");
-                    this.tryGet(options, instanceAttributes, "maxSizeField");
-                    this.tryGet(options, instanceAttributes, "maxSizeText");
-                    this.tryGetBoolean(options, instanceAttributes, "resize");
-                    this.tryGetBoolean(options, instanceAttributes, "showAlways");
-                    this.tryGetBoolean(options, instanceAttributes, "restrictEntry");
-                    this.tryGet(options, instanceAttributes, "negativeClass");
-                    if (options.restrictEntry) {
-                        element.on("keydown", function (event) { return _this.restrictEntry(event, options, element, false); });
-                        element.on("keypress", function (event) { return _this.restrictEntry(event, options, element, true); });
-                        element.on("keyup", function (event) { return _this.restrictEntry(event, options, element, false); });
-                        scope.$watch(function () { return scope["ngModel"]; }, function () { return _this.restrictEntry(null, options, element, false); });
-                    }
-                    else {
-                        element.on("keypress", function () { return _this.showCharacterLeft(options, element, true); });
-                        scope.$watch(function () { return scope["ngModel"]; }, function () { return _this.showCharacterLeft(options, element, false); });
-                    }
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                CommentArea.prototype.restrictEntry = function (event, options, element, cancel) {
-                    if (!Object.isNull(options.maxSize)) {
-                        var value = element.val();
-                        var length_1 = value.length;
-                        var available = options.maxSize - length_1;
-                        if (available < 0)
-                            available = -1;
-                        if (available === -1) {
-                            if (cancel) {
-                                event.stopPropagation();
-                                event.preventDefault();
-                            }
-                            element.val(value.substr(0, options.maxSize));
-                            available = 0;
-                        }
-                        if (!Object.isNull(options.maxSizeText)) {
-                            $(options.maxSizeField).text((available === options.maxSize && !options.showAlways) ? String.empty : String.format(options.maxSizeText, available));
-                        }
-                        if (!Object.isNull(options.resize) && options.resize) {
-                            this.checkSize(options, element);
-                        }
-                    }
-                };
-                CommentArea.prototype.showCharacterLeft = function (options, element, cancel) {
-                    if (!Object.isNull(options.maxSize)) {
-                        var value = element.val();
-                        var length_2 = value.length;
-                        var available = options.maxSize - length_2;
-                        if (!Object.isNull(options.maxSizeText)) {
-                            var field = $(options.maxSizeField);
-                            if (!Object.isNull(options.negativeClass)) {
-                                if (available < 0)
-                                    field.addClass(options.negativeClass);
-                                else
-                                    field.removeClass(options.negativeClass);
-                            }
-                            $(options.maxSizeField).text((available === options.maxSize && !options.showAlways) ? String.empty : String.format(options.maxSizeText, available));
-                        }
-                        if (!Object.isNull(options.resize) && options.resize) {
-                            this.checkSize(options, element);
-                        }
-                    }
-                    else {
-                        if (!Object.isNull(options.resize) && options.resize) {
-                            this.checkSize(options, element);
-                        }
-                    }
-                };
-                CommentArea.prototype.checkSize = function (options, element) {
-                    var control = element[0];
-                    var defaultHeight = options.defaultHeight || 0;
-                    control.style.height = "1px";
-                    if (control.scrollHeight > control.clientHeight) {
-                        if (control.scrollHeight > defaultHeight)
-                            control.style.height = control.scrollHeight + "px";
-                        else
-                            control.style.height = defaultHeight + "px";
-                    }
-                    else if (!Object.isNull(options.defaultHeight)) {
-                        control.style.height = defaultHeight + "px";
-                    }
-                };
-                CommentArea.factory = function () {
-                    return new CommentArea();
-                };
-                CommentArea.register = {
-                    name: "commentArea",
-                    factory: CommentArea.factory
-                };
-                return CommentArea;
-            }(Directives.DirectiveBase));
-            Directives.CommentArea = CommentArea;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(CommentArea.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-///<reference path="../core/String.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var ConvertToNumber = (function (_super) {
-                __extends(ConvertToNumber, _super);
-                function ConvertToNumber() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                    this.require = "ngModel";
-                }
-                ConvertToNumber.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    controller.$parsers.push(function (val) { return Object.isNull(val) ? parseInt(val, 10) : null; });
-                    controller.$formatters.push(function (val) { return val != null ? "" + val : null; });
-                    var element = $(instanceElement);
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                ConvertToNumber.factory = function () {
-                    return new ConvertToNumber();
-                };
-                ConvertToNumber.register = {
-                    name: "convertToNumber",
-                    factory: ConvertToNumber.factory
-                };
-                return ConvertToNumber;
-            }(Directives.DirectiveBase));
-            Directives.ConvertToNumber = ConvertToNumber;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(ConvertToNumber.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../../typings/datetimepicker/datetimepicker.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var DateTimePicker = (function (_super) {
-                __extends(DateTimePicker, _super);
-                function DateTimePicker(filter) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.require = "ngModel";
-                    this.filter = filter;
-                }
-                DateTimePicker.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var _this = this;
-                    var element = $(instanceElement);
-                    var options = {};
-                    //////////////////////////////////////////////////////////////////
-                    // Own properties
-                    //////////////////////////////////////////////////////////////////
-                    this.tryGet(options, instanceAttributes, "format");
-                    this.tryGet(options, instanceAttributes, "dayViewHeaderFormat");
-                    this.tryGetBoolean(options, instanceAttributes, "extraFormats");
-                    this.tryGetNumber(options, instanceAttributes, "stepping");
-                    this.tryGetDate(options, instanceAttributes, "minDate");
-                    this.tryGetDate(options, instanceAttributes, "maxDate");
-                    this.tryGetBoolean(options, instanceAttributes, "useCurrent");
-                    this.tryGetBoolean(options, instanceAttributes, "collapse");
-                    this.tryGet(options, instanceAttributes, "locale");
-                    this.tryGet(options, instanceAttributes, "viewMode");
-                    this.tryGetDate(options, instanceAttributes, "defaultDate");
-                    this.tryGetBoolean(options, instanceAttributes, "disabledDates");
-                    this.tryGetBoolean(options, instanceAttributes, "enabledDates");
-                    this.tryGetBoolean(options, instanceAttributes, "disabledHours");
-                    this.tryGetBoolean(options, instanceAttributes, "disabledTimeIntervals");
-                    this.tryGetBoolean(options, instanceAttributes, "useStrict");
-                    this.tryGetBoolean(options, instanceAttributes, "sideBySide");
-                    this.tryGetBoolean(options, instanceAttributes, "calendarWeeks");
-                    this.tryGet(options, instanceAttributes, "toolbarPlacement");
-                    this.tryGetBoolean(options, instanceAttributes, "showTodayButton");
-                    this.tryGetBoolean(options, instanceAttributes, "showClear");
-                    this.tryGetBoolean(options, instanceAttributes, "showClose");
-                    this.tryGetBoolean(options, instanceAttributes, "keepOpen");
-                    this.tryGetBoolean(options, instanceAttributes, "allowInputToggle");
-                    this.tryGetBoolean(options, instanceAttributes, "focusOnShow");
-                    if (!Object.isNull(instanceAttributes["maxDateToday"]))
-                        options.maxDate = new Date();
-                    options.icons = { clear: "dtp-action clear", close: "dtp-action close" };
-                    element.datetimepicker(options);
-                    element.on("dp.change", function (e) {
-                        if (Object.isNull(options.format) || options.format === "L")
-                            controller.$setViewValue(!Object.isNull(e["date"])
-                                ? _this.filter("date")(e["date"]._d, "MM/dd/yyyy")
-                                : null);
-                        if (!Object.isNull(options.format) && options.format === "LT")
-                            controller.$setViewValue(!Object.isNull(e["date"])
-                                ? _this.filter("date")(e["date"]._d, "hh:mm")
-                                : null);
-                    });
-                    element.on("dp.show", function () {
-                        if (!Object.isNull(options.viewMode)) {
-                            element.data("DateTimePicker").viewMode(options.viewMode);
-                        }
-                    });
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                DateTimePicker.factory = function (filter) {
-                    return new DateTimePicker(filter);
-                };
-                DateTimePicker.register = {
-                    name: "dateTimePicker",
-                    factory: DateTimePicker.factory,
-                    dependencies: ["$filter"]
-                };
-                return DateTimePicker;
-            }(Directives.DirectiveBase));
-            Directives.DateTimePicker = DateTimePicker;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(DateTimePicker.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var FileButton = (function (_super) {
-                __extends(FileButton, _super);
-                function FileButton(timeout) {
-                    _super.call(this);
-                    this.restrict = "E";
-                    this.scope = {
-                        title: "@",
-                        ariaLabel: "@",
-                        accept: "@",
-                        caption: "@",
-                        cssClass: "@",
-                        fileSelected: "&"
-                    };
-                    this.template = '<input type="file" style="display: none" title="{{title}}" accept="{{accept}}" aria-label="{{ariaLabel}}" />' +
-                        '<button class="{{cssClass}}">{{caption}}</button>';
-                    this.timeout = timeout;
-                }
-                FileButton.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var _this = this;
-                    var element = $(instanceElement);
-                    var button = element.find("button");
-                    var file = element.find("input");
-                    button.on("click", function () { return file.trigger("click"); });
-                    file.on("change", function (e) {
-                        _this.timeout(function () {
-                            if (Object.isNull(e) || Object.isNull(e.target) || Object.isNull(e.target["files"]))
-                                return;
-                            scope["fileSelected"]({ files: e.target["files"] });
-                        });
-                    });
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                FileButton.factory = function (timeout) {
-                    return new FileButton(timeout);
-                };
-                FileButton.register = {
-                    name: "fileButton",
-                    factory: FileButton.factory,
-                    dependencies: [AngularServices.timeout]
-                };
-                return FileButton;
-            }(Directives.DirectiveBase));
-            Directives.FileButton = FileButton;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(FileButton.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var FileDragAndDrop = (function (_super) {
-                __extends(FileDragAndDrop, _super);
-                function FileDragAndDrop() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                    this.scope = {
-                        fileSelected: "&"
-                    };
-                }
-                FileDragAndDrop.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var element = $(instanceElement);
-                    instanceElement[0].addEventListener("dragenter", function () { return element.css("border", "2px dashed gray"); }, false);
-                    instanceElement[0].addEventListener("dragexit", function () { return element.css("border", "none"); }, false);
-                    instanceElement[0].addEventListener("dragend", function () { return element.css("border", "none"); }, false);
-                    instanceElement[0].addEventListener("dragover", function (e) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = "copy";
-                    }, false);
-                    instanceElement[0].addEventListener("drop", function (e) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        scope["fileSelected"]({ files: e.dataTransfer.files });
-                    }, false);
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                FileDragAndDrop.factory = function () {
-                    return new FileDragAndDrop();
-                };
-                FileDragAndDrop.register = {
-                    name: "fileDragAndDrop",
-                    factory: FileDragAndDrop.factory
-                };
-                return FileDragAndDrop;
-            }(Directives.DirectiveBase));
-            Directives.FileDragAndDrop = FileDragAndDrop;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(FileDragAndDrop.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var FocusInvalidField = (function (_super) {
-                __extends(FocusInvalidField, _super);
-                function FocusInvalidField() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                FocusInvalidField.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    control.on("submit", function () {
-                        var invalid = control.find(".ng-invalid");
-                        if (!Object.isNull(invalid) && invalid.length > 0) {
-                            invalid[0].focus();
-                        }
-                    });
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                FocusInvalidField.factory = function () {
-                    return new FocusInvalidField();
-                };
-                FocusInvalidField.register = {
-                    name: "focusInvalidField",
-                    factory: FocusInvalidField.factory
-                };
-                return FocusInvalidField;
-            }(Directives.DirectiveBase));
-            Directives.FocusInvalidField = FocusInvalidField;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(FocusInvalidField.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var FocusWhen = (function (_super) {
-                __extends(FocusWhen, _super);
-                function FocusWhen(timeout) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.timeout = timeout;
-                }
-                FocusWhen.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var _this = this;
-                    var control = $(instanceElement);
-                    var focusDelay = 100;
-                    if (instanceAttributes["focus-delay"])
-                        focusDelay = parseInt(instanceAttributes["focus-delay"]);
-                    scope.$watch(function () { return instanceAttributes[FocusWhen.register.name]; }, function (value) {
-                        try {
-                            var model = scope.$eval(value);
-                            if (model) {
-                                _this.timeout(function () { return control.focus(); }, focusDelay);
-                            }
-                        }
-                        catch (e) {
-                        }
-                    });
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                FocusWhen.factory = function (timeout) {
-                    return new FocusWhen(timeout);
-                };
-                FocusWhen.register = {
-                    name: "focusWhen",
-                    factory: FocusWhen.factory,
-                    dependencies: [AngularServices.timeout]
-                };
-                return FocusWhen;
-            }(Directives.DirectiveBase));
-            Directives.FocusWhen = FocusWhen;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(FocusWhen.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var FullSelect = (function (_super) {
-                __extends(FullSelect, _super);
-                function FullSelect() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                FullSelect.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    control.on("focus", function () { return instanceElement.select(); });
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                FullSelect.factory = function () {
-                    return new FullSelect();
-                };
-                FullSelect.register = {
-                    name: "fullSelect",
-                    factory: FullSelect.factory
-                };
-                return FullSelect;
-            }(Directives.DirectiveBase));
-            Directives.FullSelect = FullSelect;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(FullSelect.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var HorizontalScroller = (function (_super) {
-                __extends(HorizontalScroller, _super);
-                function HorizontalScroller(interpolate) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.interpolate = interpolate;
-                }
-                HorizontalScroller.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var options = {};
-                    options.element = instanceElement;
-                    this.tryGet(options, instanceAttributes, "container");
-                    this.tryGet(options, instanceAttributes, "content");
-                    this.tryGet(options, instanceAttributes, "leftArrow");
-                    this.tryGet(options, instanceAttributes, "rightArrow");
-                    this.tryGetNumber(options, instanceAttributes, "speed");
-                    this.tryGetNumber(options, instanceAttributes, "friction");
-                    this.tryGetNumber(options, instanceAttributes, "fps");
-                    this.tryGetNumber(options, instanceAttributes, "minVelocity");
-                    if (String.isNullOrWhiteSpace(options.container) ||
-                        String.isNullOrWhiteSpace(options.content) ||
-                        String.isNullOrWhiteSpace(options.leftArrow) ||
-                        String.isNullOrWhiteSpace(options.rightArrow))
-                        return;
-                    instanceElement[0]["scrollerInstance"] = new HorizontalScrollerInstance(options);
-                    scope.$watch(function () { return instanceElement[0].innerHTML; }, function () { return instanceElement[0]["scrollerInstance"].enableScroll(); });
-                    scope.$on("$destroy", function () {
-                        instanceElement[0]["scrollerInstance"].dispose();
-                    });
-                };
-                HorizontalScroller.factory = function (interpolate) {
-                    return new HorizontalScroller(interpolate);
-                };
-                HorizontalScroller.register = {
-                    name: "horizontalScroller",
-                    factory: HorizontalScroller.factory,
-                    dependencies: [AngularServices.interpolate]
-                };
-                return HorizontalScroller;
-            }(Directives.DirectiveBase));
-            Directives.HorizontalScroller = HorizontalScroller;
-            var HorizontalScrollerInstance = (function () {
-                function HorizontalScrollerInstance(options) {
-                    var _this = this;
-                    this.element = $(options.element);
-                    this.container = this.element.find(options.container);
-                    this.content = this.element.find(options.content);
-                    this.leftArrow = this.element.find(options.leftArrow);
-                    this.rightArrow = this.element.find(options.rightArrow);
-                    this.position = 0;
-                    this.velocity = 0;
-                    this.speed = options.speed || 140;
-                    this.friction = options.friction || 0.95;
-                    this.millisecondsPerFrame = 1000 / (options.fps || 60);
-                    this.minVelocity = options.minVelocity || 10;
-                    this.enableScroll();
-                    $(window).on("resize", function () { return _this.enableScroll(); });
-                    this.leftArrow.on("mousedown touchstart", function () { return _this.moveLeft(); });
-                    this.leftArrow.on("mouseup mouseleave touchend touchcancel", function () { return _this.pressing = false; });
-                    this.rightArrow.on("mousedown touchstart", function () { return _this.moveRight(); });
-                    this.rightArrow.on("mouseup mouseleave touchend touchcancel", function () { return _this.pressing = false; });
-                }
-                HorizontalScrollerInstance.prototype.enableScroll = function () {
-                    var wContainer = this.container.width();
-                    var wContent = this.content.width();
-                    if (wContent < wContainer) {
-                        this.leftArrow.css("display", "none");
-                        this.rightArrow.css("display", "none");
-                        this.position = 0;
-                    }
-                    else {
-                        this.leftArrow.css("display", "inline-block");
-                        this.rightArrow.css("display", "inline-block");
-                    }
-                    this.checkConstraints();
-                    this.applyPosition();
-                };
-                HorizontalScrollerInstance.prototype.applyPosition = function () {
-                    var translate = "translate(" + this.position + "px, 0)";
-                    var translate3D = "translate3d(" + this.position + "px, 0, 0)";
-                    this.content.css({
-                        '-ms-transform': translate,
-                        '-moz-transform': translate3D,
-                        '-webkit-transform': translate3D,
-                        'transform': translate3D
-                    });
-                };
-                HorizontalScrollerInstance.prototype.checkConstraints = function () {
-                    var wContainer = this.container.width();
-                    var wContent = this.content.width();
-                    var minMovement = wContainer - wContent;
-                    if (wContent <= wContainer || this.position >= 0)
-                        this.position = 0;
-                    if (wContent >= wContainer && this.position <= minMovement)
-                        this.position = minMovement;
-                };
-                HorizontalScrollerInstance.prototype.killInterval = function () {
-                    if (Object.isNull(this.intervalId))
-                        return;
-                    window.clearInterval(this.intervalId);
-                };
-                HorizontalScrollerInstance.prototype.getMilliseconds = function () {
-                    return (new Date()).getTime();
-                };
-                HorizontalScrollerInstance.prototype.moveLeft = function () {
-                    var _this = this;
-                    this.pressing = true;
-                    this.direction = 1;
-                    this.lastTime = this.getMilliseconds();
-                    this.killInterval();
-                    this.intervalId = window.setInterval(function () { return _this.move(); }, this.millisecondsPerFrame);
-                };
-                HorizontalScrollerInstance.prototype.moveRight = function () {
-                    var _this = this;
-                    this.pressing = true;
-                    this.direction = -1;
-                    this.lastTime = this.getMilliseconds();
-                    this.killInterval();
-                    this.intervalId = window.setInterval(function () { return _this.move(); }, this.millisecondsPerFrame);
-                };
-                HorizontalScrollerInstance.prototype.move = function () {
-                    var deltaTime = (this.getMilliseconds() - this.lastTime) / 1000;
-                    if (this.pressing) {
-                        this.velocity = this.speed;
-                    }
-                    this.velocity *= this.friction;
-                    this.position = this.position + (this.direction * this.velocity * deltaTime);
-                    this.checkConstraints();
-                    this.applyPosition();
-                    if (this.velocity <= this.minVelocity) {
-                        this.killInterval();
-                    }
-                    this.lastTime = this.getMilliseconds();
-                };
-                HorizontalScrollerInstance.prototype.dispose = function () {
-                    this.container.remove();
-                    this.content.remove();
-                    this.leftArrow.remove();
-                    this.rightArrow.remove();
-                };
-                return HorizontalScrollerInstance;
-            }());
-            Directives.HorizontalScrollerInstance = HorizontalScrollerInstance;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(HorizontalScroller.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var MdUiSrefActive = (function (_super) {
-                __extends(MdUiSrefActive, _super);
-                function MdUiSrefActive(interpolate, state) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.interpolate = interpolate;
-                    this.state = state;
-                }
-                MdUiSrefActive.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var cssClass = instanceAttributes[MdUiSrefActive.register.name];
-                    var state = this.interpolate(instanceAttributes["mdUiSref"] || instanceAttributes["uiSref"])(scope);
-                    function update(toState) {
-                        if (Object.isNull(toState) || Object.isNull(toState.name))
-                            return;
-                        if (toState.name.indexOf(state) !== -1) {
-                            control.addClass(cssClass);
-                        }
-                        else {
-                            control.removeClass(cssClass);
-                        }
-                    }
-                    update(this.state.current);
-                    scope.$on("$stateChangeSuccess", function (event, toState) { return update(toState); });
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                MdUiSrefActive.factory = function (interpolate, state) {
-                    return new MdUiSrefActive(interpolate, state);
-                };
-                MdUiSrefActive.register = {
-                    name: "mdUiSrefActive",
-                    factory: MdUiSrefActive.factory,
-                    dependencies: [AngularServices.interpolate, AngularServices.state]
-                };
-                return MdUiSrefActive;
-            }(Directives.DirectiveBase));
-            Directives.MdUiSrefActive = MdUiSrefActive;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(MdUiSrefActive.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/ArrayList.ts"/>
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var ArrayList = Angular.Core.ArrayList;
-            var OnKeyboard = (function (_super) {
-                __extends(OnKeyboard, _super);
-                function OnKeyboard(parse) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.parse = parse;
-                }
-                OnKeyboard.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var _this = this;
-                    var control = $(instanceElement);
-                    var keyActions = this.parseActions(instanceAttributes[OnKeyboard.register.name]);
-                    if (keyActions.any(function (x) { return x.eventType === "keypress"; }))
-                        control.keypress(function (e) { return _this.checkKeys(keyActions, "keypress", scope, e); });
-                    if (keyActions.any(function (x) { return x.eventType === "keydown"; }))
-                        control.keydown(function (e) { return _this.checkKeys(keyActions, "keydown", scope, e); });
-                    if (keyActions.any(function (x) { return x.eventType === "keyup"; }))
-                        control.keyup(function (e) { return _this.checkKeys(keyActions, "keyup", scope, e); });
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                OnKeyboard.prototype.checkKeys = function (keyActions, eventType, scope, e) {
-                    keyActions.where(function (x) { return x.eventType === eventType; }).forEach(function (keyAction) {
-                        if (e.keyCode === keyAction.keyCode &&
-                            ((Object.isNull(keyAction.shift)) ||
-                                (!Object.isNull(keyAction.shift) && keyAction.shift && e.shiftKey) ||
-                                (!Object.isNull(keyAction.shift) && !keyAction.shift && !e.shiftKey)) &&
-                            ((Object.isNull(keyAction.alt)) ||
-                                (!Object.isNull(keyAction.alt) && keyAction.alt && e.altKey) ||
-                                (!Object.isNull(keyAction.alt) && !keyAction.alt && !e.altKey)) &&
-                            ((Object.isNull(keyAction.ctrl)) ||
-                                (!Object.isNull(keyAction.ctrl) && keyAction.shift && e.ctrlKey) ||
-                                (!Object.isNull(keyAction.ctrl) && !keyAction.shift && !e.ctrlKey))) {
-                            scope.$apply(function () {
-                                keyAction.action(scope, null);
-                                e.stopPropagation();
-                                e.preventDefault();
-                            });
-                        }
-                    });
-                };
-                OnKeyboard.prototype.parseActions = function (text) {
-                    var keyActions = new ArrayList();
-                    var actionStrings = text.split("|");
-                    for (var i = 0; i < actionStrings.length; i++) {
-                        var keyAction = new KeyAction();
-                        var actionString = actionStrings[i];
-                        var parts = actionString.split(":");
-                        if (parts.length !== 2)
-                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
-                        var firstParenthesis = parts[0].indexOf("(");
-                        var lastParenthesis = parts[0].indexOf(")");
-                        if (firstParenthesis < 0 || lastParenthesis < 0)
-                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
-                        var eventType = parts[0].substr(0, firstParenthesis);
-                        if (eventType !== "keypress" &&
-                            eventType !== "keydown" &&
-                            eventType !== "keyup")
-                            throw new Error("Only keypress, keydown and keyup events are allowed on action strings.");
-                        var keys = parts[0].substr(firstParenthesis + 1, lastParenthesis - firstParenthesis - 1);
-                        var parameters = keys.split(",");
-                        try {
-                            keyAction.eventType = eventType;
-                            keyAction.action = this.parse(parts[1]);
-                            keyAction.keyCode = parseInt(parameters[0]);
-                        }
-                        catch (error) {
-                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action.");
-                        }
-                        if (parameters.length > 1)
-                            keyAction.shift = parameters[1] === "shift";
-                        if (parameters.length > 2)
-                            keyAction.alt = parameters[2] === "alt";
-                        if (parameters.length > 3)
-                            keyAction.ctrl = parameters[3] === "ctrl";
-                        keyActions.add(keyAction);
-                    }
-                    return keyActions;
-                };
-                OnKeyboard.factory = function (parse) {
-                    return new OnKeyboard(parse);
-                };
-                OnKeyboard.register = {
-                    name: "onKeyboard",
-                    factory: OnKeyboard.factory,
-                    dependencies: [AngularServices.parse]
-                };
-                return OnKeyboard;
-            }(Directives.DirectiveBase));
-            Directives.OnKeyboard = OnKeyboard;
-            var KeyAction = (function () {
-                function KeyAction() {
-                }
-                return KeyAction;
-            }());
-            Directives.KeyAction = KeyAction;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(OnKeyboard.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var PaginationBar = (function (_super) {
-                __extends(PaginationBar, _super);
-                function PaginationBar() {
-                    _super.apply(this, arguments);
-                    this.restrict = "E";
-                    this.template = '<div class="pagination-bar" ng-controller="PaginationBarController as controller"><ul class="pagination"><li ng-repeat="link in links" ng-class="{ \'active\': link.selected }"><a ng-click="link.enabled && controller.navigate(link)" tooltip title="Go to page {{link.tag}}" ng-bind-html="link.name"></a></li></ul></div>';
-                    this.scope = {
-                        cssClass: "@",
-                        firstText: "@",
-                        previousText: "@",
-                        nextText: "@",
-                        lastText: "@",
-                        pages: "=",
-                        currentPage: "=",
-                        totalLinks: "@",
-                        links: "=",
-                        itemClicked: "&",
-                        autoScroll: "@"
-                    };
-                }
-                PaginationBar.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                PaginationBar.factory = function () {
-                    return new PaginationBar();
-                };
-                PaginationBar.register = {
-                    name: "paginationBar",
-                    factory: PaginationBar.factory
-                };
-                return PaginationBar;
-            }(Directives.DirectiveBase));
-            Directives.PaginationBar = PaginationBar;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(PaginationBar.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var PreventEventIf = (function (_super) {
-                __extends(PreventEventIf, _super);
-                function PreventEventIf(timeout) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.scope = {
-                        preventEventIf: "&",
-                        preventEvent: "@"
-                    };
-                    this.timeout = timeout;
-                }
-                PreventEventIf.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    control.on(scope["preventEvent"], function (e) {
-                        if (scope["preventEventIf"]()) {
-                            event.preventDefault();
-                            e.stopPropagation();
-                        }
-                    });
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                PreventEventIf.factory = function (timeout) {
-                    return new PreventEventIf(timeout);
-                };
-                PreventEventIf.register = {
-                    name: "preventEventIf",
-                    factory: PreventEventIf.factory,
-                    dependencies: [AngularServices.timeout]
-                };
-                return PreventEventIf;
-            }(Directives.DirectiveBase));
-            Directives.PreventEventIf = PreventEventIf;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(PreventEventIf.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var RemoveClass = (function (_super) {
-                __extends(RemoveClass, _super);
-                function RemoveClass() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                RemoveClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var options = {};
-                    this.tryGet(options, instanceAttributes, "element");
-                    this.tryGet(options, instanceAttributes, "removeClass");
-                    if (!Object.isNull(options.element)) {
-                        var element = $(options.element);
-                        if (element.hasClass(options.removeClass))
-                            element.removeClass(options.removeClass);
-                    }
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                RemoveClass.factory = function () {
-                    return new RemoveClass();
-                };
-                RemoveClass.register = {
-                    name: "removeClass",
-                    factory: RemoveClass.factory
-                };
-                return RemoveClass;
-            }(Directives.DirectiveBase));
-            Directives.RemoveClass = RemoveClass;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(RemoveClass.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var ScrollToBottom = (function (_super) {
-                __extends(ScrollToBottom, _super);
-                function ScrollToBottom(rootScope) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.rootScope = rootScope;
-                }
-                ScrollToBottom.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var options = {};
-                    this.tryGetBoolean(options, instanceAttributes, "onContentChange");
-                    this.tryGetBoolean(options, instanceAttributes, "onClick");
-                    if (options.onContentChange) {
-                        scope.$watch(function () { return instanceElement[0].innerHTML; }, function () {
-                            control.scrollTop(control[0].scrollHeight);
-                        });
-                    }
-                    if (options.onClick) {
-                        control.on("click", function () {
-                            control.scrollTop(0);
-                        });
-                    }
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                ScrollToBottom.factory = function (rootScope) {
-                    return new ScrollToBottom(rootScope);
-                };
-                ScrollToBottom.register = {
-                    name: "scrollToBottom",
-                    factory: ScrollToBottom.factory,
-                    dependencies: [AngularServices.rootScope]
-                };
-                return ScrollToBottom;
-            }(Directives.DirectiveBase));
-            Directives.ScrollToBottom = ScrollToBottom;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(ScrollToBottom.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var ScrollToggleClass = (function (_super) {
-                __extends(ScrollToggleClass, _super);
-                function ScrollToggleClass() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                ScrollToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var element = $(instanceElement);
-                    var self = this;
-                    function updateElement() {
-                        self.updateElement(element, instanceAttributes);
-                    }
-                    $(window).on("scroll.scrollToggleClass", updateElement);
-                    scope.$on("$destroy", function () {
-                        $(window).unbind("scroll.scrollToggleClass", updateElement);
-                        element.remove();
-                    });
-                    this.updateElement(element, instanceAttributes);
-                };
-                ScrollToggleClass.prototype.updateElement = function (element, instanceAttributes) {
-                    var options = {};
-                    this.tryGetNumber(options, instanceAttributes, "minPos");
-                    this.tryGetNumber(options, instanceAttributes, "maxPos");
-                    this.tryGet(options, instanceAttributes, "cssClass");
-                    options.minPos = options.minPos || Number.MIN_VALUE;
-                    options.maxPos = options.maxPos || Number.MAX_VALUE;
-                    var scroll = $(window).scrollTop();
-                    if (scroll >= options.minPos && scroll <= options.maxPos)
-                        element.addClass(options.cssClass);
-                    else
-                        element.removeClass(options.cssClass);
-                };
-                ScrollToggleClass.factory = function () {
-                    return new ScrollToggleClass();
-                };
-                ScrollToggleClass.register = {
-                    name: "scrollToggleClass",
-                    factory: ScrollToggleClass.factory
-                };
-                return ScrollToggleClass;
-            }(Directives.DirectiveBase));
-            Directives.ScrollToggleClass = ScrollToggleClass;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(ScrollToggleClass.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var ScrollToTop = (function (_super) {
-                __extends(ScrollToTop, _super);
-                function ScrollToTop(rootScope) {
-                    _super.call(this);
-                    this.restrict = "A";
-                    this.rootScope = rootScope;
-                }
-                ScrollToTop.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var _this = this;
-                    var control = $(instanceElement);
-                    var options = {};
-                    this.tryGetBoolean(options, instanceAttributes, "onStateChange");
-                    this.tryGetBoolean(options, instanceAttributes, "onClick");
-                    scope.$watch(function () { return instanceAttributes["onStateChange"]; }, function (newValue) {
-                        if (newValue === "true") {
-                            if (Object.isNull(control[0]["stateChangeEvent"])) {
-                                control[0]["stateChangeEvent"] = _this.rootScope.$on("$stateChangeSuccess", function () {
-                                    $("body").scrollTop(0);
-                                });
-                            }
-                        }
-                        else {
-                            if (!Object.isNull(control[0]["stateChangeEvent"])) {
-                                control[0]["stateChangeEvent"]();
-                                control[0]["stateChangeEvent"] = null;
-                            }
-                        }
-                    });
-                    if (options.onClick) {
-                        control.on("click", function () {
-                            $("body").scrollTop(0);
-                        });
-                    }
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                ScrollToTop.factory = function (rootScope) {
-                    return new ScrollToTop(rootScope);
-                };
-                ScrollToTop.register = {
-                    name: "scrollToTop",
-                    factory: ScrollToTop.factory,
-                    dependencies: [AngularServices.rootScope]
-                };
-                return ScrollToTop;
-            }(Directives.DirectiveBase));
-            Directives.ScrollToTop = ScrollToTop;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(ScrollToTop.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var SelectToggleClass = (function (_super) {
-                __extends(SelectToggleClass, _super);
-                function SelectToggleClass() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                SelectToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var element = $(instanceElement);
-                    var className = instanceAttributes[SelectToggleClass.register.name];
-                    function documentClick() {
-                        element.removeClass(className);
-                    }
-                    $("html").on("click.selectToggleClass", documentClick);
-                    element.on("click", function (e) {
-                        e.stopPropagation();
-                        element.toggleClass(className);
-                    });
-                    scope.$on("$destroy", function () {
-                        $("html").unbind("click.selectToggleClass", documentClick);
-                        element.remove();
-                    });
-                };
-                SelectToggleClass.factory = function () {
-                    return new SelectToggleClass();
-                };
-                SelectToggleClass.register = {
-                    name: "selectToggleClass",
-                    factory: SelectToggleClass.factory
-                };
-                return SelectToggleClass;
-            }(Directives.DirectiveBase));
-            Directives.SelectToggleClass = SelectToggleClass;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(SelectToggleClass.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var ToggleClass = (function (_super) {
-                __extends(ToggleClass, _super);
-                function ToggleClass() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                ToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var options = {};
-                    this.tryGet(options, instanceAttributes, "element");
-                    this.tryGet(options, instanceAttributes, "toggleClass");
-                    if (!Object.isNull(options.element)) {
-                        var element = $(options.element);
-                        if (!element.hasClass(options.toggleClass))
-                            element.addClass(options.toggleClass);
-                        else
-                            element.removeClass(options.toggleClass);
-                    }
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                ToggleClass.factory = function () {
-                    return new ToggleClass();
-                };
-                ToggleClass.register = {
-                    name: "toggleClass",
-                    factory: ToggleClass.factory
-                };
-                return ToggleClass;
-            }(Directives.DirectiveBase));
-            Directives.ToggleClass = ToggleClass;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(ToggleClass.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var ToggleClassOnClick = (function (_super) {
-                __extends(ToggleClassOnClick, _super);
-                function ToggleClassOnClick() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                }
-                ToggleClassOnClick.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var element = $(instanceElement);
-                    var toggleElement = $(instanceAttributes["toggleElement"] || instanceElement);
-                    var toggleClass = instanceAttributes["toggleClass"];
-                    element.on("click touch", function () { return $(toggleElement).toggleClass(toggleClass); });
-                    scope.$on("$destroy", function () { return element.remove(); });
-                };
-                ToggleClassOnClick.factory = function () {
-                    return new ToggleClassOnClick();
-                };
-                ToggleClassOnClick.register = {
-                    name: "toggleClassOnClick",
-                    factory: ToggleClassOnClick.factory
-                };
-                return ToggleClassOnClick;
-            }(Directives.DirectiveBase));
-            Directives.ToggleClassOnClick = ToggleClassOnClick;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(ToggleClassOnClick.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/String.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var Tooltip = (function (_super) {
-                __extends(Tooltip, _super);
-                function Tooltip() {
-                    _super.apply(this, arguments);
-                    this.restrict = "A";
-                    this.scope = {
-                        tooltipOptions: "@",
-                        tooltipCose: "&",
-                        tooltipParameter: "="
-                    };
-                }
-                Tooltip.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    var options = this.getOptions(instanceAttributes, Tooltip.register.name + "Options");
-                    if (Object.isNull(options) || Object.isNull(options.content)) {
-                        this.normalTooltip(control, scope, instanceAttributes);
-                    }
-                    control.tooltipster(options);
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                Tooltip.prototype.normalTooltip = function (control, scope, instanceAttributes) {
-                    scope.$watch(function () { return instanceAttributes["title"]; }, function (newValue) {
-                        if (String.isNullOrWhiteSpace(newValue))
-                            return;
-                        var tooltipsterData = control.data("tooltipster-ns");
-                        if (!Object.isNull(tooltipsterData)) {
-                            control.removeAttr("title");
-                            control.tooltipster("content", newValue);
-                        }
-                    });
-                };
-                Tooltip.factory = function () {
-                    return new Tooltip();
-                };
-                Tooltip.register = {
-                    name: "tooltip",
-                    factory: Tooltip.factory
-                };
-                return Tooltip;
-            }(Directives.DirectiveBase));
-            Directives.Tooltip = Tooltip;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(Tooltip.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 Date.fromIso8601 = function (value) {
@@ -4281,6 +2628,1723 @@ Number.isNumber = function (value) {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+String.empty = "";
+String.isString = function (value) {
+    return (typeof (value) === "string" || value instanceof String);
+};
+String.isNullOrEmpty = function (value) {
+    return value == null || value === "";
+};
+String.isNullOrWhiteSpace = function (value) {
+    return value == null || value.replace(/ /g, "") === "";
+};
+String.format = function (format) {
+    var args = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        args[_i - 1] = arguments[_i];
+    }
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
+        index = parseInt(index, 10);
+        if (index < 0 || index >= args.length) {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+        return args[index];
+    });
+};
+String.formatArray = function (format, args) {
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
+        index = parseInt(index, 10);
+        if (index < 0 || index >= args.length) {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+        return args[index];
+    });
+};
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var DirectiveBase = (function () {
+                function DirectiveBase() {
+                    var _this = this;
+                    this.link = function (s, e, a, c, t) { return _this.create(s, e, a, c, t); };
+                }
+                DirectiveBase.prototype.getOptions = function (instanceAttributes, optionsParameter) {
+                    if (String.isNullOrWhiteSpace(instanceAttributes[optionsParameter]))
+                        return null;
+                    return JSON.parse(instanceAttributes[optionsParameter]);
+                };
+                DirectiveBase.prototype.tryGetInt = function (options, instanceAttributes, optionFrom, optionTo) {
+                    optionTo = optionTo || optionFrom;
+                    if (!Object.isNull(instanceAttributes[optionFrom]))
+                        options[optionTo] = parseInt(instanceAttributes[optionFrom]);
+                    return options[optionTo];
+                };
+                DirectiveBase.prototype.tryGetNumber = function (options, instanceAttributes, optionFrom, optionTo) {
+                    optionTo = optionTo || optionFrom;
+                    if (!Object.isNull(instanceAttributes[optionFrom]))
+                        options[optionTo] = parseFloat(instanceAttributes[optionFrom]);
+                    return options[optionTo];
+                };
+                DirectiveBase.prototype.tryGetDate = function (options, instanceAttributes, optionFrom, optionTo) {
+                    optionTo = optionTo || optionFrom;
+                    if (!Object.isNull(instanceAttributes[optionFrom]))
+                        options[optionTo] = new Date(instanceAttributes[optionFrom]);
+                    return options[optionTo];
+                };
+                DirectiveBase.prototype.tryGetBoolean = function (options, instanceAttributes, optionFrom, optionTo) {
+                    optionTo = optionTo || optionFrom;
+                    if (!Object.isNull(instanceAttributes[optionFrom])) {
+                        var value = instanceAttributes[optionFrom].toLowerCase();
+                        options[optionTo] = value === "yes" ||
+                            value === "true" ||
+                            value === "1";
+                    }
+                    return options[optionTo];
+                };
+                DirectiveBase.prototype.tryGet = function (options, instanceAttributes, optionFrom, optionTo) {
+                    optionTo = optionTo || optionFrom;
+                    if (!Object.isNull(instanceAttributes[optionFrom]))
+                        options[optionTo] = instanceAttributes[optionFrom];
+                    return options[optionTo];
+                };
+                return DirectiveBase;
+            }());
+            Directives.DirectiveBase = DirectiveBase;
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AddClass = (function (_super) {
+                __extends(AddClass, _super);
+                function AddClass() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                AddClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var options = {};
+                    this.tryGet(options, instanceAttributes, "element");
+                    this.tryGet(options, instanceAttributes, "addClass");
+                    if (!Object.isNull(options.element)) {
+                        var element = $(options.element);
+                        if (!element.hasClass(options.addClass)) {
+                            element.addClass(options.addClass);
+                        }
+                    }
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                AddClass.factory = function () {
+                    return new AddClass();
+                };
+                AddClass.register = {
+                    name: "addClass",
+                    factory: AddClass.factory
+                };
+                return AddClass;
+            }(Directives.DirectiveBase));
+            Directives.AddClass = AddClass;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(AddClass.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var Alert = (function (_super) {
+                __extends(Alert, _super);
+                function Alert(timeout) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.scope = {
+                        alertType: "@",
+                        timeout: "@",
+                        close: "&"
+                    };
+                    this.timeout = timeout;
+                }
+                Alert.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var alertType = scope["alertType"];
+                    var timeout = parseInt(scope["timeout"]);
+                    control.addClass("alert");
+                    if (!Object.isNull(alertType))
+                        control.addClass(alertType);
+                    if (!Object.isNull(timeout))
+                        this.timeout(function () { return scope["close"](); }, timeout);
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                Alert.factory = function (timeout) {
+                    return new Alert(timeout);
+                };
+                Alert.register = {
+                    name: "alert",
+                    factory: Alert.factory,
+                    dependencies: [AngularServices.timeout]
+                };
+                return Alert;
+            }(Directives.DirectiveBase));
+            Directives.Alert = Alert;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(Alert.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var BackgroundImage = (function (_super) {
+                __extends(BackgroundImage, _super);
+                function BackgroundImage() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                BackgroundImage.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var element = $(instanceElement);
+                    scope.$watch(function () { return instanceAttributes[BackgroundImage.register.name]; }, function (newValue) {
+                        if (String.isNullOrWhiteSpace(newValue))
+                            return;
+                        element.css("background-image", String.format("url({0})", newValue));
+                    });
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                BackgroundImage.factory = function () {
+                    return new BackgroundImage();
+                };
+                BackgroundImage.register = {
+                    name: "backgroundImage",
+                    factory: BackgroundImage.factory,
+                    dependencies: [AngularServices.interpolate]
+                };
+                return BackgroundImage;
+            }(Directives.DirectiveBase));
+            Directives.BackgroundImage = BackgroundImage;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(BackgroundImage.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+///<reference path="../core/String.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var CommentArea = (function (_super) {
+                __extends(CommentArea, _super);
+                function CommentArea() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.scope = {
+                        ngModel: "="
+                    };
+                }
+                CommentArea.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var element = $(instanceElement);
+                    var options = {};
+                    this.tryGetNumber(options, instanceAttributes, "defaultHeight");
+                    this.tryGetNumber(options, instanceAttributes, "maxSize");
+                    this.tryGet(options, instanceAttributes, "maxSizeField");
+                    this.tryGet(options, instanceAttributes, "maxSizeText");
+                    this.tryGetBoolean(options, instanceAttributes, "resize");
+                    this.tryGetBoolean(options, instanceAttributes, "showAlways");
+                    this.tryGetBoolean(options, instanceAttributes, "restrictEntry");
+                    this.tryGet(options, instanceAttributes, "negativeClass");
+                    if (options.restrictEntry) {
+                        element.on("keydown", function (event) { return _this.restrictEntry(event, options, element, false); });
+                        element.on("keypress", function (event) { return _this.restrictEntry(event, options, element, true); });
+                        element.on("keyup", function (event) { return _this.restrictEntry(event, options, element, false); });
+                        scope.$watch(function () { return scope["ngModel"]; }, function () { return _this.restrictEntry(null, options, element, false); });
+                    }
+                    else {
+                        element.on("keypress", function () { return _this.showCharacterLeft(options, element, true); });
+                        scope.$watch(function () { return scope["ngModel"]; }, function () { return _this.showCharacterLeft(options, element, false); });
+                    }
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                CommentArea.prototype.restrictEntry = function (event, options, element, cancel) {
+                    if (!Object.isNull(options.maxSize)) {
+                        var value = element.val();
+                        var length_1 = value.length;
+                        var available = options.maxSize - length_1;
+                        if (available < 0)
+                            available = -1;
+                        if (available === -1) {
+                            if (cancel) {
+                                event.stopPropagation();
+                                event.preventDefault();
+                            }
+                            element.val(value.substr(0, options.maxSize));
+                            available = 0;
+                        }
+                        if (!Object.isNull(options.maxSizeText)) {
+                            $(options.maxSizeField).text((available === options.maxSize && !options.showAlways) ? String.empty : String.format(options.maxSizeText, available));
+                        }
+                        if (!Object.isNull(options.resize) && options.resize) {
+                            this.checkSize(options, element);
+                        }
+                    }
+                };
+                CommentArea.prototype.showCharacterLeft = function (options, element, cancel) {
+                    if (!Object.isNull(options.maxSize)) {
+                        var value = element.val();
+                        var length_2 = value.length;
+                        var available = options.maxSize - length_2;
+                        if (!Object.isNull(options.maxSizeText)) {
+                            var field = $(options.maxSizeField);
+                            if (!Object.isNull(options.negativeClass)) {
+                                if (available < 0)
+                                    field.addClass(options.negativeClass);
+                                else
+                                    field.removeClass(options.negativeClass);
+                            }
+                            $(options.maxSizeField).text((available === options.maxSize && !options.showAlways) ? String.empty : String.format(options.maxSizeText, available));
+                        }
+                        if (!Object.isNull(options.resize) && options.resize) {
+                            this.checkSize(options, element);
+                        }
+                    }
+                    else {
+                        if (!Object.isNull(options.resize) && options.resize) {
+                            this.checkSize(options, element);
+                        }
+                    }
+                };
+                CommentArea.prototype.checkSize = function (options, element) {
+                    var control = element[0];
+                    var defaultHeight = options.defaultHeight || 0;
+                    control.style.height = "1px";
+                    if (control.scrollHeight > control.clientHeight) {
+                        if (control.scrollHeight > defaultHeight)
+                            control.style.height = control.scrollHeight + "px";
+                        else
+                            control.style.height = defaultHeight + "px";
+                    }
+                    else if (!Object.isNull(options.defaultHeight)) {
+                        control.style.height = defaultHeight + "px";
+                    }
+                };
+                CommentArea.factory = function () {
+                    return new CommentArea();
+                };
+                CommentArea.register = {
+                    name: "commentArea",
+                    factory: CommentArea.factory
+                };
+                return CommentArea;
+            }(Directives.DirectiveBase));
+            Directives.CommentArea = CommentArea;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(CommentArea.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+///<reference path="../core/String.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var ConvertToNumber = (function (_super) {
+                __extends(ConvertToNumber, _super);
+                function ConvertToNumber() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.require = "ngModel";
+                }
+                ConvertToNumber.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    controller.$parsers.push(function (val) { return Object.isNull(val) ? parseInt(val, 10) : null; });
+                    controller.$formatters.push(function (val) { return val != null ? "" + val : null; });
+                    var element = $(instanceElement);
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                ConvertToNumber.factory = function () {
+                    return new ConvertToNumber();
+                };
+                ConvertToNumber.register = {
+                    name: "convertToNumber",
+                    factory: ConvertToNumber.factory
+                };
+                return ConvertToNumber;
+            }(Directives.DirectiveBase));
+            Directives.ConvertToNumber = ConvertToNumber;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(ConvertToNumber.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../../typings/datetimepicker/datetimepicker.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var DateTimePicker = (function (_super) {
+                __extends(DateTimePicker, _super);
+                function DateTimePicker(filter) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.require = "ngModel";
+                    this.filter = filter;
+                }
+                DateTimePicker.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var element = $(instanceElement);
+                    var options = {};
+                    //////////////////////////////////////////////////////////////////
+                    // Own properties
+                    //////////////////////////////////////////////////////////////////
+                    this.tryGet(options, instanceAttributes, "format");
+                    this.tryGet(options, instanceAttributes, "dayViewHeaderFormat");
+                    this.tryGetBoolean(options, instanceAttributes, "extraFormats");
+                    this.tryGetNumber(options, instanceAttributes, "stepping");
+                    this.tryGetDate(options, instanceAttributes, "minDate");
+                    this.tryGetDate(options, instanceAttributes, "maxDate");
+                    this.tryGetBoolean(options, instanceAttributes, "useCurrent");
+                    this.tryGetBoolean(options, instanceAttributes, "collapse");
+                    this.tryGet(options, instanceAttributes, "locale");
+                    this.tryGet(options, instanceAttributes, "viewMode");
+                    this.tryGetDate(options, instanceAttributes, "defaultDate");
+                    this.tryGetBoolean(options, instanceAttributes, "disabledDates");
+                    this.tryGetBoolean(options, instanceAttributes, "enabledDates");
+                    this.tryGetBoolean(options, instanceAttributes, "disabledHours");
+                    this.tryGetBoolean(options, instanceAttributes, "disabledTimeIntervals");
+                    this.tryGetBoolean(options, instanceAttributes, "useStrict");
+                    this.tryGetBoolean(options, instanceAttributes, "sideBySide");
+                    this.tryGetBoolean(options, instanceAttributes, "calendarWeeks");
+                    this.tryGet(options, instanceAttributes, "toolbarPlacement");
+                    this.tryGetBoolean(options, instanceAttributes, "showTodayButton");
+                    this.tryGetBoolean(options, instanceAttributes, "showClear");
+                    this.tryGetBoolean(options, instanceAttributes, "showClose");
+                    this.tryGetBoolean(options, instanceAttributes, "keepOpen");
+                    this.tryGetBoolean(options, instanceAttributes, "allowInputToggle");
+                    this.tryGetBoolean(options, instanceAttributes, "focusOnShow");
+                    if (!Object.isNull(instanceAttributes["maxDateToday"]))
+                        options.maxDate = new Date();
+                    options.icons = { clear: "dtp-action clear", close: "dtp-action close" };
+                    element.datetimepicker(options);
+                    element.on("dp.change", function (e) {
+                        if (Object.isNull(options.format) || options.format === "L")
+                            controller.$setViewValue(!Object.isNull(e["date"])
+                                ? _this.filter("date")(e["date"]._d, "MM/dd/yyyy")
+                                : null);
+                        if (!Object.isNull(options.format) && options.format === "LT")
+                            controller.$setViewValue(!Object.isNull(e["date"])
+                                ? _this.filter("date")(e["date"]._d, "hh:mm")
+                                : null);
+                    });
+                    element.on("dp.show", function () {
+                        if (!Object.isNull(options.viewMode)) {
+                            element.data("DateTimePicker").viewMode(options.viewMode);
+                        }
+                    });
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                DateTimePicker.factory = function (filter) {
+                    return new DateTimePicker(filter);
+                };
+                DateTimePicker.register = {
+                    name: "dateTimePicker",
+                    factory: DateTimePicker.factory,
+                    dependencies: ["$filter"]
+                };
+                return DateTimePicker;
+            }(Directives.DirectiveBase));
+            Directives.DateTimePicker = DateTimePicker;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(DateTimePicker.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts"/>
+///<reference path="../core/ArrayList.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Services;
+        (function (Services) {
+            var KeyAction = (function () {
+                function KeyAction() {
+                }
+                return KeyAction;
+            }());
+            Services.KeyAction = KeyAction;
+        })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="../core/ArrayList.ts"/>
+///<reference path="DirectiveBase.ts" />
+///<reference path="../services/IKeyProcessorService.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FrameworkServices = Angular.Services.FrameworkServices;
+            var DocumentKeyboard = (function (_super) {
+                __extends(DocumentKeyboard, _super);
+                function DocumentKeyboard(keyProcessor) {
+                    _super.call(this);
+                    this.restrict = "E";
+                    this.keyProcessor = keyProcessor;
+                }
+                DocumentKeyboard.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var mainDocument = $(document);
+                    var control = $(instanceElement);
+                    var actions = String.empty;
+                    control.find("listener").each(function (index, element) {
+                        actions += element.getAttribute("action") + "|";
+                    });
+                    if (actions[actions.length - 1] === "|")
+                        actions = actions.substr(0, actions.length - 1);
+                    var keyActions = this.keyProcessor.parseActions(actions);
+                    var keyProcessor = this.keyProcessor;
+                    function evaluateKeyActions(e) {
+                        keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e);
+                    }
+                    if (keyActions.any(function (x) { return x.eventType === "keypress"; }))
+                        mainDocument.on("keypress.documentKeyboard", evaluateKeyActions);
+                    if (keyActions.any(function (x) { return x.eventType === "keydown"; }))
+                        mainDocument.on("keydown.documentKeyboard", evaluateKeyActions);
+                    if (keyActions.any(function (x) { return x.eventType === "keyup"; }))
+                        mainDocument.on("keyup.documentKeyboard", evaluateKeyActions);
+                    scope.$on("$destroy", function () {
+                        mainDocument.off("keypress.documentKeyboard", evaluateKeyActions);
+                        mainDocument.off("keydown.documentKeyboard", evaluateKeyActions);
+                        mainDocument.off("keyup.documentKeyboard", evaluateKeyActions);
+                        control.remove();
+                    });
+                };
+                DocumentKeyboard.factory = function (keyProcessor) {
+                    return new DocumentKeyboard(keyProcessor);
+                };
+                DocumentKeyboard.register = {
+                    name: "documentKeyboard",
+                    factory: DocumentKeyboard.factory,
+                    dependencies: [FrameworkServices.keyProcessorService]
+                };
+                return DocumentKeyboard;
+            }(Directives.DirectiveBase));
+            Directives.DocumentKeyboard = DocumentKeyboard;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(DocumentKeyboard.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var FileButton = (function (_super) {
+                __extends(FileButton, _super);
+                function FileButton(timeout) {
+                    _super.call(this);
+                    this.restrict = "E";
+                    this.scope = {
+                        title: "@",
+                        ariaLabel: "@",
+                        accept: "@",
+                        caption: "@",
+                        cssClass: "@",
+                        fileSelected: "&"
+                    };
+                    this.template = '<input type="file" style="display: none" title="{{title}}" accept="{{accept}}" aria-label="{{ariaLabel}}" />' +
+                        '<button class="{{cssClass}}">{{caption}}</button>';
+                    this.timeout = timeout;
+                }
+                FileButton.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var element = $(instanceElement);
+                    var button = element.find("button");
+                    var file = element.find("input");
+                    button.on("click", function () { return file.trigger("click"); });
+                    file.on("change", function (e) {
+                        _this.timeout(function () {
+                            if (Object.isNull(e) || Object.isNull(e.target) || Object.isNull(e.target["files"]))
+                                return;
+                            scope["fileSelected"]({ files: e.target["files"] });
+                        });
+                    });
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                FileButton.factory = function (timeout) {
+                    return new FileButton(timeout);
+                };
+                FileButton.register = {
+                    name: "fileButton",
+                    factory: FileButton.factory,
+                    dependencies: [AngularServices.timeout]
+                };
+                return FileButton;
+            }(Directives.DirectiveBase));
+            Directives.FileButton = FileButton;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FileButton.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FileDragAndDrop = (function (_super) {
+                __extends(FileDragAndDrop, _super);
+                function FileDragAndDrop() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.scope = {
+                        fileSelected: "&"
+                    };
+                }
+                FileDragAndDrop.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var element = $(instanceElement);
+                    instanceElement[0].addEventListener("dragenter", function () { return element.css("border", "2px dashed gray"); }, false);
+                    instanceElement[0].addEventListener("dragexit", function () { return element.css("border", "none"); }, false);
+                    instanceElement[0].addEventListener("dragend", function () { return element.css("border", "none"); }, false);
+                    instanceElement[0].addEventListener("dragover", function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "copy";
+                    }, false);
+                    instanceElement[0].addEventListener("drop", function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        scope["fileSelected"]({ files: e.dataTransfer.files });
+                    }, false);
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                FileDragAndDrop.factory = function () {
+                    return new FileDragAndDrop();
+                };
+                FileDragAndDrop.register = {
+                    name: "fileDragAndDrop",
+                    factory: FileDragAndDrop.factory
+                };
+                return FileDragAndDrop;
+            }(Directives.DirectiveBase));
+            Directives.FileDragAndDrop = FileDragAndDrop;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FileDragAndDrop.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FocusInvalidField = (function (_super) {
+                __extends(FocusInvalidField, _super);
+                function FocusInvalidField() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                FocusInvalidField.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    control.on("submit", function () {
+                        var invalid = control.find(".ng-invalid");
+                        if (!Object.isNull(invalid) && invalid.length > 0) {
+                            invalid[0].focus();
+                        }
+                    });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FocusInvalidField.factory = function () {
+                    return new FocusInvalidField();
+                };
+                FocusInvalidField.register = {
+                    name: "focusInvalidField",
+                    factory: FocusInvalidField.factory
+                };
+                return FocusInvalidField;
+            }(Directives.DirectiveBase));
+            Directives.FocusInvalidField = FocusInvalidField;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FocusInvalidField.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var FocusWhen = (function (_super) {
+                __extends(FocusWhen, _super);
+                function FocusWhen(timeout) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.timeout = timeout;
+                }
+                FocusWhen.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var control = $(instanceElement);
+                    var focusDelay = 100;
+                    if (instanceAttributes["focus-delay"])
+                        focusDelay = parseInt(instanceAttributes["focus-delay"]);
+                    scope.$watch(function () { return instanceAttributes[FocusWhen.register.name]; }, function (value) {
+                        try {
+                            var model = scope.$eval(value);
+                            if (model) {
+                                _this.timeout(function () { return control.focus(); }, focusDelay);
+                            }
+                        }
+                        catch (e) {
+                        }
+                    });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FocusWhen.factory = function (timeout) {
+                    return new FocusWhen(timeout);
+                };
+                FocusWhen.register = {
+                    name: "focusWhen",
+                    factory: FocusWhen.factory,
+                    dependencies: [AngularServices.timeout]
+                };
+                return FocusWhen;
+            }(Directives.DirectiveBase));
+            Directives.FocusWhen = FocusWhen;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FocusWhen.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FullSelect = (function (_super) {
+                __extends(FullSelect, _super);
+                function FullSelect() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                FullSelect.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    control.on("focus", function () { return instanceElement.select(); });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FullSelect.factory = function () {
+                    return new FullSelect();
+                };
+                FullSelect.register = {
+                    name: "fullSelect",
+                    factory: FullSelect.factory
+                };
+                return FullSelect;
+            }(Directives.DirectiveBase));
+            Directives.FullSelect = FullSelect;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FullSelect.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var HorizontalScroller = (function (_super) {
+                __extends(HorizontalScroller, _super);
+                function HorizontalScroller(interpolate) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.interpolate = interpolate;
+                }
+                HorizontalScroller.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var options = {};
+                    options.element = instanceElement;
+                    this.tryGet(options, instanceAttributes, "container");
+                    this.tryGet(options, instanceAttributes, "content");
+                    this.tryGet(options, instanceAttributes, "leftArrow");
+                    this.tryGet(options, instanceAttributes, "rightArrow");
+                    this.tryGetNumber(options, instanceAttributes, "speed");
+                    this.tryGetNumber(options, instanceAttributes, "friction");
+                    this.tryGetNumber(options, instanceAttributes, "fps");
+                    this.tryGetNumber(options, instanceAttributes, "minVelocity");
+                    if (String.isNullOrWhiteSpace(options.container) ||
+                        String.isNullOrWhiteSpace(options.content) ||
+                        String.isNullOrWhiteSpace(options.leftArrow) ||
+                        String.isNullOrWhiteSpace(options.rightArrow))
+                        return;
+                    instanceElement[0]["scrollerInstance"] = new HorizontalScrollerInstance(options);
+                    scope.$watch(function () { return instanceElement[0].innerHTML; }, function () { return instanceElement[0]["scrollerInstance"].enableScroll(); });
+                    scope.$on("$destroy", function () {
+                        instanceElement[0]["scrollerInstance"].dispose();
+                    });
+                };
+                HorizontalScroller.factory = function (interpolate) {
+                    return new HorizontalScroller(interpolate);
+                };
+                HorizontalScroller.register = {
+                    name: "horizontalScroller",
+                    factory: HorizontalScroller.factory,
+                    dependencies: [AngularServices.interpolate]
+                };
+                return HorizontalScroller;
+            }(Directives.DirectiveBase));
+            Directives.HorizontalScroller = HorizontalScroller;
+            var HorizontalScrollerInstance = (function () {
+                function HorizontalScrollerInstance(options) {
+                    var _this = this;
+                    this.element = $(options.element);
+                    this.container = this.element.find(options.container);
+                    this.content = this.element.find(options.content);
+                    this.leftArrow = this.element.find(options.leftArrow);
+                    this.rightArrow = this.element.find(options.rightArrow);
+                    this.position = 0;
+                    this.velocity = 0;
+                    this.speed = options.speed || 140;
+                    this.friction = options.friction || 0.95;
+                    this.millisecondsPerFrame = 1000 / (options.fps || 60);
+                    this.minVelocity = options.minVelocity || 10;
+                    this.enableScroll();
+                    $(window).on("resize", function () { return _this.enableScroll(); });
+                    this.leftArrow.on("mousedown touchstart", function () { return _this.moveLeft(); });
+                    this.leftArrow.on("mouseup mouseleave touchend touchcancel", function () { return _this.pressing = false; });
+                    this.rightArrow.on("mousedown touchstart", function () { return _this.moveRight(); });
+                    this.rightArrow.on("mouseup mouseleave touchend touchcancel", function () { return _this.pressing = false; });
+                }
+                HorizontalScrollerInstance.prototype.enableScroll = function () {
+                    var wContainer = this.container.width();
+                    var wContent = this.content.width();
+                    if (wContent < wContainer) {
+                        this.leftArrow.css("display", "none");
+                        this.rightArrow.css("display", "none");
+                        this.position = 0;
+                    }
+                    else {
+                        this.leftArrow.css("display", "inline-block");
+                        this.rightArrow.css("display", "inline-block");
+                    }
+                    this.checkConstraints();
+                    this.applyPosition();
+                };
+                HorizontalScrollerInstance.prototype.applyPosition = function () {
+                    var translate = "translate(" + this.position + "px, 0)";
+                    var translate3D = "translate3d(" + this.position + "px, 0, 0)";
+                    this.content.css({
+                        '-ms-transform': translate,
+                        '-moz-transform': translate3D,
+                        '-webkit-transform': translate3D,
+                        'transform': translate3D
+                    });
+                };
+                HorizontalScrollerInstance.prototype.checkConstraints = function () {
+                    var wContainer = this.container.width();
+                    var wContent = this.content.width();
+                    var minMovement = wContainer - wContent;
+                    if (wContent <= wContainer || this.position >= 0)
+                        this.position = 0;
+                    if (wContent >= wContainer && this.position <= minMovement)
+                        this.position = minMovement;
+                };
+                HorizontalScrollerInstance.prototype.killInterval = function () {
+                    if (Object.isNull(this.intervalId))
+                        return;
+                    window.clearInterval(this.intervalId);
+                };
+                HorizontalScrollerInstance.prototype.getMilliseconds = function () {
+                    return (new Date()).getTime();
+                };
+                HorizontalScrollerInstance.prototype.moveLeft = function () {
+                    var _this = this;
+                    this.pressing = true;
+                    this.direction = 1;
+                    this.lastTime = this.getMilliseconds();
+                    this.killInterval();
+                    this.intervalId = window.setInterval(function () { return _this.move(); }, this.millisecondsPerFrame);
+                };
+                HorizontalScrollerInstance.prototype.moveRight = function () {
+                    var _this = this;
+                    this.pressing = true;
+                    this.direction = -1;
+                    this.lastTime = this.getMilliseconds();
+                    this.killInterval();
+                    this.intervalId = window.setInterval(function () { return _this.move(); }, this.millisecondsPerFrame);
+                };
+                HorizontalScrollerInstance.prototype.move = function () {
+                    var deltaTime = (this.getMilliseconds() - this.lastTime) / 1000;
+                    if (this.pressing) {
+                        this.velocity = this.speed;
+                    }
+                    this.velocity *= this.friction;
+                    this.position = this.position + (this.direction * this.velocity * deltaTime);
+                    this.checkConstraints();
+                    this.applyPosition();
+                    if (this.velocity <= this.minVelocity) {
+                        this.killInterval();
+                    }
+                    this.lastTime = this.getMilliseconds();
+                };
+                HorizontalScrollerInstance.prototype.dispose = function () {
+                    this.container.remove();
+                    this.content.remove();
+                    this.leftArrow.remove();
+                    this.rightArrow.remove();
+                };
+                return HorizontalScrollerInstance;
+            }());
+            Directives.HorizontalScrollerInstance = HorizontalScrollerInstance;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(HorizontalScroller.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var MdUiSrefActive = (function (_super) {
+                __extends(MdUiSrefActive, _super);
+                function MdUiSrefActive(interpolate, state) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.interpolate = interpolate;
+                    this.state = state;
+                }
+                MdUiSrefActive.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var cssClass = instanceAttributes[MdUiSrefActive.register.name];
+                    var state = this.interpolate(instanceAttributes["mdUiSref"] || instanceAttributes["uiSref"])(scope);
+                    function update(toState) {
+                        if (Object.isNull(toState) || Object.isNull(toState.name))
+                            return;
+                        if (toState.name.indexOf(state) !== -1) {
+                            control.addClass(cssClass);
+                        }
+                        else {
+                            control.removeClass(cssClass);
+                        }
+                    }
+                    update(this.state.current);
+                    scope.$on("$stateChangeSuccess", function (event, toState) { return update(toState); });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                MdUiSrefActive.factory = function (interpolate, state) {
+                    return new MdUiSrefActive(interpolate, state);
+                };
+                MdUiSrefActive.register = {
+                    name: "mdUiSrefActive",
+                    factory: MdUiSrefActive.factory,
+                    dependencies: [AngularServices.interpolate, AngularServices.state]
+                };
+                return MdUiSrefActive;
+            }(Directives.DirectiveBase));
+            Directives.MdUiSrefActive = MdUiSrefActive;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(MdUiSrefActive.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="../core/ArrayList.ts"/>
+///<reference path="DirectiveBase.ts" />
+///<reference path="../services/IKeyProcessorService.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FrameworkServices = Angular.Services.FrameworkServices;
+            var OnKeyboard = (function (_super) {
+                __extends(OnKeyboard, _super);
+                function OnKeyboard(keyProcessor) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.keyProcessor = keyProcessor;
+                }
+                OnKeyboard.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var control = $(instanceElement);
+                    var keyActions = this.keyProcessor.parseActions(instanceAttributes[OnKeyboard.register.name]);
+                    if (keyActions.any(function (x) { return x.eventType === "keypress"; }))
+                        control.keypress(function (e) { return _this.keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e); });
+                    if (keyActions.any(function (x) { return x.eventType === "keydown"; }))
+                        control.keydown(function (e) { return _this.keyProcessor.evaluateKeyActions(keyActions, "keydown", scope, e); });
+                    if (keyActions.any(function (x) { return x.eventType === "keyup"; }))
+                        control.keyup(function (e) { return _this.keyProcessor.evaluateKeyActions(keyActions, "keyup", scope, e); });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                OnKeyboard.factory = function (keyProcessor) {
+                    return new OnKeyboard(keyProcessor);
+                };
+                OnKeyboard.register = {
+                    name: "onKeyboard",
+                    factory: OnKeyboard.factory,
+                    dependencies: [FrameworkServices.keyProcessorService]
+                };
+                return OnKeyboard;
+            }(Directives.DirectiveBase));
+            Directives.OnKeyboard = OnKeyboard;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(OnKeyboard.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var PaginationBar = (function (_super) {
+                __extends(PaginationBar, _super);
+                function PaginationBar() {
+                    _super.apply(this, arguments);
+                    this.restrict = "E";
+                    this.template = '<div class="pagination-bar" ng-controller="PaginationBarController as controller"><ul class="pagination"><li ng-repeat="link in links" ng-class="{ \'active\': link.selected }"><a ng-click="link.enabled && controller.navigate(link)" tooltip title="Go to page {{link.tag}}" ng-bind-html="link.name"></a></li></ul></div>';
+                    this.scope = {
+                        cssClass: "@",
+                        firstText: "@",
+                        previousText: "@",
+                        nextText: "@",
+                        lastText: "@",
+                        pages: "=",
+                        currentPage: "=",
+                        totalLinks: "@",
+                        links: "=",
+                        itemClicked: "&",
+                        autoScroll: "@"
+                    };
+                }
+                PaginationBar.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                PaginationBar.factory = function () {
+                    return new PaginationBar();
+                };
+                PaginationBar.register = {
+                    name: "paginationBar",
+                    factory: PaginationBar.factory
+                };
+                return PaginationBar;
+            }(Directives.DirectiveBase));
+            Directives.PaginationBar = PaginationBar;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(PaginationBar.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var PreventEventIf = (function (_super) {
+                __extends(PreventEventIf, _super);
+                function PreventEventIf(timeout) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.scope = {
+                        preventEventIf: "&",
+                        preventEvent: "@"
+                    };
+                    this.timeout = timeout;
+                }
+                PreventEventIf.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    control.on(scope["preventEvent"], function (e) {
+                        if (scope["preventEventIf"]()) {
+                            event.preventDefault();
+                            e.stopPropagation();
+                        }
+                    });
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                PreventEventIf.factory = function (timeout) {
+                    return new PreventEventIf(timeout);
+                };
+                PreventEventIf.register = {
+                    name: "preventEventIf",
+                    factory: PreventEventIf.factory,
+                    dependencies: [AngularServices.timeout]
+                };
+                return PreventEventIf;
+            }(Directives.DirectiveBase));
+            Directives.PreventEventIf = PreventEventIf;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(PreventEventIf.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var RemoveClass = (function (_super) {
+                __extends(RemoveClass, _super);
+                function RemoveClass() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                RemoveClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var options = {};
+                    this.tryGet(options, instanceAttributes, "element");
+                    this.tryGet(options, instanceAttributes, "removeClass");
+                    if (!Object.isNull(options.element)) {
+                        var element = $(options.element);
+                        if (element.hasClass(options.removeClass))
+                            element.removeClass(options.removeClass);
+                    }
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                RemoveClass.factory = function () {
+                    return new RemoveClass();
+                };
+                RemoveClass.register = {
+                    name: "removeClass",
+                    factory: RemoveClass.factory
+                };
+                return RemoveClass;
+            }(Directives.DirectiveBase));
+            Directives.RemoveClass = RemoveClass;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(RemoveClass.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var ScrollToBottom = (function (_super) {
+                __extends(ScrollToBottom, _super);
+                function ScrollToBottom(rootScope) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.rootScope = rootScope;
+                }
+                ScrollToBottom.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var options = {};
+                    this.tryGetBoolean(options, instanceAttributes, "onContentChange");
+                    this.tryGetBoolean(options, instanceAttributes, "onClick");
+                    if (options.onContentChange) {
+                        scope.$watch(function () { return instanceElement[0].innerHTML; }, function () {
+                            control.scrollTop(control[0].scrollHeight);
+                        });
+                    }
+                    if (options.onClick) {
+                        control.on("click", function () {
+                            control.scrollTop(0);
+                        });
+                    }
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                ScrollToBottom.factory = function (rootScope) {
+                    return new ScrollToBottom(rootScope);
+                };
+                ScrollToBottom.register = {
+                    name: "scrollToBottom",
+                    factory: ScrollToBottom.factory,
+                    dependencies: [AngularServices.rootScope]
+                };
+                return ScrollToBottom;
+            }(Directives.DirectiveBase));
+            Directives.ScrollToBottom = ScrollToBottom;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(ScrollToBottom.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var ScrollToggleClass = (function (_super) {
+                __extends(ScrollToggleClass, _super);
+                function ScrollToggleClass() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                ScrollToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var element = $(instanceElement);
+                    var self = this;
+                    function updateElement() {
+                        self.updateElement(element, instanceAttributes);
+                    }
+                    $(window).on("scroll.scrollToggleClass", updateElement);
+                    scope.$on("$destroy", function () {
+                        $(window).unbind("scroll.scrollToggleClass", updateElement);
+                        element.remove();
+                    });
+                    this.updateElement(element, instanceAttributes);
+                };
+                ScrollToggleClass.prototype.updateElement = function (element, instanceAttributes) {
+                    var options = {};
+                    this.tryGetNumber(options, instanceAttributes, "minPos");
+                    this.tryGetNumber(options, instanceAttributes, "maxPos");
+                    this.tryGet(options, instanceAttributes, "cssClass");
+                    options.minPos = options.minPos || Number.MIN_VALUE;
+                    options.maxPos = options.maxPos || Number.MAX_VALUE;
+                    var scroll = $(window).scrollTop();
+                    if (scroll >= options.minPos && scroll <= options.maxPos)
+                        element.addClass(options.cssClass);
+                    else
+                        element.removeClass(options.cssClass);
+                };
+                ScrollToggleClass.factory = function () {
+                    return new ScrollToggleClass();
+                };
+                ScrollToggleClass.register = {
+                    name: "scrollToggleClass",
+                    factory: ScrollToggleClass.factory
+                };
+                return ScrollToggleClass;
+            }(Directives.DirectiveBase));
+            Directives.ScrollToggleClass = ScrollToggleClass;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(ScrollToggleClass.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var ScrollToTop = (function (_super) {
+                __extends(ScrollToTop, _super);
+                function ScrollToTop(rootScope) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.rootScope = rootScope;
+                }
+                ScrollToTop.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var control = $(instanceElement);
+                    var options = {};
+                    this.tryGetBoolean(options, instanceAttributes, "onStateChange");
+                    this.tryGetBoolean(options, instanceAttributes, "onClick");
+                    scope.$watch(function () { return instanceAttributes["onStateChange"]; }, function (newValue) {
+                        if (newValue === "true") {
+                            if (Object.isNull(control[0]["stateChangeEvent"])) {
+                                control[0]["stateChangeEvent"] = _this.rootScope.$on("$stateChangeSuccess", function () {
+                                    $("body").scrollTop(0);
+                                });
+                            }
+                        }
+                        else {
+                            if (!Object.isNull(control[0]["stateChangeEvent"])) {
+                                control[0]["stateChangeEvent"]();
+                                control[0]["stateChangeEvent"] = null;
+                            }
+                        }
+                    });
+                    if (options.onClick) {
+                        control.on("click", function () {
+                            $("body").scrollTop(0);
+                        });
+                    }
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                ScrollToTop.factory = function (rootScope) {
+                    return new ScrollToTop(rootScope);
+                };
+                ScrollToTop.register = {
+                    name: "scrollToTop",
+                    factory: ScrollToTop.factory,
+                    dependencies: [AngularServices.rootScope]
+                };
+                return ScrollToTop;
+            }(Directives.DirectiveBase));
+            Directives.ScrollToTop = ScrollToTop;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(ScrollToTop.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var SelectToggleClass = (function (_super) {
+                __extends(SelectToggleClass, _super);
+                function SelectToggleClass() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                SelectToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var element = $(instanceElement);
+                    var className = instanceAttributes[SelectToggleClass.register.name];
+                    function documentClick() {
+                        element.removeClass(className);
+                    }
+                    $("html").on("click.selectToggleClass", documentClick);
+                    element.on("click", function (e) {
+                        e.stopPropagation();
+                        element.toggleClass(className);
+                    });
+                    scope.$on("$destroy", function () {
+                        $("html").unbind("click.selectToggleClass", documentClick);
+                        element.remove();
+                    });
+                };
+                SelectToggleClass.factory = function () {
+                    return new SelectToggleClass();
+                };
+                SelectToggleClass.register = {
+                    name: "selectToggleClass",
+                    factory: SelectToggleClass.factory
+                };
+                return SelectToggleClass;
+            }(Directives.DirectiveBase));
+            Directives.SelectToggleClass = SelectToggleClass;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(SelectToggleClass.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var ToggleClass = (function (_super) {
+                __extends(ToggleClass, _super);
+                function ToggleClass() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                ToggleClass.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var options = {};
+                    this.tryGet(options, instanceAttributes, "element");
+                    this.tryGet(options, instanceAttributes, "toggleClass");
+                    if (!Object.isNull(options.element)) {
+                        var element = $(options.element);
+                        if (!element.hasClass(options.toggleClass))
+                            element.addClass(options.toggleClass);
+                        else
+                            element.removeClass(options.toggleClass);
+                    }
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                ToggleClass.factory = function () {
+                    return new ToggleClass();
+                };
+                ToggleClass.register = {
+                    name: "toggleClass",
+                    factory: ToggleClass.factory
+                };
+                return ToggleClass;
+            }(Directives.DirectiveBase));
+            Directives.ToggleClass = ToggleClass;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(ToggleClass.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var ToggleClassOnClick = (function (_super) {
+                __extends(ToggleClassOnClick, _super);
+                function ToggleClassOnClick() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                }
+                ToggleClassOnClick.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var element = $(instanceElement);
+                    var toggleElement = $(instanceAttributes["toggleElement"] || instanceElement);
+                    var toggleClass = instanceAttributes["toggleClass"];
+                    element.on("click touch", function () { return $(toggleElement).toggleClass(toggleClass); });
+                    scope.$on("$destroy", function () { return element.remove(); });
+                };
+                ToggleClassOnClick.factory = function () {
+                    return new ToggleClassOnClick();
+                };
+                ToggleClassOnClick.register = {
+                    name: "toggleClassOnClick",
+                    factory: ToggleClassOnClick.factory
+                };
+                return ToggleClassOnClick;
+            }(Directives.DirectiveBase));
+            Directives.ToggleClassOnClick = ToggleClassOnClick;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(ToggleClassOnClick.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="../core/String.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var Tooltip = (function (_super) {
+                __extends(Tooltip, _super);
+                function Tooltip() {
+                    _super.apply(this, arguments);
+                    this.restrict = "A";
+                    this.scope = {
+                        tooltipOptions: "@",
+                        tooltipCose: "&",
+                        tooltipParameter: "="
+                    };
+                }
+                Tooltip.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var control = $(instanceElement);
+                    var options = this.getOptions(instanceAttributes, Tooltip.register.name + "Options");
+                    if (Object.isNull(options) || Object.isNull(options.content)) {
+                        this.normalTooltip(control, scope, instanceAttributes);
+                    }
+                    control.tooltipster(options);
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                Tooltip.prototype.normalTooltip = function (control, scope, instanceAttributes) {
+                    scope.$watch(function () { return instanceAttributes["title"]; }, function (newValue) {
+                        if (String.isNullOrWhiteSpace(newValue))
+                            return;
+                        var tooltipsterData = control.data("tooltipster-ns");
+                        if (!Object.isNull(tooltipsterData)) {
+                            control.removeAttr("title");
+                            control.tooltipster("content", newValue);
+                        }
+                    });
+                };
+                Tooltip.factory = function () {
+                    return new Tooltip();
+                };
+                Tooltip.register = {
+                    name: "tooltip",
+                    factory: Tooltip.factory
+                };
+                return Tooltip;
+            }(Directives.DirectiveBase));
+            Directives.Tooltip = Tooltip;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(Tooltip.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -4580,41 +4644,6 @@ var MiracleDevs;
             }());
             Models.ModelBase = ModelBase;
         })(Models = Angular.Models || (Angular.Models = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../core/Object.ts"/>
-///<reference path="../core/LocalStorage.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Session;
-        (function (Session) {
-            var LocalStorage = Angular.Core.LocalStorage;
-            var ObjectSession = (function () {
-                function ObjectSession() {
-                }
-                ObjectSession.save = function (name, data) {
-                    LocalStorage.set(name, JSON.stringify(data));
-                };
-                ObjectSession.restore = function (name) {
-                    var content = LocalStorage.get(String, name);
-                    if (Object.isNull(content))
-                        return null;
-                    return JSON.parse(content.valueOf());
-                };
-                ObjectSession.clear = function (name) {
-                    LocalStorage.remove(name);
-                };
-                return ObjectSession;
-            }());
-            Session.ObjectSession = ObjectSession;
-        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -5232,6 +5261,109 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../../typings/angularjs/angular.d.ts"/>
+///<reference path="../core/ArrayList.ts" />
+///<reference path="../interfaces/IServiceRegister.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Services;
+        (function (Services) {
+            var ArrayList = Angular.Core.ArrayList;
+            var KeyProcessorService = (function (_super) {
+                __extends(KeyProcessorService, _super);
+                function KeyProcessorService(parse) {
+                    _super.call(this);
+                    this.parse = parse;
+                }
+                KeyProcessorService.prototype.evaluateKeyActions = function (keyActions, eventType, scope, e) {
+                    keyActions.where(function (x) { return x.eventType === eventType; }).forEach(function (keyAction) {
+                        if (e.keyCode === keyAction.keyCode &&
+                            ((Object.isNull(keyAction.shift)) ||
+                                (!Object.isNull(keyAction.shift) && keyAction.shift && e.shiftKey) ||
+                                (!Object.isNull(keyAction.shift) && !keyAction.shift && !e.shiftKey)) &&
+                            ((Object.isNull(keyAction.alt)) ||
+                                (!Object.isNull(keyAction.alt) && keyAction.alt && e.altKey) ||
+                                (!Object.isNull(keyAction.alt) && !keyAction.alt && !e.altKey)) &&
+                            ((Object.isNull(keyAction.ctrl)) ||
+                                (!Object.isNull(keyAction.ctrl) && keyAction.ctrl && e.ctrlKey) ||
+                                (!Object.isNull(keyAction.ctrl) && !keyAction.ctrl && !e.ctrlKey))) {
+                            scope.$apply(function () {
+                                keyAction.action(scope, null);
+                                e.stopPropagation();
+                                e.preventDefault();
+                            });
+                        }
+                    });
+                };
+                KeyProcessorService.prototype.parseActions = function (text) {
+                    var keyActions = new ArrayList();
+                    var actionStrings = text.split("|");
+                    for (var i = 0; i < actionStrings.length; i++) {
+                        var keyAction = new Services.KeyAction();
+                        var actionString = actionStrings[i];
+                        var parts = actionString.split(":");
+                        if (parts.length !== 2)
+                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
+                        var firstParenthesis = parts[0].indexOf("(");
+                        var lastParenthesis = parts[0].indexOf(")");
+                        if (firstParenthesis < 0 || lastParenthesis < 0)
+                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
+                        var eventType = parts[0].substr(0, firstParenthesis);
+                        if (eventType !== "keypress" &&
+                            eventType !== "keydown" &&
+                            eventType !== "keyup")
+                            throw new Error("Only keypress, keydown and keyup events are allowed on action strings.");
+                        var keys = parts[0].substr(firstParenthesis + 1, lastParenthesis - firstParenthesis - 1);
+                        var parameters = new ArrayList(keys.split(","));
+                        try {
+                            keyAction.eventType = eventType;
+                            keyAction.action = this.parse(parts[1]);
+                            keyAction.keyCode = parseInt(parameters.get(0));
+                        }
+                        catch (error) {
+                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action.");
+                        }
+                        if (parameters.any(function (x) { return x === "shift"; }))
+                            keyAction.shift = true;
+                        else if (parameters.any(function (x) { return x === "!shift"; }))
+                            keyAction.shift = false;
+                        if (parameters.any(function (x) { return x === "ctrl"; }))
+                            keyAction.ctrl = true;
+                        else if (parameters.any(function (x) { return x === "!ctrl"; }))
+                            keyAction.ctrl = false;
+                        if (parameters.any(function (x) { return x === "alt"; }))
+                            keyAction.alt = true;
+                        else if (parameters.any(function (x) { return x === "!alt"; }))
+                            keyAction.alt = false;
+                        keyActions.add(keyAction);
+                    }
+                    return keyActions;
+                };
+                KeyProcessorService.factory = function (parse) {
+                    return new KeyProcessorService(parse);
+                };
+                KeyProcessorService.register = {
+                    name: Services.FrameworkServices.keyProcessorService,
+                    factory: KeyProcessorService.factory,
+                    dependencies: [Services.AngularServices.parse]
+                };
+                return KeyProcessorService;
+            }(Services.ServiceBase));
+            Services.KeyProcessorService = KeyProcessorService;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerService(KeyProcessorService.register);
+        })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Core/Dictionary.ts" />
 ///<reference path="../Core/Guid.ts" />
 ///<reference path="ServiceBase.ts" />
@@ -5492,6 +5624,41 @@ var MiracleDevs;
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerService(UrlService.register);
         })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../core/Object.ts"/>
+///<reference path="../core/LocalStorage.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Session;
+        (function (Session) {
+            var LocalStorage = Angular.Core.LocalStorage;
+            var ObjectSession = (function () {
+                function ObjectSession() {
+                }
+                ObjectSession.save = function (name, data) {
+                    LocalStorage.set(name, JSON.stringify(data));
+                };
+                ObjectSession.restore = function (name) {
+                    var content = LocalStorage.get(String, name);
+                    if (Object.isNull(content))
+                        return null;
+                    return JSON.parse(content.valueOf());
+                };
+                ObjectSession.clear = function (name) {
+                    LocalStorage.remove(name);
+                };
+                return ObjectSession;
+            }());
+            Session.ObjectSession = ObjectSession;
+        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

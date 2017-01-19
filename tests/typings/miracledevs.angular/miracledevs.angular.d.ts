@@ -362,6 +362,7 @@ declare module MiracleDevs.Angular.Services {
         static readonly urlService: string;
         static readonly dateService: string;
         static readonly messageBus: string;
+        static readonly keyProcessorService: string;
     }
 }
 /*!
@@ -720,6 +721,50 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Services {
+    import IScope = angular.IScope;
+    import ArrayList = Core.ArrayList;
+    import ICompiledExpression = angular.ICompiledExpression;
+    interface IKeyProcessorService {
+        evaluateKeyActions(keyActions: ArrayList<KeyAction>, eventType: string, scope: IScope, e: JQueryKeyEventObject): void;
+        parseActions(text: string): ArrayList<KeyAction>;
+    }
+    class KeyAction {
+        eventType: string;
+        keyCode: number;
+        shift: boolean;
+        ctrl: boolean;
+        alt: boolean;
+        action: ICompiledExpression;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = angular.IScope;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IKeyProcessorService = Services.IKeyProcessorService;
+    class DocumentKeyboard extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private readonly keyProcessor;
+        private readonly actions;
+        constructor(keyProcessor: IKeyProcessorService);
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(keyProcessor: IKeyProcessorService): DocumentKeyboard;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -915,26 +960,15 @@ declare module MiracleDevs.Angular.Directives {
     import IAugmentedJQuery = angular.IAugmentedJQuery;
     import IAttributes = angular.IAttributes;
     import ITranscludeFunction = angular.ITranscludeFunction;
-    import ICompiledExpression = angular.ICompiledExpression;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IParseService = angular.IParseService;
+    import IKeyProcessorService = Services.IKeyProcessorService;
     class OnKeyboard extends DirectiveBase {
         static register: IDirectiveRegister;
         restrict: string;
-        private parse;
-        constructor(parse: IParseService);
+        private readonly keyProcessor;
+        constructor(keyProcessor: IKeyProcessorService);
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        private checkKeys(keyActions, eventType, scope, e);
-        private parseActions(text);
-        static factory(parse: IParseService): OnKeyboard;
-    }
-    class KeyAction {
-        eventType: string;
-        keyCode: number;
-        shift: boolean;
-        ctrl: boolean;
-        alt: boolean;
-        action: ICompiledExpression;
+        static factory(keyProcessor: IKeyProcessorService): OnKeyboard;
     }
 }
 /*!
@@ -1647,6 +1681,25 @@ declare module MiracleDevs.Angular.Services {
 declare module MiracleDevs.Angular.Services {
     interface IUrlService {
         getParsedUrl(url: string): string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Services {
+    import IScope = angular.IScope;
+    import IParseService = angular.IParseService;
+    import ArrayList = Core.ArrayList;
+    import IServiceRegister = Interfaces.IServiceRegister;
+    class KeyProcessorService extends ServiceBase implements IKeyProcessorService {
+        static register: IServiceRegister;
+        private readonly parse;
+        constructor(parse: IParseService);
+        evaluateKeyActions(keyActions: ArrayList<KeyAction>, eventType: string, scope: IScope, e: JQueryKeyEventObject): void;
+        parseActions(text: string): ArrayList<KeyAction>;
+        static factory(parse: IParseService): IKeyProcessorService;
     }
 }
 /*!

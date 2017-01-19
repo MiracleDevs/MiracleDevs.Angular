@@ -520,7 +520,7 @@ Object.getDifference = function (source, other, ignore, checkObjectType) {
         return null;
     if ((!Object.isNull(source) && Object.isNull(other)) ||
         (Object.isNull(source) && !Object.isNull(other)))
-        return "null object";
+        return "different value";
     if (checkObjectType && Object.getTypeName(source) !== Object.getTypeName(other))
         return "different type";
     if ((Object.getTypeName(source) === "Number" && Object.getTypeName(other) === "Number") ||
@@ -1240,6 +1240,11 @@ var MiracleDevs;
                 });
                 Object.defineProperty(FrameworkServices, "messageBus", {
                     get: function () { return "MessageBus"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkServices, "keyProcessorService", {
+                    get: function () { return "KeyProcessorService"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -3146,6 +3151,97 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../../typings/angularjs/angular.d.ts"/>
+///<reference path="../core/ArrayList.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Services;
+        (function (Services) {
+            var KeyAction = (function () {
+                function KeyAction() {
+                }
+                return KeyAction;
+            }());
+            Services.KeyAction = KeyAction;
+        })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="../core/ArrayList.ts"/>
+///<reference path="DirectiveBase.ts" />
+///<reference path="../services/IKeyProcessorService.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
+            var FrameworkServices = Angular.Services.FrameworkServices;
+            var DocumentKeyboard = (function (_super) {
+                __extends(DocumentKeyboard, _super);
+                function DocumentKeyboard(keyProcessor) {
+                    _super.call(this);
+                    this.restrict = "E";
+                    this.keyProcessor = keyProcessor;
+                }
+                DocumentKeyboard.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var mainDocument = $(document);
+                    var control = $(instanceElement);
+                    var actions = String.empty;
+                    control.find("listener").each(function (index, element) {
+                        actions += element.getAttribute("action") + ";";
+                    });
+                    if (actions[actions.length - 1] === ";")
+                        actions = actions.substr(0, actions.length - 1);
+                    var keyActions = this.keyProcessor.parseActions(instanceAttributes[Directives.OnKeyboard.register.name]);
+                    var keyProcessor = this.keyProcessor;
+                    function evaluateKeyActions(e) {
+                        keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e);
+                    }
+                    if (keyActions.any(function (x) { return x.eventType === "keypress"; }))
+                        mainDocument.on("keypress.documentKeyboard", evaluateKeyActions);
+                    if (keyActions.any(function (x) { return x.eventType === "keydown"; }))
+                        mainDocument.on("keydown.documentKeyboard", evaluateKeyActions);
+                    if (keyActions.any(function (x) { return x.eventType === "keyup"; }))
+                        mainDocument.on("keyup.documentKeyboard", evaluateKeyActions);
+                    scope.$on("$destroy", function () {
+                        mainDocument.off("keypress.documentKeyboard", evaluateKeyActions);
+                        mainDocument.off("keydown.documentKeyboard", evaluateKeyActions);
+                        mainDocument.off("keyup.documentKeyboard", evaluateKeyActions);
+                        control.remove();
+                    });
+                };
+                DocumentKeyboard.factory = function (keyProcessor) {
+                    return new DocumentKeyboard(keyProcessor);
+                };
+                DocumentKeyboard.register = {
+                    name: "documentKeyboard",
+                    factory: DocumentKeyboard.factory,
+                    dependencies: [FrameworkServices.keyProcessorService]
+                };
+                return DocumentKeyboard;
+            }(Directives.DirectiveBase));
+            Directives.DocumentKeyboard = DocumentKeyboard;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(DocumentKeyboard.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
@@ -3642,108 +3738,44 @@ var MiracleDevs;
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../core/ArrayList.ts"/>
 ///<reference path="DirectiveBase.ts" />
+///<reference path="../services/IKeyProcessorService.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
     (function (Angular) {
         var Directives;
         (function (Directives) {
-            var AngularServices = Angular.Services.AngularServices;
-            var ArrayList = Angular.Core.ArrayList;
+            var FrameworkServices = Angular.Services.FrameworkServices;
             var OnKeyboard = (function (_super) {
                 __extends(OnKeyboard, _super);
-                function OnKeyboard(parse) {
+                function OnKeyboard(keyProcessor) {
                     _super.call(this);
                     this.restrict = "A";
-                    this.parse = parse;
+                    this.keyProcessor = keyProcessor;
                 }
                 OnKeyboard.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
                     var _this = this;
                     var control = $(instanceElement);
-                    var keyActions = this.parseActions(instanceAttributes[OnKeyboard.register.name]);
+                    var keyActions = this.keyProcessor.parseActions(instanceAttributes[OnKeyboard.register.name]);
                     if (keyActions.any(function (x) { return x.eventType === "keypress"; }))
-                        control.keypress(function (e) { return _this.checkKeys(keyActions, "keypress", scope, e); });
+                        control.keypress(function (e) { return _this.keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e); });
                     if (keyActions.any(function (x) { return x.eventType === "keydown"; }))
-                        control.keydown(function (e) { return _this.checkKeys(keyActions, "keydown", scope, e); });
+                        control.keydown(function (e) { return _this.keyProcessor.evaluateKeyActions(keyActions, "keydown", scope, e); });
                     if (keyActions.any(function (x) { return x.eventType === "keyup"; }))
-                        control.keyup(function (e) { return _this.checkKeys(keyActions, "keyup", scope, e); });
+                        control.keyup(function (e) { return _this.keyProcessor.evaluateKeyActions(keyActions, "keyup", scope, e); });
                     scope.$on("$destroy", function () { return control.remove(); });
                 };
-                OnKeyboard.prototype.checkKeys = function (keyActions, eventType, scope, e) {
-                    keyActions.where(function (x) { return x.eventType === eventType; }).forEach(function (keyAction) {
-                        if (e.keyCode === keyAction.keyCode &&
-                            ((Object.isNull(keyAction.shift)) ||
-                                (!Object.isNull(keyAction.shift) && keyAction.shift && e.shiftKey) ||
-                                (!Object.isNull(keyAction.shift) && !keyAction.shift && !e.shiftKey)) &&
-                            ((Object.isNull(keyAction.alt)) ||
-                                (!Object.isNull(keyAction.alt) && keyAction.alt && e.altKey) ||
-                                (!Object.isNull(keyAction.alt) && !keyAction.alt && !e.altKey)) &&
-                            ((Object.isNull(keyAction.ctrl)) ||
-                                (!Object.isNull(keyAction.ctrl) && keyAction.shift && e.ctrlKey) ||
-                                (!Object.isNull(keyAction.ctrl) && !keyAction.shift && !e.ctrlKey))) {
-                            scope.$apply(function () {
-                                keyAction.action(scope, null);
-                                e.stopPropagation();
-                                e.preventDefault();
-                            });
-                        }
-                    });
-                };
-                OnKeyboard.prototype.parseActions = function (text) {
-                    var keyActions = new ArrayList();
-                    var actionStrings = text.split("|");
-                    for (var i = 0; i < actionStrings.length; i++) {
-                        var keyAction = new KeyAction();
-                        var actionString = actionStrings[i];
-                        var parts = actionString.split(":");
-                        if (parts.length !== 2)
-                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
-                        var firstParenthesis = parts[0].indexOf("(");
-                        var lastParenthesis = parts[0].indexOf(")");
-                        if (firstParenthesis < 0 || lastParenthesis < 0)
-                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
-                        var eventType = parts[0].substr(0, firstParenthesis);
-                        if (eventType !== "keypress" &&
-                            eventType !== "keydown" &&
-                            eventType !== "keyup")
-                            throw new Error("Only keypress, keydown and keyup events are allowed on action strings.");
-                        var keys = parts[0].substr(firstParenthesis + 1, lastParenthesis - firstParenthesis - 1);
-                        var parameters = keys.split(",");
-                        try {
-                            keyAction.eventType = eventType;
-                            keyAction.action = this.parse(parts[1]);
-                            keyAction.keyCode = parseInt(parameters[0]);
-                        }
-                        catch (error) {
-                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action.");
-                        }
-                        if (parameters.length > 1)
-                            keyAction.shift = parameters[1] === "shift";
-                        if (parameters.length > 2)
-                            keyAction.alt = parameters[2] === "alt";
-                        if (parameters.length > 3)
-                            keyAction.ctrl = parameters[3] === "ctrl";
-                        keyActions.add(keyAction);
-                    }
-                    return keyActions;
-                };
-                OnKeyboard.factory = function (parse) {
-                    return new OnKeyboard(parse);
+                OnKeyboard.factory = function (keyProcessor) {
+                    return new OnKeyboard(keyProcessor);
                 };
                 OnKeyboard.register = {
                     name: "onKeyboard",
                     factory: OnKeyboard.factory,
-                    dependencies: [AngularServices.parse]
+                    dependencies: [FrameworkServices.keyProcessorService]
                 };
                 return OnKeyboard;
             }(Directives.DirectiveBase));
             Directives.OnKeyboard = OnKeyboard;
-            var KeyAction = (function () {
-                function KeyAction() {
-                }
-                return KeyAction;
-            }());
-            Directives.KeyAction = KeyAction;
             ////////////////////////////////////////////////////////////
             // Register directive
             ////////////////////////////////////////////////////////////
@@ -5224,6 +5256,103 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts"/>
+///<reference path="../core/ArrayList.ts" />
+///<reference path="../interfaces/IServiceRegister.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Services;
+        (function (Services) {
+            var ArrayList = Angular.Core.ArrayList;
+            var KeyProcessorService = (function (_super) {
+                __extends(KeyProcessorService, _super);
+                function KeyProcessorService(parse) {
+                    _super.call(this);
+                    this.parse = parse;
+                }
+                KeyProcessorService.prototype.evaluateKeyActions = function (keyActions, eventType, scope, e) {
+                    keyActions.where(function (x) { return x.eventType === eventType; }).forEach(function (keyAction) {
+                        if (e.keyCode === keyAction.keyCode &&
+                            ((Object.isNull(keyAction.shift)) ||
+                                (!Object.isNull(keyAction.shift) && keyAction.shift && e.shiftKey) ||
+                                (!Object.isNull(keyAction.shift) && !keyAction.shift && !e.shiftKey)) &&
+                            ((Object.isNull(keyAction.alt)) ||
+                                (!Object.isNull(keyAction.alt) && keyAction.alt && e.altKey) ||
+                                (!Object.isNull(keyAction.alt) && !keyAction.alt && !e.altKey)) &&
+                            ((Object.isNull(keyAction.ctrl)) ||
+                                (!Object.isNull(keyAction.ctrl) && keyAction.shift && e.ctrlKey) ||
+                                (!Object.isNull(keyAction.ctrl) && !keyAction.shift && !e.ctrlKey))) {
+                            scope.$apply(function () {
+                                keyAction.action(scope, null);
+                                e.stopPropagation();
+                                e.preventDefault();
+                            });
+                        }
+                    });
+                };
+                KeyProcessorService.prototype.parseActions = function (text) {
+                    var keyActions = new ArrayList();
+                    var actionStrings = text.split("|");
+                    for (var i = 0; i < actionStrings.length; i++) {
+                        var keyAction = new Services.KeyAction();
+                        var actionString = actionStrings[i];
+                        var parts = actionString.split(":");
+                        if (parts.length !== 2)
+                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
+                        var firstParenthesis = parts[0].indexOf("(");
+                        var lastParenthesis = parts[0].indexOf(")");
+                        if (firstParenthesis < 0 || lastParenthesis < 0)
+                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action");
+                        var eventType = parts[0].substr(0, firstParenthesis);
+                        if (eventType !== "keypress" &&
+                            eventType !== "keydown" &&
+                            eventType !== "keyup")
+                            throw new Error("Only keypress, keydown and keyup events are allowed on action strings.");
+                        var keys = parts[0].substr(firstParenthesis + 1, lastParenthesis - firstParenthesis - 1);
+                        var parameters = keys.split(",");
+                        try {
+                            keyAction.eventType = eventType;
+                            keyAction.action = this.parse(parts[1]);
+                            keyAction.keyCode = parseInt(parameters[0]);
+                        }
+                        catch (error) {
+                            throw new Error("The key-submit expression number " + i + " is incorrect. Should be event(keycode,[shift],[alt],[ctrl]): action.");
+                        }
+                        if (parameters.length > 1)
+                            keyAction.shift = parameters[1] === "shift";
+                        if (parameters.length > 2)
+                            keyAction.alt = parameters[2] === "alt";
+                        if (parameters.length > 3)
+                            keyAction.ctrl = parameters[3] === "ctrl";
+                        keyActions.add(keyAction);
+                    }
+                    return keyActions;
+                };
+                KeyProcessorService.factory = function (parse) {
+                    return new KeyProcessorService(parse);
+                };
+                KeyProcessorService.register = {
+                    name: Services.FrameworkServices.keyProcessorService,
+                    factory: KeyProcessorService.factory,
+                    dependencies: [Services.AngularServices.parse]
+                };
+                return KeyProcessorService;
+            }(Services.ServiceBase));
+            Services.KeyProcessorService = KeyProcessorService;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerService(KeyProcessorService.register);
+        })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc

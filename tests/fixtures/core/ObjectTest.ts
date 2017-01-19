@@ -185,8 +185,8 @@ describe("Object", () =>
         it("should be null for two nulls", () => expect(Object.getDifference(null, null)).toBeNull());
         it("should be null for two undefined", () => expect(Object.getDifference(undefined, undefined)).toBeNull());
         it("should be null for null and undefined", () => expect(Object.getDifference(null, undefined)).toBeNull());
-        it("should get difference for null and any not null", () => expect(Object.getDifference(null, 1)).toBe("null object"));
-        it("should get difference for undefined and any not null", () => expect(Object.getDifference(undefined, 1)).toBe("null object"));
+        it("should get difference for null and any not null", () => expect(Object.getDifference(null, 1)).toBe("different value"));
+        it("should get difference for undefined and any not null", () => expect(Object.getDifference(undefined, 1)).toBe("different value"));
 
         it("should be null for two equal numbers", () => expect(Object.getDifference(1, 1)).toBeNull());
         it("should get difference for two different numbers", () => expect(Object.getDifference(1, 2)).toBe("different value"));

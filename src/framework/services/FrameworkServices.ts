@@ -25,5 +25,7 @@ module MiracleDevs.Angular.Services
         static get dateService(): string { return "dateService"; }
 
         static get messageBus(): string { return "MessageBus"; }
+
+        static get keyProcessorService(): string { return "KeyProcessorService"; }
     }
 }

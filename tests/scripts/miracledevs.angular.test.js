@@ -1378,8 +1378,8 @@ describe("Object", function () {
         it("should be null for two nulls", function () { return expect(Object.getDifference(null, null)).toBeNull(); });
         it("should be null for two undefined", function () { return expect(Object.getDifference(undefined, undefined)).toBeNull(); });
         it("should be null for null and undefined", function () { return expect(Object.getDifference(null, undefined)).toBeNull(); });
-        it("should get difference for null and any not null", function () { return expect(Object.getDifference(null, 1)).toBe("null object"); });
-        it("should get difference for undefined and any not null", function () { return expect(Object.getDifference(undefined, 1)).toBe("null object"); });
+        it("should get difference for null and any not null", function () { return expect(Object.getDifference(null, 1)).toBe("different value"); });
+        it("should get difference for undefined and any not null", function () { return expect(Object.getDifference(undefined, 1)).toBe("different value"); });
         it("should be null for two equal numbers", function () { return expect(Object.getDifference(1, 1)).toBeNull(); });
         it("should get difference for two different numbers", function () { return expect(Object.getDifference(1, 2)).toBe("different value"); });
         it("should get difference for a number and a bool", function () { return expect(Object.getDifference(1, true)).toBe("different type"); });
