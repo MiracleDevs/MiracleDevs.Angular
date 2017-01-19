@@ -721,50 +721,6 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Services {
-    import IScope = angular.IScope;
-    import ArrayList = Core.ArrayList;
-    import ICompiledExpression = angular.ICompiledExpression;
-    interface IKeyProcessorService {
-        evaluateKeyActions(keyActions: ArrayList<KeyAction>, eventType: string, scope: IScope, e: JQueryKeyEventObject): void;
-        parseActions(text: string): ArrayList<KeyAction>;
-    }
-    class KeyAction {
-        eventType: string;
-        keyCode: number;
-        shift: boolean;
-        ctrl: boolean;
-        alt: boolean;
-        action: ICompiledExpression;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IKeyProcessorService = Services.IKeyProcessorService;
-    class DocumentKeyboard extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        private readonly keyProcessor;
-        private readonly actions;
-        constructor(keyProcessor: IKeyProcessorService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(keyProcessor: IKeyProcessorService): DocumentKeyboard;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -925,6 +881,59 @@ declare module MiracleDevs.Angular.Directives {
         private moveRight();
         private move();
         dispose(): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Services {
+    import IScope = angular.IScope;
+    import ArrayList = Core.ArrayList;
+    import ICompiledExpression = angular.ICompiledExpression;
+    interface IKeyProcessorService {
+        evaluateKeyActions(keyActions: ArrayList<KeyAction>, eventType: string, scope: IScope, e: JQueryKeyEventObject): void;
+        parseActions(text: string): ArrayList<KeyAction>;
+    }
+    class KeyAction {
+        eventType: string;
+        keyCode: number;
+        shift: boolean;
+        ctrl: boolean;
+        alt: boolean;
+        action: ICompiledExpression;
+    }
+}
+declare module MiracleDevs.Angular.Scopes.Directives {
+    import IScope = angular.IScope;
+    interface IKeyboardElementScope extends IScope {
+        disabled: boolean;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IKeyProcessorService = Services.IKeyProcessorService;
+    import IKeyboardElementScope = Scopes.Directives.IKeyboardElementScope;
+    class KeyboardElement extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            disabled: string;
+        };
+        private readonly keyProcessor;
+        private readonly actions;
+        constructor(keyProcessor: IKeyProcessorService);
+        protected create(scope: IKeyboardElementScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(keyProcessor: IKeyProcessorService): KeyboardElement;
     }
 }
 /*!

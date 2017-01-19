@@ -75,8 +75,6 @@ module MiracleDevs.Angular.Directives
             if (!Object.isNull(instanceAttributes["maxDateToday"]))
                 options.maxDate = new Date();
 
-            options.icons = { clear: "dtp-action clear", close: "dtp-action close" };
-
             element.datetimepicker(options);
 
             element.on("dp.change", e =>
