@@ -16,20 +16,51 @@ interface StringConstructor
 
     formatArray(format: string, arguments: any[]): string;
 
+    padLeft(value: string, length: number, padChar: string): string;
+
+    padRight(value: string, length: number, padChar: string): string;
+
     empty: string;
 }
 
+interface String
+{
+    padLeft(length: number, padChar: string): string;
+
+    padRight(length: number, padChar: string): string;
+};
+
 String.empty = "";
+
+String.padLeft = (value: string, length: number, padChar: string): string =>
+{
+    while (value.length < length)
+    {
+        value += padChar;
+    }
+
+    return value;
+};
+
+String.padRight = (value: string, length: number, padChar: string): string =>
+{
+    while (value.length < length)
+    {
+        value = padChar + value;
+    }
+
+    return value;
+};
 
 String.isString = (value: any): boolean =>
 {
-    return (typeof(value) === "string" || value instanceof String);
-}
+    return (typeof (value) === "string" || value instanceof String);
+};
 
 String.isNullOrEmpty = (value: string): boolean =>
 {
     return value == null || value === "";
-}
+};
 
 String.isNullOrWhiteSpace = (value: string): boolean =>
 {
@@ -47,7 +78,7 @@ String.format = (format: string, ...args: any[]): string =>
 
         if (index < 0 || index >= args.length)
         {
-            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+            throw new Error(`Index is zero based. Must be greater than 0 and less than ${args.length - 1}.`);
         }
 
         return args[index];
@@ -61,14 +92,23 @@ String.formatArray = (format: string, args: any[]) =>
 
     return String(format).replace(/\{([0-9]+)\}/g, (match, index) =>
     {
-
         index = parseInt(index, 10);
 
         if (index < 0 || index >= args.length)
         {
-            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+            throw new Error(`Index is zero based. Must be greater than 0 and less than ${args.length - 1}.`);
         }
 
         return args[index];
     });
+};
+
+String.prototype.padLeft = function (length: number, padChar: string): string 
+{
+    return String.padLeft(this, length, padChar);
+};
+
+String.prototype.padRight = function (length: number, padChar: string): string 
+{
+    return String.padRight(this, length, padChar);
 };

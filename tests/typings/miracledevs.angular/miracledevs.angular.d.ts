@@ -370,14 +370,70 @@ declare module MiracleDevs.Angular.Services {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+interface StringConstructor {
+    isString(value: any): boolean;
+    isNullOrEmpty(value: string): boolean;
+    isNullOrWhiteSpace(value: string): boolean;
+    format(format: string, ...args: any[]): string;
+    formatArray(format: string, arguments: any[]): string;
+    padLeft(value: string, length: number, padChar: string): string;
+    padRight(value: string, length: number, padChar: string): string;
+    empty: string;
+}
+interface String {
+    padLeft(length: number, padChar: string): string;
+    padRight(length: number, padChar: string): string;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare enum DayOfWeek {
+    Sunday = 0,
+    Monday = 1,
+    Tuesday = 2,
+    Wednesday = 3,
+    Thursday = 4,
+    Friday = 5,
+    Saturday = 6,
+}
+interface DateConstructor {
+    fromIso8601(value: string): Date;
+}
+interface Date {
+    fromIso8601(value: string): Date;
+    getNextWeekDay(dayOfWeek: DayOfWeek): Date;
+    getPreviousWeekDay(dayOfWeek: DayOfWeek): Date;
+    addMilliseconds(ms: number): Date;
+    addSeconds(seconds: number): Date;
+    addMinutes(minutes: number): Date;
+    addHours(hours: number): Date;
+    addDays(days: number): Date;
+    addMonths(months: number): Date;
+    addYears(years: number): Date;
+    getTwoDigitYear(): string;
+    getTwoDigitUTCYear(): string;
+    format(format: string): string;
+    formatUTC(format: string): string;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
-    class DummyLoggingService extends ServiceBase implements ILoggingService {
+    abstract class LoggingServiceBase extends ServiceBase implements ILoggingService {
         writeMessage(message: string): void;
         writeWarning(message: string): void;
         writeError(message: string): void;
+        protected getString(message: string): string;
     }
-    class LoggingService extends ServiceBase implements ILoggingService {
+    class DummyLoggingService extends LoggingServiceBase {
+        writeError(message: string): void;
+    }
+    class LoggingService extends LoggingServiceBase {
         static register: IServiceRegister;
         writeMessage(message: string): void;
         writeWarning(message: string): void;
@@ -408,51 +464,6 @@ declare module MiracleDevs.Angular {
         protected authorizeRoute(rootScope: IScope, state: IStateService, injector: IInjectorService): void;
         protected getModuleDependencies(): string[];
     }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Controllers {
-    import IAlertService = Services.IAlertService;
-    import ILoadingService = Services.ILoadingService;
-    import IStateService = angular.ui.IStateService;
-    import IInjectorService = angular.auto.IInjectorService;
-    import ILoggingService = Services.ILoggingService;
-    import IScope = angular.IScope;
-    import IHttpPromise = angular.IHttpPromise;
-    import IPromise = angular.IPromise;
-    import IModalInstance = Services.IModalInstance;
-    abstract class ControllerBase {
-        protected scope: IScope;
-        protected injector: IInjectorService;
-        protected alertService: IAlertService;
-        protected loadingService: ILoadingService;
-        protected stateService: IStateService;
-        protected logger: ILoggingService;
-        protected constructor(scope: IScope, injector: IInjectorService);
-        protected dispose(): void;
-        protected getService<T>(service: string): T;
-        protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
-        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
-        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
-        protected showErrors(messages: string[]): void;
-        protected showWarnings(messages: string[]): void;
-        protected showError(message: string): void;
-        protected showWarning(message: string): void;
-        protected showMessage(message: string): void;
-        protected showLoading(): void;
-        protected hideLoading(): void;
-        protected handleException(ex: any): void;
-        protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
-    }
-}
-interface DateConstructor {
-    fromIso8601(value: string): Date;
-}
-interface Date {
-    fromIso8601(value: string): void;
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -539,18 +550,392 @@ declare module MiracleDevs.Angular.Core {
 interface NumberConstructor {
     isNumber(value: any): boolean;
 }
+declare module MiracleDevs.Angular.Core {
+    class TimeSpan {
+        milliseconds: number;
+        /**
+         * The exact time when the application started.
+         * On reality holds the time when this script was loaded.
+         * @type TimeSpan
+         * @static
+         */
+        private static applicationStarted;
+        /**
+         * Retrieves the number of milliseconds in one second.
+         * @return {Number} Number of milliseconds in one second.
+         * @static
+         */
+        static readonly millisecondsPerSecond: number;
+        /**
+         * Retrieves the number of milliseconds in one minute.
+         * @return {Number} Number of milliseconds in one minute.
+         * @static
+         */
+        static readonly millisecondsPerMinute: number;
+        /**
+         * Retrieves the number of milliseconds in one hour.
+         * @return {Number} Number of milliseconds in one hour.
+         * @static
+         */
+        static readonly millisecondsPerHour: number;
+        /**
+         * Retrieves the number of milliseconds in one day.
+         * @return {Number} Number of milliseconds in one day.
+         * @static
+         */
+        static readonly millisecondsPerDay: number;
+        /**
+         * Creates a new time span with the number of milliseconds
+         * elapsed to the present time.
+         * @return {TimeSpan} Time span representing the current UTC time.
+         * @static
+         */
+        static readonly now: TimeSpan;
+        /**
+         * Creates a new time span with the number of milliseconds
+         * elapsed since the aplication started.
+         * @return {TimeSpan} Time elapsed sirce the Application started.
+         * @static
+         */
+        static sinceTheApplicationStarted(): TimeSpan;
+        /**
+         * A time span without milliseconds.
+         * @type TimeSpan
+         * @static
+         */
+        static readonly zero: TimeSpan;
+        /**
+         * A time span which represents one millisecond.
+         * @type TimeSpan
+         * @static
+         */
+        static oneMillisecond(): TimeSpan;
+        /**
+         * A time span which represents ten milliseconds.
+         * @type TimeSpan
+         * @static
+         */
+        static tenMilliseconds(): TimeSpan;
+        /**
+         * A time span which represents hundred milliseconds.
+         * @type TimeSpan
+         * @static
+         */
+        static hundredMilliseconds(): TimeSpan;
+        /**
+         * A time span which represents five hundred millisencods, or half a second.
+         * @type TimeSpan
+         * @static
+         */
+        static halfSecond(): TimeSpan;
+        /**
+         * A time span which represents one second.
+         * @type TimeSpan
+         * @static
+         */
+        static oneSecond(): TimeSpan;
+        /**
+         * A time span which represents thirty seconds or half a minute.
+         * @type TimeSpan
+         * @static
+         */
+        static halfMinute(): TimeSpan;
+        /**
+         * A time span which represents one minute.
+         * @type TimeSpan
+         * @static
+         */
+        static oneMinute(): TimeSpan;
+        /**
+         * A time span which represents thirty minutes or half an hour.
+         * @type TimeSpan
+         * @static
+         */
+        static halfHour(): TimeSpan;
+        /**
+         * A time span which represents an hour.
+         * @type TimeSpan
+         * @static
+         */
+        static oneHour(): TimeSpan;
+        /**
+         * A time span which represents tweleve hours or half a day.
+         * @type TimeSpan
+         * @static
+         */
+        static halfDay(): TimeSpan;
+        /**
+         * A time span which represents on day.
+         * @type TimeSpan
+         * @static
+         */
+        static oneDay(): TimeSpan;
+        constructor(milliseconds: number);
+        /**
+        * Adds the milliseconds of the parameter to the current timespan.
+         * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        add(timeSpan: TimeSpan): TimeSpan;
+        /**
+         * Adds milliseconds to the current time span.
+         * @param {Number} milliseconds Milliseconds to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addMilliseconds(milliseconds: number): TimeSpan;
+        /**
+         * Adds secods to the current time span.
+         * @param {Number} seconds Seconds to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addSeconds(seconds: number): TimeSpan;
+        /**
+         * Adds minutes to the current time span.
+         * @param {Number} minutes Minutes to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addMintures(minutes: number): TimeSpan;
+        /**
+         * Adds hours to the current time span.
+         * @param {Number} hours Hours to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addHours(hours: number): TimeSpan;
+        /**
+         * Adds days to the current time span.
+         * @param {Number} days Days to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addDays(days: number): TimeSpan;
+        /**
+         * Subtracts the milliseconds of the parameter to the current timespan.
+         * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtract(timeSpan: TimeSpan): TimeSpan;
+        /**
+         * Subtracts milliseconds to the current time span.
+         * @param {Number} milliseconds Milliseconds to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractMilliseconds(milliseconds: number): TimeSpan;
+        /**
+         * Subtracts seconds to the current time span.
+         * @param {Number} seconds Seconds to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractSeconds(seconds: number): TimeSpan;
+        /**
+         * Subtracts minutes to the current time span.
+         * @param {Number} minutes Minutes to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractMintures(minutes: number): TimeSpan;
+        /**
+         * Subtracts hours to the current time span.
+         * @param {Number} hours Hours to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractHours(hours: number): TimeSpan;
+        /**
+         * Subtracts days to the current time span.
+         * @param {Number} days Days to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractDays(days: number): TimeSpan;
+        /**
+         * Converts the timespan into seconds.
+         * @return {Number} Number of seconds.
+         */
+        toSeconds(): number;
+        /**
+         * Converts the timespan into minutes.
+         * @return {Number} Number of minutes.
+         */
+        toMinutes(): number;
+        /**
+         * Converts the timespan into hours.
+         * @return {Number} Number of hours.
+         */
+        toHours(): number;
+        /**
+         * Converts the timespan into days.
+         * @return {Number} Number of days.
+         */
+        toDays(): number;
+        /**
+         * Returns a new instance copy of the current time span.
+         * @return {TimeSpan} New instance copied from this one.
+         */
+        copy(): TimeSpan;
+        /**
+         * Retrieves the difference with the current time span in milliseconds.
+         * @param {TimeSpan} timeSpan Time span to calculate the difference.
+         * @return {Number} difference between the two time span in milliseconds.
+         */
+        difference(timeSpan: TimeSpan): number;
+        /**
+         * Retrieves the percentage relation between the current time and the
+         * given one. This takes as the total value the given time span, so if
+         * this time span is greater than the parameter the percentage will be
+         * greater than one. The percentage is expressed between[0-1] being 1
+         * 100%.
+         * @param {TimeSpan} timeSpan Time considered the total time in the percentage relation.
+         * @return {Number} A Number greater or equal than 0, when 1 is 100%.
+         */
+        percentage(timeSpan: TimeSpan): number;
+        /**
+         * Converts the object into a string.
+         * @return {String} String representation of the object.
+         */
+        toString(): string;
+        /**
+         * Creates a new time span from a number of seconds.
+         * @param {Number} second Number of seconds.
+         * @return {TimeSpan} A time span representing the number of seconds.
+         * @static
+         */
+        static fromSeconds(seconds: any): TimeSpan;
+        /**
+         * Creates a new time span from a number of minutes.
+         * @param {Number} second Number of minutes.
+         * @return {TimeSpan} A time span representing the number of minutes.
+         * @static
+         */
+        static fromMinutes(minutes: any): TimeSpan;
+        /**
+         * Creates a new time span from a number of hours.
+         * @param {Number} second Number of hours.
+         * @return {TimeSpan} A time span representing the number of hours.
+         * @static
+         */
+        static fromHours(hours: any): TimeSpan;
+        /**
+         * Creates a new time span from a number of days.
+         * @param {Number} second Number of days.
+         * @return {TimeSpan} A time span representing the number of days.
+         * @static
+         */
+        static fromDays(days: any): TimeSpan;
+    }
+}
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-interface StringConstructor {
-    isString(value: any): boolean;
-    isNullOrEmpty(value: string): boolean;
-    isNullOrWhiteSpace(value: string): boolean;
-    format(format: string, ...args: any[]): string;
-    formatArray(format: string, arguments: any[]): string;
-    empty: string;
+declare module MiracleDevs.Angular.Controllers {
+    import IAlertService = Services.IAlertService;
+    import ILoadingService = Services.ILoadingService;
+    import IStateService = angular.ui.IStateService;
+    import IInjectorService = angular.auto.IInjectorService;
+    import ILoggingService = Services.ILoggingService;
+    import IScope = angular.IScope;
+    import IHttpPromise = angular.IHttpPromise;
+    import IPromise = angular.IPromise;
+    import IModalInstance = Services.IModalInstance;
+    abstract class ControllerBase {
+        protected scope: IScope;
+        protected injector: IInjectorService;
+        protected alertService: IAlertService;
+        protected loadingService: ILoadingService;
+        protected stateService: IStateService;
+        protected logger: ILoggingService;
+        protected constructor(scope: IScope, injector: IInjectorService);
+        protected dispose(): void;
+        protected getService<T>(service: string): T;
+        protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
+        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
+        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
+        protected showErrors(messages: string[]): void;
+        protected showWarnings(messages: string[]): void;
+        protected showError(message: string): void;
+        protected showWarning(message: string): void;
+        protected showMessage(message: string): void;
+        protected showLoading(): void;
+        protected hideLoading(): void;
+        protected handleException(ex: any): void;
+        protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class AngularFilters {
+        static readonly currency: string;
+        static readonly number: string;
+        static readonly date: string;
+        static readonly json: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+        static readonly limitTo: string;
+        static readonly orderBy: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class FrameworkFilters {
+        static readonly reverse: string;
+        static readonly trim: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class LowercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class ReverseFilter {
+        static register: FilterRegister;
+        static factory(): (items: any[]) => any[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class TrimFilter {
+        static register: FilterRegister;
+        private static trim(value, maxChars);
+        static factory(): (value: string, maxChars: number) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class UppercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
 }
 /*!
  * MiracleDevs.Angular v1.0.0
@@ -907,8 +1292,9 @@ declare module MiracleDevs.Angular.Services {
 }
 declare module MiracleDevs.Angular.Scopes.Directives {
     import IScope = angular.IScope;
-    interface IKeyboardElementScope extends IScope {
+    interface IKeyboardListenerScope extends IScope {
         disabled: boolean;
+        attachTo: string;
     }
 }
 /*!
@@ -922,18 +1308,21 @@ declare module MiracleDevs.Angular.Directives {
     import ITranscludeFunction = angular.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import IKeyProcessorService = Services.IKeyProcessorService;
-    import IKeyboardElementScope = Scopes.Directives.IKeyboardElementScope;
-    class KeyboardElement extends DirectiveBase {
+    import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
+    import ILoggingService = Services.ILoggingService;
+    class KeyboardListener extends DirectiveBase {
         static register: IDirectiveRegister;
         restrict: string;
         scope: {
             disabled: string;
+            attachTo: string;
         };
         private readonly keyProcessor;
+        private readonly logger;
         private readonly actions;
-        constructor(keyProcessor: IKeyProcessorService);
-        protected create(scope: IKeyboardElementScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(keyProcessor: IKeyProcessorService): KeyboardElement;
+        constructor(keyProcessor: IKeyProcessorService, logger: ILoggingService);
+        protected create(scope: IKeyboardListenerScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(keyProcessor: IKeyProcessorService, logger: ILoggingService): KeyboardListener;
     }
 }
 /*!
@@ -1258,78 +1647,13 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Filters {
-    class AngularFilters {
-        static readonly currency: string;
-        static readonly number: string;
-        static readonly date: string;
-        static readonly json: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-        static readonly limitTo: string;
-        static readonly orderBy: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class FrameworkFilters {
-        static readonly reverse: string;
-        static readonly trim: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class LowercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class ReverseFilter {
-        static register: FilterRegister;
-        static factory(): (items: any[]) => any[];
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class TrimFilter {
-        static register: FilterRegister;
-        private static trim(value, maxChars);
-        static factory(): (value: string, maxChars: number) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class UppercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
+declare module MiracleDevs.Angular.Models {
+    class ModelBase {
+        private original;
+        startTracking(): void;
+        stopTracking(): void;
+        isDirty(): boolean;
+        isTracking(): boolean;
     }
 }
 /*!
@@ -1354,20 +1678,6 @@ declare module MiracleDevs.Angular.Interceptors {
         onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
         onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
         onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Models {
-    class ModelBase {
-        private original;
-        startTracking(): void;
-        stopTracking(): void;
-        isDirty(): boolean;
-        isTracking(): boolean;
     }
 }
 /*!
@@ -1451,7 +1761,7 @@ declare module MiracleDevs.Angular.Services {
         "May" = 4,
         "June" = 5,
         "July" = 6,
-        "August" = 8,
+        "August" = 7,
         "September" = 8,
         "October" = 9,
         "November" = 10,
@@ -1801,22 +2111,6 @@ declare module MiracleDevs.Angular.Session {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Controllers.Dialogs {
-    import IInjectorService = angular.auto.IInjectorService;
-    import IModalInstance = Services.IModalInstance;
-    import IScope = angular.IScope;
-    abstract class DialogControllerBase extends ControllerBase {
-        protected modalInstance: IModalInstance;
-        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
-        cancel(): void;
-        protected close(result?: any): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 declare module MiracleDevs.Angular.Core.Mapping {
     class PropertyMapping<TSource, TDest> {
         property: string;
@@ -1864,6 +2158,22 @@ declare module MiracleDevs.Angular.Core.Mapping {
         static mapTo<TSource, TDest>(source: TSource, destination: TDest): void;
         static mapToByName<TSource, TDest>(name: string, source: TSource, destination: TDest): void;
         static dynamicMap(source: any, destination: any): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Controllers.Dialogs {
+    import IInjectorService = angular.auto.IInjectorService;
+    import IModalInstance = Services.IModalInstance;
+    import IScope = angular.IScope;
+    abstract class DialogControllerBase extends ControllerBase {
+        protected modalInstance: IModalInstance;
+        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
+        cancel(): void;
+        protected close(result?: any): void;
     }
 }
 /*!

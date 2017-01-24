@@ -1259,24 +1259,254 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+;
+String.empty = "";
+String.padLeft = function (value, length, padChar) {
+    while (value.length < length) {
+        value += padChar;
+    }
+    return value;
+};
+String.padRight = function (value, length, padChar) {
+    while (value.length < length) {
+        value = padChar + value;
+    }
+    return value;
+};
+String.isString = function (value) {
+    return (typeof (value) === "string" || value instanceof String);
+};
+String.isNullOrEmpty = function (value) {
+    return value == null || value === "";
+};
+String.isNullOrWhiteSpace = function (value) {
+    return value == null || value.replace(/ /g, "") === "";
+};
+String.format = function (format) {
+    var args = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        args[_i - 1] = arguments[_i];
+    }
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
+        index = parseInt(index, 10);
+        if (index < 0 || index >= args.length) {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+        return args[index];
+    });
+};
+String.formatArray = function (format, args) {
+    if (Object.isNull(format))
+        throw new Error("Format string can not be null.");
+    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
+        index = parseInt(index, 10);
+        if (index < 0 || index >= args.length) {
+            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
+        }
+        return args[index];
+    });
+};
+String.prototype.padLeft = function (length, padChar) {
+    return String.padLeft(this, length, padChar);
+};
+String.prototype.padRight = function (length, padChar) {
+    return String.padRight(this, length, padChar);
+};
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="String.ts" />
+var DayOfWeek;
+(function (DayOfWeek) {
+    DayOfWeek[DayOfWeek["Sunday"] = 0] = "Sunday";
+    DayOfWeek[DayOfWeek["Monday"] = 1] = "Monday";
+    DayOfWeek[DayOfWeek["Tuesday"] = 2] = "Tuesday";
+    DayOfWeek[DayOfWeek["Wednesday"] = 3] = "Wednesday";
+    DayOfWeek[DayOfWeek["Thursday"] = 4] = "Thursday";
+    DayOfWeek[DayOfWeek["Friday"] = 5] = "Friday";
+    DayOfWeek[DayOfWeek["Saturday"] = 6] = "Saturday";
+})(DayOfWeek || (DayOfWeek = {}));
+Date.prototype.getNextWeekDay = function (dayOfWeek) {
+    var from = new Date(this.getFullYear(), this.getMonth(), this.getDate());
+    var daysUntil = (dayOfWeek - from.getDay() + 7) % 7;
+    return from.addDays(daysUntil);
+};
+Date.prototype.getPreviousWeekDay = function (dayOfWeek) {
+    var from = new Date(this.getFullYear(), this.getMonth(), this.getDate());
+    var daysUntil = (from.getDay() - dayOfWeek + 7) % 7;
+    return from.addDays(-daysUntil);
+};
+Date.prototype.getTwoDigitYear = function () {
+    var year = this.getFullYear().toString();
+    return (year.length < 2) ? year.padRight(2, "0") : year.substr(year.length - 2, 2);
+};
+Date.prototype.getTwoDigitUTCYear = function () {
+    var year = this.getUTCFullYear().toString();
+    return (year.length < 2) ? year.padRight(2, "0") : year.substr(year.length - 2, 2);
+};
+Date.prototype.format = function (format) {
+    return format.replace(/yyyy/g, this.getFullYear().toString())
+        .replace(/yy/g, this.getTwoDigitYear())
+        .replace(/MM/g, (this.getMonth() + 1).toString().padRight(2, "0"))
+        .replace(/M/g, (this.getMonth() + 1).toString())
+        .replace(/dd/g, this.getDate().toString().padRight(2, "0"))
+        .replace(/d/g, this.getDate().toString())
+        .replace(/ww/g, this.getDay().toString().padRight(2, "0"))
+        .replace(/w/g, this.getDay().toString())
+        .replace(/hh/g, this.getHours().toString().padRight(2, "0"))
+        .replace(/h/g, this.getHours().toString())
+        .replace(/mm/g, this.getMinutes().toString().padRight(2, "0"))
+        .replace(/m/g, this.getMinutes().toString())
+        .replace(/ss/g, this.getSeconds().toString().padRight(2, "0"))
+        .replace(/s/g, this.getSeconds().toString())
+        .replace(/fff/g, this.getMilliseconds().toString().padRight(3, "0"))
+        .replace(/ff/g, this.getMilliseconds().toString().padRight(2, "0"))
+        .replace(/f/g, this.getMilliseconds().toString());
+};
+Date.prototype.formatUTC = function (format) {
+    return format.replace(/yyyy/g, this.getUTCFullYear().toString())
+        .replace(/yy/g, this.getTwoDigitUTCYear())
+        .replace(/MM/g, (this.getUTCMonth() + 1).toString().padRight(2, "0"))
+        .replace(/M/g, (this.getUTCMonth() + 1).toString())
+        .replace(/dd/g, this.getUTCDate().toString().padRight(2, "0"))
+        .replace(/d/g, this.getUTCDate().toString())
+        .replace(/ww/g, this.getUTCDay().toString().padRight(2, "0"))
+        .replace(/w/g, this.getUTCDay().toString())
+        .replace(/hh/g, this.getUTCHours().toString().padRight(2, "0"))
+        .replace(/h/g, this.getUTCHours().toString())
+        .replace(/mm/g, this.getUTCMinutes().toString().padRight(2, "0"))
+        .replace(/m/g, this.getUTCMinutes().toString())
+        .replace(/ss/g, this.getUTCSeconds().toString().padRight(2, "0"))
+        .replace(/s/g, this.getUTCSeconds().toString())
+        .replace(/fff/g, this.getUTCMilliseconds().toString().padRight(3, "0"))
+        .replace(/ff/g, this.getUTCMilliseconds().toString().padRight(2, "0"))
+        .replace(/f/g, this.getUTCMilliseconds().toString());
+};
+Date.prototype.addMilliseconds = function (ms) {
+    var date = new Date(this.valueOf());
+    date.setMilliseconds(date.getMilliseconds() + ms);
+    return date;
+};
+Date.prototype.addSeconds = function (seconds) {
+    var date = new Date(this.valueOf());
+    date.setSeconds(date.getSeconds() + seconds);
+    return date;
+};
+Date.prototype.addMinutes = function (minutes) {
+    var date = new Date(this.valueOf());
+    date.setMinutes(date.getMinutes() + minutes);
+    return date;
+};
+Date.prototype.addHours = function (hours) {
+    var date = new Date(this.valueOf());
+    date.setHours(date.getHours() + hours);
+    return date;
+};
+Date.prototype.addDays = function (days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+};
+Date.prototype.addMonths = function (months) {
+    var date = new Date(this.valueOf());
+    date.setMonth(date.getMonth() + months);
+    return date;
+};
+Date.prototype.addYears = function (years) {
+    var date = new Date(this.valueOf());
+    date.setFullYear(date.getFullYear() + years);
+    return date;
+};
+Date.fromIso8601 = function (value) {
+    var date = new Date();
+    date.fromIso8601(value);
+    return date;
+};
+Date.prototype.fromIso8601 = function (value) {
+    try {
+        var regexp = "([0-9]{2,4})(-([0-9]{1,2})(-([0-9]{1,2})" +
+            "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
+            "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
+        var d = value.match(new RegExp(regexp));
+        var date = new Date(parseInt(d[1]), 0, 1);
+        var offset = 0;
+        if (d[3])
+            date.setMonth(parseInt(d[3]) - 1);
+        if (d[5])
+            date.setDate(parseInt(d[5]));
+        if (d[7])
+            date.setHours(parseInt(d[7]));
+        if (d[8])
+            date.setMinutes(parseInt(d[8]));
+        if (d[10])
+            date.setSeconds(parseInt(d[10]));
+        if (d[12])
+            date.setMilliseconds(Number("0." + d[12]) * 1000);
+        if (d[14]) {
+            offset = (Number(d[16]) * 60) + Number(d[17]);
+            offset *= ((d[15] === "-") ? 1 : -1);
+        }
+        offset -= date.getTimezoneOffset();
+        var time = (Number(date) + (offset * 60 * 1000));
+        this.setTime(Number(time));
+    }
+    catch (e) {
+        throw new Error("String is not recognized as a valid ISO 8601 date.");
+    }
+    return this;
+};
+if (!Date.prototype.toISOString) {
+    Date.prototype.toISOString = function () {
+        return this.getUTCFullYear()
+            + "-" + String.padRight((this.getUTCMonth() + 1).toString(), 2, "0")
+            + "-" + String.padRight(this.getUTCDate().toString(), 2, "0")
+            + "T" + String.padRight(this.getUTCHours().toString(), 2, "0")
+            + ":" + String.padRight(this.getUTCMinutes().toString(), 2, "0")
+            + ":" + String.padRight(this.getUTCSeconds().toString(), 2, "0")
+            + "." + String((this.getUTCMilliseconds() / 1000).toFixed(3)).slice(2, 5)
+            + "Z";
+    };
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="ServiceBase.ts" />
 ///<reference path="FrameworkServices.ts"/>
+///<reference path="../core/Date.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
     (function (Angular) {
         var Services;
         (function (Services) {
+            var LoggingServiceBase = (function (_super) {
+                __extends(LoggingServiceBase, _super);
+                function LoggingServiceBase() {
+                    _super.apply(this, arguments);
+                }
+                LoggingServiceBase.prototype.writeMessage = function (message) { };
+                LoggingServiceBase.prototype.writeWarning = function (message) { };
+                LoggingServiceBase.prototype.writeError = function (message) { };
+                LoggingServiceBase.prototype.getString = function (message) {
+                    return "[" + new Date().format("MM/dd/yy hh:mm:ss.fff") + "] - " + message;
+                };
+                return LoggingServiceBase;
+            }(Services.ServiceBase));
+            Services.LoggingServiceBase = LoggingServiceBase;
             var DummyLoggingService = (function (_super) {
                 __extends(DummyLoggingService, _super);
                 function DummyLoggingService() {
                     _super.apply(this, arguments);
                 }
-                DummyLoggingService.prototype.writeMessage = function (message) { };
-                DummyLoggingService.prototype.writeWarning = function (message) { };
-                DummyLoggingService.prototype.writeError = function (message) { };
+                DummyLoggingService.prototype.writeError = function (message) { console.error(this.getString(message)); };
                 return DummyLoggingService;
-            }(Services.ServiceBase));
+            }(LoggingServiceBase));
             Services.DummyLoggingService = DummyLoggingService;
             var LoggingService = (function (_super) {
                 __extends(LoggingService, _super);
@@ -1284,13 +1514,13 @@ var MiracleDevs;
                     _super.apply(this, arguments);
                 }
                 LoggingService.prototype.writeMessage = function (message) {
-                    console.info(message);
+                    console.info(this.getString(message));
                 };
                 LoggingService.prototype.writeWarning = function (message) {
-                    console.warn("Warning: " + message);
+                    console.warn(this.getString(message));
                 };
                 LoggingService.prototype.writeError = function (message) {
-                    console.error("Error: " + message);
+                    console.error(this.getString(message));
                 };
                 LoggingService.factory = function () {
                     return Angular.BuildInfo.instance.isDebug ? new LoggingService() : new DummyLoggingService();
@@ -1300,7 +1530,7 @@ var MiracleDevs;
                     factory: LoggingService.factory
                 };
                 return LoggingService;
-            }(Services.ServiceBase));
+            }(LoggingServiceBase));
             Services.LoggingService = LoggingService;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
@@ -1350,173 +1580,6 @@ var MiracleDevs;
         Angular.FrameworkModule = FrameworkModule;
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../services/FrameworkServices.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var FrameworkServices = Angular.Services.FrameworkServices;
-            var ControllerBase = (function () {
-                function ControllerBase(scope, injector) {
-                    var _this = this;
-                    this.scope = scope;
-                    this.injector = injector;
-                    this.scope.$on("$destroy", function () { return _this.dispose(); });
-                }
-                ControllerBase.prototype.dispose = function () {
-                    this.logger.writeMessage("Disposing " + Object.getTypeName(this));
-                };
-                ControllerBase.prototype.getService = function (service) {
-                    if (service == null)
-                        return null;
-                    return this.injector.get(service, null);
-                };
-                ControllerBase.prototype.open = function (controller, parameters, staticDialog, keyboard) {
-                    return this.getService(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
-                };
-                ControllerBase.prototype.call = function (call, success, loading, fail) {
-                    var _this = this;
-                    if (!Object.isNull(loading))
-                        loading(true);
-                    call()
-                        .then(function (result) {
-                        if (!Object.isNull(loading))
-                            loading(false);
-                        if (!Object.isNull(success)) {
-                            success(result);
-                        }
-                    })
-                        .catch(function (error) {
-                        if (!Object.isNull(loading))
-                            loading(false);
-                        if (!Object.isNull(fail))
-                            fail(error);
-                        _this.handleException(error);
-                    });
-                };
-                ControllerBase.prototype.callEx = function (call, success, fail, showLoading) {
-                    var _this = this;
-                    if (showLoading === void 0) { showLoading = false; }
-                    if (showLoading)
-                        this.showLoading();
-                    call()
-                        .success(function (x) {
-                        if (showLoading)
-                            _this.hideLoading();
-                        if (!Object.isNull(success))
-                            success(x);
-                    })
-                        .error(function (x) {
-                        if (showLoading)
-                            _this.hideLoading();
-                        if (!Object.isNull(fail))
-                            fail(x);
-                        _this.handleException(x);
-                    });
-                };
-                ControllerBase.prototype.showErrors = function (messages) {
-                    if (messages.length === 0)
-                        return;
-                    for (var i = 0; i < messages.length; i++) {
-                        this.showError(messages[i]);
-                    }
-                };
-                ControllerBase.prototype.showWarnings = function (messages) {
-                    if (messages.length === 0)
-                        return;
-                    for (var i = 0; i < messages.length; i++) {
-                        this.showWarning(messages[i]);
-                    }
-                };
-                ControllerBase.prototype.showError = function (message) {
-                    this.alertService.addError(message);
-                };
-                ControllerBase.prototype.showWarning = function (message) {
-                    this.alertService.addWarning(message);
-                };
-                ControllerBase.prototype.showMessage = function (message) {
-                    this.alertService.addMessage(message);
-                };
-                ControllerBase.prototype.showLoading = function () {
-                    this.loadingService.show();
-                };
-                ControllerBase.prototype.hideLoading = function () {
-                    this.loadingService.hide();
-                };
-                ControllerBase.prototype.handleException = function (ex) {
-                    if (Object.isNull(ex))
-                        return;
-                    // if ex.data is not null, it's probably a 
-                    // an http promise exception.
-                    if (!Object.isNull(ex.data))
-                        ex = ex.data;
-                    if (!Object.isNull(ex.message)) {
-                        this.showError(ex.message);
-                    }
-                    else if (!Object.isNull(ex.Message)) {
-                        this.showError(ex.Message);
-                    }
-                    else if (!Object.isNull(ex.ExceptionMessage)) {
-                        this.showError(ex.ExceptionMessage);
-                    }
-                    else if (!Object.isNull(ex.error) && !Object.isNull(ex.error.message)) {
-                        this.showError(ex.error.message);
-                    }
-                };
-                ControllerBase.prototype.changeState = function (state, params, reload) {
-                    if (reload === void 0) { reload = false; }
-                    return this.stateService.go(state, params, { reload: reload });
-                };
-                return ControllerBase;
-            }());
-            Controllers.ControllerBase = ControllerBase;
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-Date.fromIso8601 = function (value) {
-    var date = new Date();
-    date.fromIso8601(value);
-    return date;
-};
-Date.prototype.fromIso8601 = function (value) {
-    try {
-        var regexp = "([0-9]{2,4})(-([0-9]{1,2})(-([0-9]{1,2})" +
-            "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
-            "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
-        var d = value.match(new RegExp(regexp));
-        var date = new Date(parseInt(d[1]), 0, 1);
-        var offset = 0;
-        if (d[3])
-            date.setMonth(parseInt(d[3]) - 1);
-        if (d[5])
-            date.setDate(parseInt(d[5]));
-        if (d[7])
-            date.setHours(parseInt(d[7]));
-        if (d[8])
-            date.setMinutes(parseInt(d[8]));
-        if (d[10])
-            date.setSeconds(parseInt(d[10]));
-        if (d[12])
-            date.setMilliseconds(Number("0." + d[12]) * 1000);
-        if (d[14]) {
-            offset = (Number(d[16]) * 60) + Number(d[17]);
-            offset *= ((d[15] === "-") ? 1 : -1);
-        }
-        offset -= date.getTimezoneOffset();
-        var time = (Number(date) + (offset * 60 * 1000));
-        this.setTime(Number(time));
-    }
-    catch (e) {
-        throw new Error("String is not recognized as a valid ISO 8601 date.");
-    }
-};
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -2623,47 +2686,544 @@ var MiracleDevs;
 Number.isNumber = function (value) {
     return !isNaN(parseFloat(value)) && isFinite(value);
 };
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Core;
+        (function (Core) {
+            var TimeSpan = (function () {
+                function TimeSpan(milliseconds) {
+                    this.milliseconds = milliseconds;
+                    /**
+                     * Number of milliseconds representing the time span.
+                     * @type Number
+                     */
+                    this.milliseconds = milliseconds;
+                }
+                Object.defineProperty(TimeSpan, "millisecondsPerSecond", {
+                    /**
+                     * Retrieves the number of milliseconds in one second.
+                     * @return {Number} Number of milliseconds in one second.
+                     * @static
+                     */
+                    get: function () {
+                        return 1000;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Object.defineProperty(TimeSpan, "millisecondsPerMinute", {
+                    /**
+                     * Retrieves the number of milliseconds in one minute.
+                     * @return {Number} Number of milliseconds in one minute.
+                     * @static
+                     */
+                    get: function () {
+                        return 60000;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Object.defineProperty(TimeSpan, "millisecondsPerHour", {
+                    /**
+                     * Retrieves the number of milliseconds in one hour.
+                     * @return {Number} Number of milliseconds in one hour.
+                     * @static
+                     */
+                    get: function () {
+                        return 3600000;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Object.defineProperty(TimeSpan, "millisecondsPerDay", {
+                    /**
+                     * Retrieves the number of milliseconds in one day.
+                     * @return {Number} Number of milliseconds in one day.
+                     * @static
+                     */
+                    get: function () {
+                        return 86400000;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                Object.defineProperty(TimeSpan, "now", {
+                    /**
+                     * Creates a new time span with the number of milliseconds
+                     * elapsed to the present time.
+                     * @return {TimeSpan} Time span representing the current UTC time.
+                     * @static
+                     */
+                    get: function () {
+                        return new TimeSpan(new Date().valueOf());
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                ;
+                /**
+                 * Creates a new time span with the number of milliseconds
+                 * elapsed since the aplication started.
+                 * @return {TimeSpan} Time elapsed sirce the Application started.
+                 * @static
+                 */
+                TimeSpan.sinceTheApplicationStarted = function () {
+                    return TimeSpan.now.subtract(TimeSpan.applicationStarted);
+                };
+                ;
+                Object.defineProperty(TimeSpan, "zero", {
+                    /**
+                     * A time span without milliseconds.
+                     * @type TimeSpan
+                     * @static
+                     */
+                    get: function () { return new TimeSpan(0); },
+                    enumerable: true,
+                    configurable: true
+                });
+                /**
+                 * A time span which represents one millisecond.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.oneMillisecond = function () { return new TimeSpan(1); };
+                /**
+                 * A time span which represents ten milliseconds.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.tenMilliseconds = function () { return new TimeSpan(10); };
+                /**
+                 * A time span which represents hundred milliseconds.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.hundredMilliseconds = function () { return new TimeSpan(100); };
+                /**
+                 * A time span which represents five hundred millisencods, or half a second.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.halfSecond = function () { return new TimeSpan(500); };
+                /**
+                 * A time span which represents one second.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.oneSecond = function () { return TimeSpan.fromSeconds(1); };
+                /**
+                 * A time span which represents thirty seconds or half a minute.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.halfMinute = function () { return TimeSpan.fromSeconds(30); };
+                /**
+                 * A time span which represents one minute.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.oneMinute = function () { return TimeSpan.fromMinutes(1); };
+                /**
+                 * A time span which represents thirty minutes or half an hour.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.halfHour = function () { return TimeSpan.fromMinutes(30); };
+                /**
+                 * A time span which represents an hour.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.oneHour = function () { return TimeSpan.fromHours(1); };
+                /**
+                 * A time span which represents tweleve hours or half a day.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.halfDay = function () { return TimeSpan.fromHours(12); };
+                /**
+                 * A time span which represents on day.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.oneDay = function () { return TimeSpan.fromDays(1); };
+                /**
+                * Adds the milliseconds of the parameter to the current timespan.
+                 * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.add = function (timeSpan) {
+                    this.milliseconds += timeSpan.milliseconds;
+                    return this;
+                };
+                ;
+                /**
+                 * Adds milliseconds to the current time span.
+                 * @param {Number} milliseconds Milliseconds to be added.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.addMilliseconds = function (milliseconds) {
+                    this.milliseconds += milliseconds;
+                    return this;
+                };
+                ;
+                /**
+                 * Adds secods to the current time span.
+                 * @param {Number} seconds Seconds to be added.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.addSeconds = function (seconds) {
+                    this.addMilliseconds(seconds * 1000);
+                    return this;
+                };
+                ;
+                /**
+                 * Adds minutes to the current time span.
+                 * @param {Number} minutes Minutes to be added.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.addMintures = function (minutes) {
+                    this.addMilliseconds(minutes * 60000);
+                    return this;
+                };
+                ;
+                /**
+                 * Adds hours to the current time span.
+                 * @param {Number} hours Hours to be added.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.addHours = function (hours) {
+                    this.addMilliseconds(hours * 3600000);
+                    return this;
+                };
+                ;
+                /**
+                 * Adds days to the current time span.
+                 * @param {Number} days Days to be added.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.addDays = function (days) {
+                    this.addMilliseconds(days * 86400000);
+                    return this;
+                };
+                ;
+                /**
+                 * Subtracts the milliseconds of the parameter to the current timespan.
+                 * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.subtract = function (timeSpan) {
+                    this.milliseconds -= timeSpan.milliseconds;
+                    if (this.milliseconds < 0) {
+                        this.milliseconds = 0;
+                    }
+                    return this;
+                };
+                ;
+                /**
+                 * Subtracts milliseconds to the current time span.
+                 * @param {Number} milliseconds Milliseconds to be subtracted.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.subtractMilliseconds = function (milliseconds) {
+                    this.milliseconds -= milliseconds;
+                    if (this.milliseconds < 0) {
+                        this.milliseconds = 0;
+                    }
+                    return this;
+                };
+                ;
+                /**
+                 * Subtracts seconds to the current time span.
+                 * @param {Number} seconds Seconds to be subtracted.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.subtractSeconds = function (seconds) {
+                    this.subtractMilliseconds(seconds * 1000);
+                    return this;
+                };
+                ;
+                /**
+                 * Subtracts minutes to the current time span.
+                 * @param {Number} minutes Minutes to be subtracted.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.subtractMintures = function (minutes) {
+                    this.subtractMilliseconds(minutes * 60000);
+                    return this;
+                };
+                ;
+                /**
+                 * Subtracts hours to the current time span.
+                 * @param {Number} hours Hours to be subtracted.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.subtractHours = function (hours) {
+                    this.subtractMilliseconds(hours * 3600000);
+                    return this;
+                };
+                ;
+                /**
+                 * Subtracts days to the current time span.
+                 * @param {Number} days Days to be subtracted.
+                 * @return {TimeSpan} A reference to the time span.
+                 */
+                TimeSpan.prototype.subtractDays = function (days) {
+                    this.subtractMilliseconds(days * 86400000);
+                    return this;
+                };
+                ;
+                /**
+                 * Converts the timespan into seconds.
+                 * @return {Number} Number of seconds.
+                 */
+                TimeSpan.prototype.toSeconds = function () { return this.milliseconds / 1000; };
+                ;
+                /**
+                 * Converts the timespan into minutes.
+                 * @return {Number} Number of minutes.
+                 */
+                TimeSpan.prototype.toMinutes = function () { return this.milliseconds / 60000; };
+                ;
+                /**
+                 * Converts the timespan into hours.
+                 * @return {Number} Number of hours.
+                 */
+                TimeSpan.prototype.toHours = function () { return this.milliseconds / 3600000; };
+                ;
+                /**
+                 * Converts the timespan into days.
+                 * @return {Number} Number of days.
+                 */
+                TimeSpan.prototype.toDays = function () { return this.milliseconds / 86400000; };
+                ;
+                /**
+                 * Returns a new instance copy of the current time span.
+                 * @return {TimeSpan} New instance copied from this one.
+                 */
+                TimeSpan.prototype.copy = function () {
+                    return new TimeSpan(this.milliseconds);
+                };
+                ;
+                /**
+                 * Retrieves the difference with the current time span in milliseconds.
+                 * @param {TimeSpan} timeSpan Time span to calculate the difference.
+                 * @return {Number} difference between the two time span in milliseconds.
+                 */
+                TimeSpan.prototype.difference = function (timeSpan) {
+                    return this.milliseconds - timeSpan.milliseconds;
+                };
+                ;
+                /**
+                 * Retrieves the percentage relation between the current time and the
+                 * given one. This takes as the total value the given time span, so if
+                 * this time span is greater than the parameter the percentage will be
+                 * greater than one. The percentage is expressed between[0-1] being 1
+                 * 100%.
+                 * @param {TimeSpan} timeSpan Time considered the total time in the percentage relation.
+                 * @return {Number} A Number greater or equal than 0, when 1 is 100%.
+                 */
+                TimeSpan.prototype.percentage = function (timeSpan) {
+                    return this.milliseconds / timeSpan.milliseconds;
+                };
+                ;
+                /**
+                 * Converts the object into a string.
+                 * @return {String} String representation of the object.
+                 */
+                TimeSpan.prototype.toString = function () {
+                    return this.milliseconds.toString() + "ms";
+                };
+                ;
+                /**
+                 * Creates a new time span from a number of seconds.
+                 * @param {Number} second Number of seconds.
+                 * @return {TimeSpan} A time span representing the number of seconds.
+                 * @static
+                 */
+                TimeSpan.fromSeconds = function (seconds) {
+                    return new TimeSpan(seconds * TimeSpan.millisecondsPerSecond);
+                };
+                ;
+                /**
+                 * Creates a new time span from a number of minutes.
+                 * @param {Number} second Number of minutes.
+                 * @return {TimeSpan} A time span representing the number of minutes.
+                 * @static
+                 */
+                TimeSpan.fromMinutes = function (minutes) {
+                    return new TimeSpan(minutes * TimeSpan.millisecondsPerMinute);
+                };
+                ;
+                /**
+                 * Creates a new time span from a number of hours.
+                 * @param {Number} second Number of hours.
+                 * @return {TimeSpan} A time span representing the number of hours.
+                 * @static
+                 */
+                TimeSpan.fromHours = function (hours) {
+                    return new TimeSpan(hours * TimeSpan.millisecondsPerHour);
+                };
+                ;
+                /**
+                 * Creates a new time span from a number of days.
+                 * @param {Number} second Number of days.
+                 * @return {TimeSpan} A time span representing the number of days.
+                 * @static
+                 */
+                TimeSpan.fromDays = function (days) {
+                    return new TimeSpan(days * TimeSpan.millisecondsPerDay);
+                };
+                ;
+                /**
+                 * The exact time when the application started.
+                 * On reality holds the time when this script was loaded.
+                 * @type TimeSpan
+                 * @static
+                 */
+                TimeSpan.applicationStarted = TimeSpan.now;
+                return TimeSpan;
+            }());
+            Core.TimeSpan = TimeSpan;
+        })(Core = Angular.Core || (Angular.Core = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-String.empty = "";
-String.isString = function (value) {
-    return (typeof (value) === "string" || value instanceof String);
-};
-String.isNullOrEmpty = function (value) {
-    return value == null || value === "";
-};
-String.isNullOrWhiteSpace = function (value) {
-    return value == null || value.replace(/ /g, "") === "";
-};
-String.format = function (format) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-    }
-    if (Object.isNull(format))
-        throw new Error("Format string can not be null.");
-    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
-        index = parseInt(index, 10);
-        if (index < 0 || index >= args.length) {
-            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-        }
-        return args[index];
-    });
-};
-String.formatArray = function (format, args) {
-    if (Object.isNull(format))
-        throw new Error("Format string can not be null.");
-    return String(format).replace(/\{([0-9]+)\}/g, function (match, index) {
-        index = parseInt(index, 10);
-        if (index < 0 || index >= args.length) {
-            throw new Error("Index is zero based. Must be greater than 0 and less than " + (args.length - 1) + ".");
-        }
-        return args[index];
-    });
-};
+///<reference path="../services/FrameworkServices.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Controllers;
+        (function (Controllers) {
+            var FrameworkServices = Angular.Services.FrameworkServices;
+            var ControllerBase = (function () {
+                function ControllerBase(scope, injector) {
+                    var _this = this;
+                    this.scope = scope;
+                    this.injector = injector;
+                    this.scope.$on("$destroy", function () { return _this.dispose(); });
+                }
+                ControllerBase.prototype.dispose = function () {
+                    this.logger.writeMessage("Disposing " + Object.getTypeName(this));
+                };
+                ControllerBase.prototype.getService = function (service) {
+                    if (service == null)
+                        return null;
+                    return this.injector.get(service, null);
+                };
+                ControllerBase.prototype.open = function (controller, parameters, staticDialog, keyboard) {
+                    return this.getService(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
+                };
+                ControllerBase.prototype.call = function (call, success, loading, fail) {
+                    var _this = this;
+                    if (!Object.isNull(loading))
+                        loading(true);
+                    call()
+                        .then(function (result) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(success)) {
+                            success(result);
+                        }
+                    })
+                        .catch(function (error) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(fail))
+                            fail(error);
+                        _this.handleException(error);
+                    });
+                };
+                ControllerBase.prototype.callEx = function (call, success, fail, showLoading) {
+                    var _this = this;
+                    if (showLoading === void 0) { showLoading = false; }
+                    if (showLoading)
+                        this.showLoading();
+                    call()
+                        .success(function (x) {
+                        if (showLoading)
+                            _this.hideLoading();
+                        if (!Object.isNull(success))
+                            success(x);
+                    })
+                        .error(function (x) {
+                        if (showLoading)
+                            _this.hideLoading();
+                        if (!Object.isNull(fail))
+                            fail(x);
+                        _this.handleException(x);
+                    });
+                };
+                ControllerBase.prototype.showErrors = function (messages) {
+                    if (messages.length === 0)
+                        return;
+                    for (var i = 0; i < messages.length; i++) {
+                        this.showError(messages[i]);
+                    }
+                };
+                ControllerBase.prototype.showWarnings = function (messages) {
+                    if (messages.length === 0)
+                        return;
+                    for (var i = 0; i < messages.length; i++) {
+                        this.showWarning(messages[i]);
+                    }
+                };
+                ControllerBase.prototype.showError = function (message) {
+                    this.alertService.addError(message);
+                };
+                ControllerBase.prototype.showWarning = function (message) {
+                    this.alertService.addWarning(message);
+                };
+                ControllerBase.prototype.showMessage = function (message) {
+                    this.alertService.addMessage(message);
+                };
+                ControllerBase.prototype.showLoading = function () {
+                    this.loadingService.show();
+                };
+                ControllerBase.prototype.hideLoading = function () {
+                    this.loadingService.hide();
+                };
+                ControllerBase.prototype.handleException = function (ex) {
+                    if (Object.isNull(ex))
+                        return;
+                    // if ex.data is not null, it's probably a 
+                    // an http promise exception.
+                    if (!Object.isNull(ex.data))
+                        ex = ex.data;
+                    if (!Object.isNull(ex.message)) {
+                        this.showError(ex.message);
+                    }
+                    else if (!Object.isNull(ex.Message)) {
+                        this.showError(ex.Message);
+                    }
+                    else if (!Object.isNull(ex.ExceptionMessage)) {
+                        this.showError(ex.ExceptionMessage);
+                    }
+                    else if (!Object.isNull(ex.error) && !Object.isNull(ex.error.message)) {
+                        this.showError(ex.error.message);
+                    }
+                };
+                ControllerBase.prototype.changeState = function (state, params, reload) {
+                    if (reload === void 0) { reload = false; }
+                    return this.stateService.go(state, params, { reload: reload });
+                };
+                return ControllerBase;
+            }());
+            Controllers.ControllerBase = ControllerBase;
+        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -4604,6 +5164,38 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Models;
+        (function (Models) {
+            var ModelBase = (function () {
+                function ModelBase() {
+                }
+                ModelBase.prototype.startTracking = function () {
+                    this.original = Object.clone(this, ["original"]);
+                };
+                ModelBase.prototype.stopTracking = function () {
+                    this.original = null;
+                };
+                ModelBase.prototype.isDirty = function () {
+                    return !Object.isEqualTo(this, this.original, ["original"]);
+                };
+                ModelBase.prototype.isTracking = function () {
+                    return this.original != null;
+                };
+                return ModelBase;
+            }());
+            Models.ModelBase = ModelBase;
+        })(Models = Angular.Models || (Angular.Models = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -4636,38 +5228,6 @@ var MiracleDevs;
             }());
             Interceptors.InterceptorBase = InterceptorBase;
         })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Models;
-        (function (Models) {
-            var ModelBase = (function () {
-                function ModelBase() {
-                }
-                ModelBase.prototype.startTracking = function () {
-                    this.original = Object.clone(this, ["original"]);
-                };
-                ModelBase.prototype.stopTracking = function () {
-                    this.original = null;
-                };
-                ModelBase.prototype.isDirty = function () {
-                    return !Object.isEqualTo(this, this.original, ["original"]);
-                };
-                ModelBase.prototype.isTracking = function () {
-                    return this.original != null;
-                };
-                return ModelBase;
-            }());
-            Models.ModelBase = ModelBase;
-        })(Models = Angular.Models || (Angular.Models = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -4820,7 +5380,7 @@ var MiracleDevs;
                 MonthName[MonthName["May"] = 4] = "May";
                 MonthName[MonthName["June"] = 5] = "June";
                 MonthName[MonthName["July"] = 6] = "July";
-                MonthName[MonthName["August"] = 8] = "August";
+                MonthName[MonthName["August"] = 7] = "August";
                 MonthName[MonthName["September"] = 8] = "September";
                 MonthName[MonthName["October"] = 9] = "October";
                 MonthName[MonthName["November"] = 10] = "November";
@@ -5693,40 +6253,6 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-///<reference path="../ControllerBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var Dialogs;
-            (function (Dialogs) {
-                var DialogControllerBase = (function (_super) {
-                    __extends(DialogControllerBase, _super);
-                    function DialogControllerBase(scope, modalInstance, injector) {
-                        _super.call(this, scope, injector);
-                        this.modalInstance = modalInstance;
-                    }
-                    DialogControllerBase.prototype.cancel = function () {
-                        this.modalInstance.close();
-                    };
-                    DialogControllerBase.prototype.close = function (result) {
-                        if (result === void 0) { result = null; }
-                        this.modalInstance.resolve(result);
-                    };
-                    return DialogControllerBase;
-                }(Controllers.ControllerBase));
-                Dialogs.DialogControllerBase = DialogControllerBase;
-            })(Dialogs = Controllers.Dialogs || (Controllers.Dialogs = {}));
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -5874,6 +6400,40 @@ var MiracleDevs;
                 Mapping.AutoMapper = AutoMapper;
             })(Mapping = Core.Mapping || (Core.Mapping = {}));
         })(Core = Angular.Core || (Angular.Core = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../ControllerBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Controllers;
+        (function (Controllers) {
+            var Dialogs;
+            (function (Dialogs) {
+                var DialogControllerBase = (function (_super) {
+                    __extends(DialogControllerBase, _super);
+                    function DialogControllerBase(scope, modalInstance, injector) {
+                        _super.call(this, scope, injector);
+                        this.modalInstance = modalInstance;
+                    }
+                    DialogControllerBase.prototype.cancel = function () {
+                        this.modalInstance.close();
+                    };
+                    DialogControllerBase.prototype.close = function (result) {
+                        if (result === void 0) { result = null; }
+                        this.modalInstance.resolve(result);
+                    };
+                    return DialogControllerBase;
+                }(Controllers.ControllerBase));
+                Dialogs.DialogControllerBase = DialogControllerBase;
+            })(Dialogs = Controllers.Dialogs || (Controllers.Dialogs = {}));
+        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

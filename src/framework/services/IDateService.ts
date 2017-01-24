@@ -33,7 +33,7 @@ module MiracleDevs.Angular.Services
         "May" = 4,
         "June" = 5,
         "July" = 6,
-        "August" = 8,
+        "August" = 7,
         "September" = 8,
         "October" = 9,
         "November" = 10,
