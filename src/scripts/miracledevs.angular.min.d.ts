@@ -363,6 +363,8 @@ declare module MiracleDevs.Angular.Services {
         static readonly dateService: string;
         static readonly messageBus: string;
         static readonly keyProcessorService: string;
+        static readonly modalInstance: string;
+        static readonly modalParameters: string;
     }
 }
 /*!
@@ -463,6 +465,45 @@ declare module MiracleDevs.Angular {
         protected configureRoutes(stateProvider: IStateProvider, urlRouterProvider: IUrlRouterProvider, httpProvider: IHttpProvider, location: ILocationProvider): void;
         protected authorizeRoute(rootScope: IScope, state: IStateService, injector: IInjectorService): void;
         protected getModuleDependencies(): string[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Controllers {
+    import IAlertService = Services.IAlertService;
+    import ILoadingService = Services.ILoadingService;
+    import IStateService = angular.ui.IStateService;
+    import IInjectorService = angular.auto.IInjectorService;
+    import ILoggingService = Services.ILoggingService;
+    import IScope = angular.IScope;
+    import IHttpPromise = angular.IHttpPromise;
+    import IPromise = angular.IPromise;
+    import IModalInstance = Services.IModalInstance;
+    abstract class ControllerBase {
+        protected scope: IScope;
+        protected injector: IInjectorService;
+        protected alertService: IAlertService;
+        protected loadingService: ILoadingService;
+        protected stateService: IStateService;
+        protected logger: ILoggingService;
+        protected constructor(scope: IScope, injector: IInjectorService);
+        protected dispose(): void;
+        protected getService<T>(service: string): T;
+        protected open(controller: Function, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
+        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
+        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
+        protected showErrors(messages: string[]): void;
+        protected showWarnings(messages: string[]): void;
+        protected showError(message: string): void;
+        protected showWarning(message: string): void;
+        protected showMessage(message: string): void;
+        protected showLoading(): void;
+        protected hideLoading(): void;
+        protected handleException(ex: any): void;
+        protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
     }
 }
 /*!
@@ -817,124 +858,6 @@ declare module MiracleDevs.Angular.Core {
          * @static
          */
         static fromDays(days: any): TimeSpan;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Controllers {
-    import IAlertService = Services.IAlertService;
-    import ILoadingService = Services.ILoadingService;
-    import IStateService = angular.ui.IStateService;
-    import IInjectorService = angular.auto.IInjectorService;
-    import ILoggingService = Services.ILoggingService;
-    import IScope = angular.IScope;
-    import IHttpPromise = angular.IHttpPromise;
-    import IPromise = angular.IPromise;
-    import IModalInstance = Services.IModalInstance;
-    abstract class ControllerBase {
-        protected scope: IScope;
-        protected injector: IInjectorService;
-        protected alertService: IAlertService;
-        protected loadingService: ILoadingService;
-        protected stateService: IStateService;
-        protected logger: ILoggingService;
-        protected constructor(scope: IScope, injector: IInjectorService);
-        protected dispose(): void;
-        protected getService<T>(service: string): T;
-        protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
-        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
-        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
-        protected showErrors(messages: string[]): void;
-        protected showWarnings(messages: string[]): void;
-        protected showError(message: string): void;
-        protected showWarning(message: string): void;
-        protected showMessage(message: string): void;
-        protected showLoading(): void;
-        protected hideLoading(): void;
-        protected handleException(ex: any): void;
-        protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class AngularFilters {
-        static readonly currency: string;
-        static readonly number: string;
-        static readonly date: string;
-        static readonly json: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-        static readonly limitTo: string;
-        static readonly orderBy: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    class FrameworkFilters {
-        static readonly reverse: string;
-        static readonly trim: string;
-        static readonly lowercase: string;
-        static readonly uppercase: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class LowercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class ReverseFilter {
-        static register: FilterRegister;
-        static factory(): (items: any[]) => any[];
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class TrimFilter {
-        static register: FilterRegister;
-        private static trim(value, maxChars);
-        static factory(): (value: string, maxChars: number) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Filters {
-    import FilterRegister = Interfaces.IFilterRegister;
-    class UppercaseFilter {
-        static register: FilterRegister;
-        static factory(): (value: string) => string;
     }
 }
 /*!
@@ -1647,13 +1570,78 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Models {
-    class ModelBase {
-        private original;
-        startTracking(): void;
-        stopTracking(): void;
-        isDirty(): boolean;
-        isTracking(): boolean;
+declare module MiracleDevs.Angular.Filters {
+    class AngularFilters {
+        static readonly currency: string;
+        static readonly number: string;
+        static readonly date: string;
+        static readonly json: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+        static readonly limitTo: string;
+        static readonly orderBy: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    class FrameworkFilters {
+        static readonly reverse: string;
+        static readonly trim: string;
+        static readonly lowercase: string;
+        static readonly uppercase: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class LowercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class ReverseFilter {
+        static register: FilterRegister;
+        static factory(): (items: any[]) => any[];
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class TrimFilter {
+        static register: FilterRegister;
+        private static trim(value, maxChars);
+        static factory(): (value: string, maxChars: number) => string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Filters {
+    import FilterRegister = Interfaces.IFilterRegister;
+    class UppercaseFilter {
+        static register: FilterRegister;
+        static factory(): (value: string) => string;
     }
 }
 /*!
@@ -1678,6 +1666,20 @@ declare module MiracleDevs.Angular.Interceptors {
         onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
         onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
         onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Models {
+    class ModelBase {
+        private original;
+        startTracking(): void;
+        stopTracking(): void;
+        isDirty(): boolean;
+        isTracking(): boolean;
     }
 }
 /*!
@@ -2053,13 +2055,13 @@ declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
     class ModalService extends ServiceBase implements IModalService {
         static register: IServiceRegister;
-        private $rootScope;
-        private $q;
-        private $http;
-        private $templateCache;
-        private $compile;
-        private $controller;
-        private modals;
+        private readonly $rootScope;
+        private readonly $q;
+        private readonly $http;
+        private readonly $templateCache;
+        private readonly $compile;
+        private readonly $controller;
+        private readonly modals;
         constructor($rootScope: angular.IRootScopeService, $q: angular.IQService, $http: angular.IHttpService, $templateCache: angular.ITemplateCacheService, $compile: angular.ICompileService, $controller: angular.IControllerService);
         open(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         close(modalInstance: IModalInstance, reason?: string): void;
@@ -2104,6 +2106,22 @@ declare module MiracleDevs.Angular.Session {
         static save<T>(name: string, data: T): void;
         static restore<T>(name: string): T;
         static clear(name: string): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Controllers.Dialogs {
+    import IInjectorService = angular.auto.IInjectorService;
+    import IModalInstance = Services.IModalInstance;
+    import IScope = angular.IScope;
+    abstract class DialogControllerBase extends ControllerBase {
+        protected modalInstance: IModalInstance;
+        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
+        cancel(): void;
+        protected close(result?: any): void;
     }
 }
 /*!
@@ -2158,22 +2176,6 @@ declare module MiracleDevs.Angular.Core.Mapping {
         static mapTo<TSource, TDest>(source: TSource, destination: TDest): void;
         static mapToByName<TSource, TDest>(name: string, source: TSource, destination: TDest): void;
         static dynamicMap(source: any, destination: any): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Controllers.Dialogs {
-    import IInjectorService = angular.auto.IInjectorService;
-    import IModalInstance = Services.IModalInstance;
-    import IScope = angular.IScope;
-    abstract class DialogControllerBase extends ControllerBase {
-        protected modalInstance: IModalInstance;
-        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
-        cancel(): void;
-        protected close(result?: any): void;
     }
 }
 /*!

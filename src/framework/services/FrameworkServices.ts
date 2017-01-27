@@ -27,5 +27,9 @@ module MiracleDevs.Angular.Services
         static get messageBus(): string { return "MessageBus"; }
 
         static get keyProcessorService(): string { return "KeyProcessorService"; }
+
+        static get modalInstance(): string { return "$modalInstance"; }
+
+        static get modalParameters(): string { return "$modalParameters"; }
     }
 }

@@ -1248,6 +1248,16 @@ var MiracleDevs;
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(FrameworkServices, "modalInstance", {
+                    get: function () { return "$modalInstance"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkServices, "modalParameters", {
+                    get: function () { return "$modalParameters"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return FrameworkServices;
             }());
             Services.FrameworkServices = FrameworkServices;
@@ -1578,6 +1588,136 @@ var MiracleDevs;
             return FrameworkModule;
         }(Angular.ModuleBase));
         Angular.FrameworkModule = FrameworkModule;
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../services/FrameworkServices.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Controllers;
+        (function (Controllers) {
+            var FrameworkServices = Angular.Services.FrameworkServices;
+            var ControllerBase = (function () {
+                function ControllerBase(scope, injector) {
+                    var _this = this;
+                    this.scope = scope;
+                    this.injector = injector;
+                    this.scope.$on("$destroy", function () { return _this.dispose(); });
+                }
+                ControllerBase.prototype.dispose = function () {
+                    this.logger.writeMessage("Disposing " + Object.getTypeName(this));
+                };
+                ControllerBase.prototype.getService = function (service) {
+                    if (service == null)
+                        return null;
+                    return this.injector.get(service, null);
+                };
+                ControllerBase.prototype.open = function (controller, parameters, staticDialog, keyboard) {
+                    return this.getService(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
+                };
+                ControllerBase.prototype.call = function (call, success, loading, fail) {
+                    var _this = this;
+                    if (!Object.isNull(loading))
+                        loading(true);
+                    call()
+                        .then(function (result) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(success)) {
+                            success(result);
+                        }
+                    })
+                        .catch(function (error) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(fail))
+                            fail(error);
+                        _this.handleException(error);
+                    });
+                };
+                ControllerBase.prototype.callEx = function (call, success, fail, showLoading) {
+                    var _this = this;
+                    if (showLoading === void 0) { showLoading = false; }
+                    if (showLoading)
+                        this.showLoading();
+                    call()
+                        .success(function (x) {
+                        if (showLoading)
+                            _this.hideLoading();
+                        if (!Object.isNull(success))
+                            success(x);
+                    })
+                        .error(function (x) {
+                        if (showLoading)
+                            _this.hideLoading();
+                        if (!Object.isNull(fail))
+                            fail(x);
+                        _this.handleException(x);
+                    });
+                };
+                ControllerBase.prototype.showErrors = function (messages) {
+                    if (messages.length === 0)
+                        return;
+                    for (var i = 0; i < messages.length; i++) {
+                        this.showError(messages[i]);
+                    }
+                };
+                ControllerBase.prototype.showWarnings = function (messages) {
+                    if (messages.length === 0)
+                        return;
+                    for (var i = 0; i < messages.length; i++) {
+                        this.showWarning(messages[i]);
+                    }
+                };
+                ControllerBase.prototype.showError = function (message) {
+                    this.alertService.addError(message);
+                };
+                ControllerBase.prototype.showWarning = function (message) {
+                    this.alertService.addWarning(message);
+                };
+                ControllerBase.prototype.showMessage = function (message) {
+                    this.alertService.addMessage(message);
+                };
+                ControllerBase.prototype.showLoading = function () {
+                    this.loadingService.show();
+                };
+                ControllerBase.prototype.hideLoading = function () {
+                    this.loadingService.hide();
+                };
+                ControllerBase.prototype.handleException = function (ex) {
+                    if (Object.isNull(ex))
+                        return;
+                    // if ex.data is not null, it's probably a 
+                    // an http promise exception.
+                    if (!Object.isNull(ex.data))
+                        ex = ex.data;
+                    if (!Object.isNull(ex.message)) {
+                        this.showError(ex.message);
+                    }
+                    else if (!Object.isNull(ex.Message)) {
+                        this.showError(ex.Message);
+                    }
+                    else if (!Object.isNull(ex.ExceptionMessage)) {
+                        this.showError(ex.ExceptionMessage);
+                    }
+                    else if (!Object.isNull(ex.error) && !Object.isNull(ex.error.message)) {
+                        this.showError(ex.error.message);
+                    }
+                };
+                ControllerBase.prototype.changeState = function (state, params, reload) {
+                    if (reload === void 0) { reload = false; }
+                    return this.stateService.go(state, params, { reload: reload });
+                };
+                return ControllerBase;
+            }());
+            Controllers.ControllerBase = ControllerBase;
+        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -3099,371 +3239,6 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-///<reference path="../services/FrameworkServices.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var FrameworkServices = Angular.Services.FrameworkServices;
-            var ControllerBase = (function () {
-                function ControllerBase(scope, injector) {
-                    var _this = this;
-                    this.scope = scope;
-                    this.injector = injector;
-                    this.scope.$on("$destroy", function () { return _this.dispose(); });
-                }
-                ControllerBase.prototype.dispose = function () {
-                    this.logger.writeMessage("Disposing " + Object.getTypeName(this));
-                };
-                ControllerBase.prototype.getService = function (service) {
-                    if (service == null)
-                        return null;
-                    return this.injector.get(service, null);
-                };
-                ControllerBase.prototype.open = function (controller, parameters, staticDialog, keyboard) {
-                    return this.getService(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
-                };
-                ControllerBase.prototype.call = function (call, success, loading, fail) {
-                    var _this = this;
-                    if (!Object.isNull(loading))
-                        loading(true);
-                    call()
-                        .then(function (result) {
-                        if (!Object.isNull(loading))
-                            loading(false);
-                        if (!Object.isNull(success)) {
-                            success(result);
-                        }
-                    })
-                        .catch(function (error) {
-                        if (!Object.isNull(loading))
-                            loading(false);
-                        if (!Object.isNull(fail))
-                            fail(error);
-                        _this.handleException(error);
-                    });
-                };
-                ControllerBase.prototype.callEx = function (call, success, fail, showLoading) {
-                    var _this = this;
-                    if (showLoading === void 0) { showLoading = false; }
-                    if (showLoading)
-                        this.showLoading();
-                    call()
-                        .success(function (x) {
-                        if (showLoading)
-                            _this.hideLoading();
-                        if (!Object.isNull(success))
-                            success(x);
-                    })
-                        .error(function (x) {
-                        if (showLoading)
-                            _this.hideLoading();
-                        if (!Object.isNull(fail))
-                            fail(x);
-                        _this.handleException(x);
-                    });
-                };
-                ControllerBase.prototype.showErrors = function (messages) {
-                    if (messages.length === 0)
-                        return;
-                    for (var i = 0; i < messages.length; i++) {
-                        this.showError(messages[i]);
-                    }
-                };
-                ControllerBase.prototype.showWarnings = function (messages) {
-                    if (messages.length === 0)
-                        return;
-                    for (var i = 0; i < messages.length; i++) {
-                        this.showWarning(messages[i]);
-                    }
-                };
-                ControllerBase.prototype.showError = function (message) {
-                    this.alertService.addError(message);
-                };
-                ControllerBase.prototype.showWarning = function (message) {
-                    this.alertService.addWarning(message);
-                };
-                ControllerBase.prototype.showMessage = function (message) {
-                    this.alertService.addMessage(message);
-                };
-                ControllerBase.prototype.showLoading = function () {
-                    this.loadingService.show();
-                };
-                ControllerBase.prototype.hideLoading = function () {
-                    this.loadingService.hide();
-                };
-                ControllerBase.prototype.handleException = function (ex) {
-                    if (Object.isNull(ex))
-                        return;
-                    // if ex.data is not null, it's probably a 
-                    // an http promise exception.
-                    if (!Object.isNull(ex.data))
-                        ex = ex.data;
-                    if (!Object.isNull(ex.message)) {
-                        this.showError(ex.message);
-                    }
-                    else if (!Object.isNull(ex.Message)) {
-                        this.showError(ex.Message);
-                    }
-                    else if (!Object.isNull(ex.ExceptionMessage)) {
-                        this.showError(ex.ExceptionMessage);
-                    }
-                    else if (!Object.isNull(ex.error) && !Object.isNull(ex.error.message)) {
-                        this.showError(ex.error.message);
-                    }
-                };
-                ControllerBase.prototype.changeState = function (state, params, reload) {
-                    if (reload === void 0) { reload = false; }
-                    return this.stateService.go(state, params, { reload: reload });
-                };
-                return ControllerBase;
-            }());
-            Controllers.ControllerBase = ControllerBase;
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var AngularFilters = (function () {
-                function AngularFilters() {
-                }
-                Object.defineProperty(AngularFilters, "currency", {
-                    get: function () { return "currency"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "number", {
-                    get: function () { return "number"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "date", {
-                    get: function () { return "date"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "json", {
-                    get: function () { return "json"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "limitTo", {
-                    get: function () { return "limitTo"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(AngularFilters, "orderBy", {
-                    get: function () { return "orderBy"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return AngularFilters;
-            }());
-            Filters.AngularFilters = AngularFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var FrameworkFilters = (function () {
-                function FrameworkFilters() {
-                }
-                Object.defineProperty(FrameworkFilters, "reverse", {
-                    get: function () { return "reverse"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "trim", {
-                    get: function () { return "trim"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "lowercase", {
-                    get: function () { return "lowercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(FrameworkFilters, "uppercase", {
-                    get: function () { return "uppercase"; },
-                    enumerable: true,
-                    configurable: true
-                });
-                return FrameworkFilters;
-            }());
-            Filters.FrameworkFilters = FrameworkFilters;
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var LowercaseFilter = (function () {
-                function LowercaseFilter() {
-                }
-                LowercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
-                };
-                LowercaseFilter.register = {
-                    name: Filters.FrameworkFilters.lowercase,
-                    factory: LowercaseFilter.factory
-                };
-                return LowercaseFilter;
-            }());
-            Filters.LowercaseFilter = LowercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var ReverseFilter = (function () {
-                function ReverseFilter() {
-                }
-                ReverseFilter.factory = function () {
-                    return function (items) { return items.slice().reverse(); };
-                };
-                ReverseFilter.register = {
-                    name: Filters.FrameworkFilters.reverse,
-                    factory: ReverseFilter.factory
-                };
-                return ReverseFilter;
-            }());
-            Filters.ReverseFilter = ReverseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var TrimFilter = (function () {
-                function TrimFilter() {
-                }
-                TrimFilter.trim = function (value, maxChars) {
-                    if (Object.isNull(value))
-                        return null;
-                    if (value.length < maxChars)
-                        return value;
-                    return value.substr(0, maxChars) + "...";
-                };
-                TrimFilter.factory = function () {
-                    return TrimFilter.trim;
-                };
-                TrimFilter.register = {
-                    name: Filters.FrameworkFilters.trim,
-                    factory: TrimFilter.factory
-                };
-                return TrimFilter;
-            }());
-            Filters.TrimFilter = TrimFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Filters;
-        (function (Filters) {
-            var UppercaseFilter = (function () {
-                function UppercaseFilter() {
-                }
-                UppercaseFilter.factory = function () {
-                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
-                };
-                UppercaseFilter.register = {
-                    name: Filters.FrameworkFilters.uppercase,
-                    factory: UppercaseFilter.factory
-                };
-                return UppercaseFilter;
-            }());
-            Filters.UppercaseFilter = UppercaseFilter;
-            ////////////////////////////////////////////////////////////
-            // Register filter
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
-        })(Filters = Angular.Filters || (Angular.Filters = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -3683,7 +3458,6 @@ var MiracleDevs;
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
-///<reference path="../core/String.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -3810,7 +3584,6 @@ var MiracleDevs;
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
-///<reference path="../core/String.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -5103,7 +4876,6 @@ var MiracleDevs;
  */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/String.ts" />
 ///<reference path="DirectiveBase.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -5168,27 +4940,230 @@ var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
     (function (Angular) {
-        var Models;
-        (function (Models) {
-            var ModelBase = (function () {
-                function ModelBase() {
+        var Filters;
+        (function (Filters) {
+            var AngularFilters = (function () {
+                function AngularFilters() {
                 }
-                ModelBase.prototype.startTracking = function () {
-                    this.original = Object.clone(this, ["original"]);
-                };
-                ModelBase.prototype.stopTracking = function () {
-                    this.original = null;
-                };
-                ModelBase.prototype.isDirty = function () {
-                    return !Object.isEqualTo(this, this.original, ["original"]);
-                };
-                ModelBase.prototype.isTracking = function () {
-                    return this.original != null;
-                };
-                return ModelBase;
+                Object.defineProperty(AngularFilters, "currency", {
+                    get: function () { return "currency"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "number", {
+                    get: function () { return "number"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "date", {
+                    get: function () { return "date"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "json", {
+                    get: function () { return "json"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "limitTo", {
+                    get: function () { return "limitTo"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(AngularFilters, "orderBy", {
+                    get: function () { return "orderBy"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return AngularFilters;
             }());
-            Models.ModelBase = ModelBase;
-        })(Models = Angular.Models || (Angular.Models = {}));
+            Filters.AngularFilters = AngularFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var FrameworkFilters = (function () {
+                function FrameworkFilters() {
+                }
+                Object.defineProperty(FrameworkFilters, "reverse", {
+                    get: function () { return "reverse"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "trim", {
+                    get: function () { return "trim"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "lowercase", {
+                    get: function () { return "lowercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(FrameworkFilters, "uppercase", {
+                    get: function () { return "uppercase"; },
+                    enumerable: true,
+                    configurable: true
+                });
+                return FrameworkFilters;
+            }());
+            Filters.FrameworkFilters = FrameworkFilters;
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var LowercaseFilter = (function () {
+                function LowercaseFilter() {
+                }
+                LowercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toLowerCase(); };
+                };
+                LowercaseFilter.register = {
+                    name: Filters.FrameworkFilters.lowercase,
+                    factory: LowercaseFilter.factory
+                };
+                return LowercaseFilter;
+            }());
+            Filters.LowercaseFilter = LowercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(LowercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var ReverseFilter = (function () {
+                function ReverseFilter() {
+                }
+                ReverseFilter.factory = function () {
+                    return function (items) { return items.slice().reverse(); };
+                };
+                ReverseFilter.register = {
+                    name: Filters.FrameworkFilters.reverse,
+                    factory: ReverseFilter.factory
+                };
+                return ReverseFilter;
+            }());
+            Filters.ReverseFilter = ReverseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(ReverseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var TrimFilter = (function () {
+                function TrimFilter() {
+                }
+                TrimFilter.trim = function (value, maxChars) {
+                    if (Object.isNull(value))
+                        return null;
+                    if (value.length < maxChars)
+                        return value;
+                    return value.substr(0, maxChars) + "...";
+                };
+                TrimFilter.factory = function () {
+                    return TrimFilter.trim;
+                };
+                TrimFilter.register = {
+                    name: Filters.FrameworkFilters.trim,
+                    factory: TrimFilter.factory
+                };
+                return TrimFilter;
+            }());
+            Filters.TrimFilter = TrimFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(TrimFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../FrameworkModule.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Filters;
+        (function (Filters) {
+            var UppercaseFilter = (function () {
+                function UppercaseFilter() {
+                }
+                UppercaseFilter.factory = function () {
+                    return function (value) { return Object.isNull(value) ? null : value.toUpperCase(); };
+                };
+                UppercaseFilter.register = {
+                    name: Filters.FrameworkFilters.uppercase,
+                    factory: UppercaseFilter.factory
+                };
+                return UppercaseFilter;
+            }());
+            Filters.UppercaseFilter = UppercaseFilter;
+            ////////////////////////////////////////////////////////////
+            // Register filter
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
+        })(Filters = Angular.Filters || (Angular.Filters = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -5228,6 +5203,38 @@ var MiracleDevs;
             }());
             Interceptors.InterceptorBase = InterceptorBase;
         })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Models;
+        (function (Models) {
+            var ModelBase = (function () {
+                function ModelBase() {
+                }
+                ModelBase.prototype.startTracking = function () {
+                    this.original = Object.clone(this, ["original"]);
+                };
+                ModelBase.prototype.stopTracking = function () {
+                    this.original = null;
+                };
+                ModelBase.prototype.isDirty = function () {
+                    return !Object.isEqualTo(this, this.original, ["original"]);
+                };
+                ModelBase.prototype.isTracking = function () {
+                    return this.original != null;
+                };
+                return ModelBase;
+            }());
+            Models.ModelBase = ModelBase;
+        })(Models = Angular.Models || (Angular.Models = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -6027,8 +6034,6 @@ var MiracleDevs;
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/String.ts"/>
-///<reference path="../core/Date.ts"/>
 ///<reference path="../core/Dictionary.ts"/>
 ///<reference path="../core/Guid.ts"/>
 ///<reference path="IModalService.ts"/>
@@ -6086,8 +6091,12 @@ var MiracleDevs;
                     var _this = this;
                     // create a new scope for the modal dialog.
                     var scope = this.$rootScope.$new(true);
+                    var controllerParameters = {};
+                    controllerParameters[Services.AngularServices.scope] = scope;
+                    controllerParameters[Services.FrameworkServices.modalInstance] = modalInstance;
+                    controllerParameters[Services.FrameworkServices.modalParameters] = parameters;
                     // instantiate the modal controller.
-                    var controller = this.$controller(register.controller, { $scope: scope, $modalInstance: modalInstance, $parameters: parameters });
+                    var controller = this.$controller(register.controller, controllerParameters);
                     // set the controller alias (by default will be controller).
                     scope[controllerAs] = controller;
                     // create the modal DOM elements.
@@ -6172,7 +6181,6 @@ var MiracleDevs;
  */
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/String.ts"/>
 ///<reference path="IModalService.ts"/>
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -6246,6 +6254,40 @@ var MiracleDevs;
             }());
             Session.ObjectSession = ObjectSession;
         })(Session = Angular.Session || (Angular.Session = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../ControllerBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Controllers;
+        (function (Controllers) {
+            var Dialogs;
+            (function (Dialogs) {
+                var DialogControllerBase = (function (_super) {
+                    __extends(DialogControllerBase, _super);
+                    function DialogControllerBase(scope, modalInstance, injector) {
+                        _super.call(this, scope, injector);
+                        this.modalInstance = modalInstance;
+                    }
+                    DialogControllerBase.prototype.cancel = function () {
+                        this.modalInstance.close();
+                    };
+                    DialogControllerBase.prototype.close = function (result) {
+                        if (result === void 0) { result = null; }
+                        this.modalInstance.resolve(result);
+                    };
+                    return DialogControllerBase;
+                }(Controllers.ControllerBase));
+                Dialogs.DialogControllerBase = DialogControllerBase;
+            })(Dialogs = Controllers.Dialogs || (Controllers.Dialogs = {}));
+        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -6400,40 +6442,6 @@ var MiracleDevs;
                 Mapping.AutoMapper = AutoMapper;
             })(Mapping = Core.Mapping || (Core.Mapping = {}));
         })(Core = Angular.Core || (Angular.Core = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../ControllerBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var Dialogs;
-            (function (Dialogs) {
-                var DialogControllerBase = (function (_super) {
-                    __extends(DialogControllerBase, _super);
-                    function DialogControllerBase(scope, modalInstance, injector) {
-                        _super.call(this, scope, injector);
-                        this.modalInstance = modalInstance;
-                    }
-                    DialogControllerBase.prototype.cancel = function () {
-                        this.modalInstance.close();
-                    };
-                    DialogControllerBase.prototype.close = function (result) {
-                        if (result === void 0) { result = null; }
-                        this.modalInstance.resolve(result);
-                    };
-                    return DialogControllerBase;
-                }(Controllers.ControllerBase));
-                Dialogs.DialogControllerBase = DialogControllerBase;
-            })(Dialogs = Controllers.Dialogs || (Controllers.Dialogs = {}));
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

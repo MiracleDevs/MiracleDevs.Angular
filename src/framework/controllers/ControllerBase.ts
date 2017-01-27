@@ -54,7 +54,7 @@ module MiracleDevs.Angular.Controllers
             return this.injector.get<T>(service, null) as T;
         }
 
-        protected open(controller: Function, parameters: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance
+        protected open(controller: Function, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance
         {
             return this.getService<IModalService>(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
         }

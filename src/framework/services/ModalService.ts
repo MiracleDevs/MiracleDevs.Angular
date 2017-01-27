@@ -7,8 +7,6 @@
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/String.ts"/>
-///<reference path="../core/Date.ts"/>
 ///<reference path="../core/Dictionary.ts"/>
 ///<reference path="../core/Guid.ts"/>
 ///<reference path="IModalService.ts"/>
@@ -28,19 +26,19 @@ module MiracleDevs.Angular.Services
             dependencies: [AngularServices.rootScope, AngularServices.q, AngularServices.http, AngularServices.templateCache, AngularServices.compile, AngularServices.controller]
         };
 
-        private $rootScope: angular.IRootScopeService;
+        private readonly $rootScope: angular.IRootScopeService;
 
-        private $q: angular.IQService;
+        private readonly $q: angular.IQService;
 
-        private $http: angular.IHttpService;
+        private readonly $http: angular.IHttpService;
 
-        private $templateCache: angular.ITemplateCacheService;
+        private readonly $templateCache: angular.ITemplateCacheService;
 
-        private $compile: angular.ICompileService;
+        private readonly $compile: angular.ICompileService;
 
-        private $controller: angular.IControllerService;
+        private readonly $controller: angular.IControllerService;
 
-        private modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
+        private readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
 
         constructor(
             $rootScope: angular.IRootScopeService,
@@ -107,9 +105,14 @@ module MiracleDevs.Angular.Services
         {
             // create a new scope for the modal dialog.
             const scope = this.$rootScope.$new(true);
+            const controllerParameters = {};
+
+            controllerParameters[AngularServices.scope] = scope;
+            controllerParameters[FrameworkServices.modalInstance] = modalInstance;
+            controllerParameters[FrameworkServices.modalParameters] = parameters;
 
             // instantiate the modal controller.
-            const controller = this.$controller(register.controller, { $scope: scope, $modalInstance: modalInstance, $parameters: parameters });
+            const controller = this.$controller(register.controller, controllerParameters);
 
             // set the controller alias (by default will be controller).
             scope[controllerAs] = controller;
