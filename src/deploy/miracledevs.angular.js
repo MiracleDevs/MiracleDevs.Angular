@@ -1203,11 +1203,6 @@ var MiracleDevs;
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(FrameworkServices, "loadingService", {
-                    get: function () { return "LoadingService"; },
-                    enumerable: true,
-                    configurable: true
-                });
                 Object.defineProperty(FrameworkServices, "modalService", {
                     get: function () { return "ModalService"; },
                     enumerable: true,

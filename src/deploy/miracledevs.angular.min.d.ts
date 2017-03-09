@@ -354,7 +354,6 @@ declare module MiracleDevs.Angular.Services {
 declare module MiracleDevs.Angular.Services {
     class FrameworkServices {
         static readonly alertService: string;
-        static readonly loadingService: string;
         static readonly modalService: string;
         static readonly fileManagementService: string;
         static readonly loggingService: string;

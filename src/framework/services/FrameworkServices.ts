@@ -9,9 +9,7 @@ module MiracleDevs.Angular.Services
     export class FrameworkServices
     {
         static get alertService(): string { return "AlertService"; }
-
-        static get loadingService(): string { return "LoadingService"; }
-
+       
         static get modalService(): string { return "ModalService"; }
 
         static get fileManagementService(): string { return "FileManagementService"; }
