@@ -9,12 +9,10 @@
 module MiracleDevs.Angular.Controllers
 {
     import IAlertService = Services.IAlertService;
-    import ILoadingService = Services.ILoadingService;
     import IStateService = angular.ui.IStateService;
     import IInjectorService = angular.auto.IInjectorService;
     import ILoggingService = Services.ILoggingService;
     import IScope = angular.IScope;
-    import IHttpPromise = angular.IHttpPromise;
     import IPromise = angular.IPromise;
     import IModalService = Services.IModalService;
     import FrameworkServices = Services.FrameworkServices;
@@ -27,9 +25,7 @@ module MiracleDevs.Angular.Controllers
         protected injector: IInjectorService;
 
         protected alertService: IAlertService;
-
-        protected loadingService: ILoadingService;
-
+     
         protected stateService: IStateService;
 
         protected logger: ILoggingService;
@@ -91,36 +87,6 @@ module MiracleDevs.Angular.Controllers
                 });
         }
 
-        protected callEx<T>(
-            call: () => IHttpPromise<T>,
-            success?: (t: T) => void,
-            fail?: (e: any) => void,
-            showLoading: boolean = false)
-        {
-            if (showLoading)
-                this.showLoading();
-
-            call()
-                .success(x =>
-                {
-                    if (showLoading)
-                        this.hideLoading();
-
-                    if (!Object.isNull(success))
-                        success(x);
-                })
-                .error(x =>
-                {
-                    if (showLoading)
-                        this.hideLoading();
-
-                    if (!Object.isNull(fail))
-                        fail(x);
-
-                    this.handleException(x);
-                });
-        }
-
         protected showErrors(messages: string[])
         {
             if (messages.length === 0)
@@ -156,16 +122,6 @@ module MiracleDevs.Angular.Controllers
         protected showMessage(message: string)
         {
             this.alertService.addMessage(message);
-        }
-
-        protected showLoading()
-        {
-            this.loadingService.show();
-        }
-
-        protected hideLoading()
-        {
-            this.loadingService.hide();
         }
 
         protected handleException(ex: any): void

@@ -474,19 +474,16 @@ declare module MiracleDevs.Angular {
  */
 declare module MiracleDevs.Angular.Controllers {
     import IAlertService = Services.IAlertService;
-    import ILoadingService = Services.ILoadingService;
     import IStateService = angular.ui.IStateService;
     import IInjectorService = angular.auto.IInjectorService;
     import ILoggingService = Services.ILoggingService;
     import IScope = angular.IScope;
-    import IHttpPromise = angular.IHttpPromise;
     import IPromise = angular.IPromise;
     import IModalInstance = Services.IModalInstance;
     abstract class ControllerBase {
         protected scope: IScope;
         protected injector: IInjectorService;
         protected alertService: IAlertService;
-        protected loadingService: ILoadingService;
         protected stateService: IStateService;
         protected logger: ILoggingService;
         protected constructor(scope: IScope, injector: IInjectorService);
@@ -494,14 +491,11 @@ declare module MiracleDevs.Angular.Controllers {
         protected getService<T>(service: string): T;
         protected open(controller: Function, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
-        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
         protected showErrors(messages: string[]): void;
         protected showWarnings(messages: string[]): void;
         protected showError(message: string): void;
         protected showWarning(message: string): void;
         protected showMessage(message: string): void;
-        protected showLoading(): void;
-        protected hideLoading(): void;
         protected handleException(ex: any): void;
         protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
     }
@@ -1920,17 +1914,6 @@ declare module MiracleDevs.Angular.Services {
         enableHighAccuracy?: boolean;
         timeout?: number;
         maximumAge?: number;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Services {
-    interface ILoadingService {
-        show(): void;
-        hide(): void;
     }
 }
 /*!

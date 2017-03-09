@@ -1641,26 +1641,6 @@ var MiracleDevs;
                         _this.handleException(error);
                     });
                 };
-                ControllerBase.prototype.callEx = function (call, success, fail, showLoading) {
-                    var _this = this;
-                    if (showLoading === void 0) { showLoading = false; }
-                    if (showLoading)
-                        this.showLoading();
-                    call()
-                        .success(function (x) {
-                        if (showLoading)
-                            _this.hideLoading();
-                        if (!Object.isNull(success))
-                            success(x);
-                    })
-                        .error(function (x) {
-                        if (showLoading)
-                            _this.hideLoading();
-                        if (!Object.isNull(fail))
-                            fail(x);
-                        _this.handleException(x);
-                    });
-                };
                 ControllerBase.prototype.showErrors = function (messages) {
                     if (messages.length === 0)
                         return;
@@ -1683,12 +1663,6 @@ var MiracleDevs;
                 };
                 ControllerBase.prototype.showMessage = function (message) {
                     this.alertService.addMessage(message);
-                };
-                ControllerBase.prototype.showLoading = function () {
-                    this.loadingService.show();
-                };
-                ControllerBase.prototype.hideLoading = function () {
-                    this.loadingService.hide();
                 };
                 ControllerBase.prototype.handleException = function (ex) {
                     if (Object.isNull(ex))
@@ -5759,11 +5733,6 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
