@@ -37,7 +37,7 @@ module MiracleDevs.Angular.Directives
         }
 
         template = '<input type="file" style="display: none" title="{{title}}" accept="{{accept}}" aria-label="{{ariaLabel}}" />' +
-                   '<button class="{{cssClass}}">{{caption}}</button>';
+                   '<button type="button" class="{{cssClass}}">{{caption}}</button>';
 
         private timeout: ITimeoutService;
 

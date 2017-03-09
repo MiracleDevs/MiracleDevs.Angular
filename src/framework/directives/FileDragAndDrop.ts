@@ -7,6 +7,7 @@
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
+
 module MiracleDevs.Angular.Directives
 {
     import IScope = angular.IScope;
@@ -24,30 +25,35 @@ module MiracleDevs.Angular.Directives
 
         restrict = "A";
 
-        scope = {
-            fileSelected: "&"
-        }
-
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
         {
             var element = $(instanceElement);
 
-            instanceElement[0].addEventListener("dragenter", () => element.css("border", "2px dashed gray"), false);
-            instanceElement[0].addEventListener("dragexit", () => element.css("border", "none"), false);
-            instanceElement[0].addEventListener("dragend", () => element.css("border", "none"), false);
+            instanceElement[0].addEventListener("dragenter", () => element.addClass("file-drag-enter"), false);
+            instanceElement[0].addEventListener("dragexit", () => element.removeClass("file-drag-enter"), false);
+            instanceElement[0].addEventListener("dragend", () => element.removeClass("file-drag-enter"), false);
+            instanceElement[0].addEventListener("dragleave", () => element.removeClass("file-drag-enter"), false);
+
             instanceElement[0].addEventListener("dragover", e =>
             {
+                element.addClass("file-drag-enter");
+                e.dataTransfer.dropEffect = "copy";
+
                 e.stopPropagation();
                 e.preventDefault();
-                e.dataTransfer.dropEffect = "copy";
+
             }, false);
+
             instanceElement[0].addEventListener("drop", e =>
             {
+                scope.$eval(instanceAttributes["fileSelected"], { files: e.dataTransfer.files });
+                element.removeClass("file-drag-enter");
+
                 e.stopPropagation();
-                e.preventDefault();                
-                scope["fileSelected"]({ files: e.dataTransfer.files });              
+                e.preventDefault();
+
             }, false);
-         
+
             scope.$on("$destroy", () => element.remove());
         }
 

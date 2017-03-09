@@ -10,18 +10,28 @@
 module MiracleDevs.Angular.Services
 {
     import IServiceRegister = Interfaces.IServiceRegister;
+    import ITimeoutService = angular.ITimeoutService;
 
     export class FileManagementService extends ServiceBase implements IFileManagementService
     {
         static register: IServiceRegister = {
             name: FrameworkServices.fileManagementService,
-            factory: FileManagementService.factory
+            factory: FileManagementService.factory,
+            dependencies: [AngularServices.timeout]
         };
+
+        timeout: ITimeoutService;
+
+        constructor(timeout: ITimeoutService)
+        {
+            super();
+            this.timeout = timeout;
+        }
 
         read(file: File, completed: (file: File, content: string) => void, progress?: (p: number) => void, error?: (e: string) => void): void
         {
             const reader = new FileReader();
-            reader.onload = (e) => completed(file, btoa(e.target["result"]));
+            reader.onload = (e) => this.timeout(() => completed(file, btoa(e.target["result"])));
 
             if (!Object.isNull(progress))
                 reader.onprogress = (e) =>
@@ -109,9 +119,9 @@ module MiracleDevs.Angular.Services
             }
         }
 
-        static factory(): FileManagementService
+        static factory(timeout: ITimeoutService): FileManagementService
         {
-            return new FileManagementService();
+            return new FileManagementService(timeout);
         }       
     }
 

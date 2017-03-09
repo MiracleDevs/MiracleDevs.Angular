@@ -504,360 +504,6 @@ declare module MiracleDevs.Angular.Controllers {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Core {
-    class FileMimeType {
-        private extensions;
-        constructor();
-        get(file: string): string;
-    }
-    var mimeType: FileMimeType;
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class Guid {
-        value: string;
-        constructor(value: string);
-        private static s4();
-        static new(): Guid;
-    }
-}
-declare module MiracleDevs.Angular.Core {
-    interface IKeyValuePair<TKey, TValue> {
-        key: TKey;
-        value: TValue;
-    }
-    interface IEnumerable<TElement> {
-        forEach(action: (element: TElement) => void): void;
-        where(predicate: (element: TElement) => boolean): IEnumerable<TElement>;
-        select<TR>(predicate: (element: TElement) => TR): IEnumerable<TR>;
-        firstOrDefault(predicate?: (element: TElement) => boolean): TElement;
-        lastOrDefault(predicate?: (element: TElement) => boolean): TElement;
-        first(predicate?: (element: TElement) => boolean): TElement;
-        last(predicate?: (element: TElement) => boolean): TElement;
-        any(predicate?: (element: TElement) => boolean): boolean;
-        count(predicate?: (element: TElement) => boolean): number;
-        sum<TI>(predicate?: (element: TElement) => TI): TI;
-        orderBy<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
-        orderByDesc<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
-        getInnerArray(): Array<TElement>;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class LocalStorage {
-        static set<T>(name: string, value: T): void;
-        static get<T>(type: {
-            new (): T;
-        }, name: string): T;
-        static getInt(name: string): Number;
-        static getNumber(name: string): Number;
-        static getBoolean(name: string): Boolean;
-        static getDate(name: string): Date;
-        static remove(name: string): void;
-        static getAllContent(): Dictionary<string, string>;
-        static clear(): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Core {
-    class Md5 {
-        static computeHash(value: string): string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-interface NumberConstructor {
-    isNumber(value: any): boolean;
-}
-declare module MiracleDevs.Angular.Core {
-    class TimeSpan {
-        milliseconds: number;
-        /**
-         * The exact time when the application started.
-         * On reality holds the time when this script was loaded.
-         * @type TimeSpan
-         * @static
-         */
-        private static applicationStarted;
-        /**
-         * Retrieves the number of milliseconds in one second.
-         * @return {Number} Number of milliseconds in one second.
-         * @static
-         */
-        static readonly millisecondsPerSecond: number;
-        /**
-         * Retrieves the number of milliseconds in one minute.
-         * @return {Number} Number of milliseconds in one minute.
-         * @static
-         */
-        static readonly millisecondsPerMinute: number;
-        /**
-         * Retrieves the number of milliseconds in one hour.
-         * @return {Number} Number of milliseconds in one hour.
-         * @static
-         */
-        static readonly millisecondsPerHour: number;
-        /**
-         * Retrieves the number of milliseconds in one day.
-         * @return {Number} Number of milliseconds in one day.
-         * @static
-         */
-        static readonly millisecondsPerDay: number;
-        /**
-         * Creates a new time span with the number of milliseconds
-         * elapsed to the present time.
-         * @return {TimeSpan} Time span representing the current UTC time.
-         * @static
-         */
-        static readonly now: TimeSpan;
-        /**
-         * Creates a new time span with the number of milliseconds
-         * elapsed since the aplication started.
-         * @return {TimeSpan} Time elapsed sirce the Application started.
-         * @static
-         */
-        static sinceTheApplicationStarted(): TimeSpan;
-        /**
-         * A time span without milliseconds.
-         * @type TimeSpan
-         * @static
-         */
-        static readonly zero: TimeSpan;
-        /**
-         * A time span which represents one millisecond.
-         * @type TimeSpan
-         * @static
-         */
-        static oneMillisecond(): TimeSpan;
-        /**
-         * A time span which represents ten milliseconds.
-         * @type TimeSpan
-         * @static
-         */
-        static tenMilliseconds(): TimeSpan;
-        /**
-         * A time span which represents hundred milliseconds.
-         * @type TimeSpan
-         * @static
-         */
-        static hundredMilliseconds(): TimeSpan;
-        /**
-         * A time span which represents five hundred millisencods, or half a second.
-         * @type TimeSpan
-         * @static
-         */
-        static halfSecond(): TimeSpan;
-        /**
-         * A time span which represents one second.
-         * @type TimeSpan
-         * @static
-         */
-        static oneSecond(): TimeSpan;
-        /**
-         * A time span which represents thirty seconds or half a minute.
-         * @type TimeSpan
-         * @static
-         */
-        static halfMinute(): TimeSpan;
-        /**
-         * A time span which represents one minute.
-         * @type TimeSpan
-         * @static
-         */
-        static oneMinute(): TimeSpan;
-        /**
-         * A time span which represents thirty minutes or half an hour.
-         * @type TimeSpan
-         * @static
-         */
-        static halfHour(): TimeSpan;
-        /**
-         * A time span which represents an hour.
-         * @type TimeSpan
-         * @static
-         */
-        static oneHour(): TimeSpan;
-        /**
-         * A time span which represents tweleve hours or half a day.
-         * @type TimeSpan
-         * @static
-         */
-        static halfDay(): TimeSpan;
-        /**
-         * A time span which represents on day.
-         * @type TimeSpan
-         * @static
-         */
-        static oneDay(): TimeSpan;
-        constructor(milliseconds: number);
-        /**
-        * Adds the milliseconds of the parameter to the current timespan.
-         * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        add(timeSpan: TimeSpan): TimeSpan;
-        /**
-         * Adds milliseconds to the current time span.
-         * @param {Number} milliseconds Milliseconds to be added.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        addMilliseconds(milliseconds: number): TimeSpan;
-        /**
-         * Adds secods to the current time span.
-         * @param {Number} seconds Seconds to be added.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        addSeconds(seconds: number): TimeSpan;
-        /**
-         * Adds minutes to the current time span.
-         * @param {Number} minutes Minutes to be added.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        addMintures(minutes: number): TimeSpan;
-        /**
-         * Adds hours to the current time span.
-         * @param {Number} hours Hours to be added.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        addHours(hours: number): TimeSpan;
-        /**
-         * Adds days to the current time span.
-         * @param {Number} days Days to be added.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        addDays(days: number): TimeSpan;
-        /**
-         * Subtracts the milliseconds of the parameter to the current timespan.
-         * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        subtract(timeSpan: TimeSpan): TimeSpan;
-        /**
-         * Subtracts milliseconds to the current time span.
-         * @param {Number} milliseconds Milliseconds to be subtracted.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        subtractMilliseconds(milliseconds: number): TimeSpan;
-        /**
-         * Subtracts seconds to the current time span.
-         * @param {Number} seconds Seconds to be subtracted.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        subtractSeconds(seconds: number): TimeSpan;
-        /**
-         * Subtracts minutes to the current time span.
-         * @param {Number} minutes Minutes to be subtracted.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        subtractMintures(minutes: number): TimeSpan;
-        /**
-         * Subtracts hours to the current time span.
-         * @param {Number} hours Hours to be subtracted.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        subtractHours(hours: number): TimeSpan;
-        /**
-         * Subtracts days to the current time span.
-         * @param {Number} days Days to be subtracted.
-         * @return {TimeSpan} A reference to the time span.
-         */
-        subtractDays(days: number): TimeSpan;
-        /**
-         * Converts the timespan into seconds.
-         * @return {Number} Number of seconds.
-         */
-        toSeconds(): number;
-        /**
-         * Converts the timespan into minutes.
-         * @return {Number} Number of minutes.
-         */
-        toMinutes(): number;
-        /**
-         * Converts the timespan into hours.
-         * @return {Number} Number of hours.
-         */
-        toHours(): number;
-        /**
-         * Converts the timespan into days.
-         * @return {Number} Number of days.
-         */
-        toDays(): number;
-        /**
-         * Returns a new instance copy of the current time span.
-         * @return {TimeSpan} New instance copied from this one.
-         */
-        copy(): TimeSpan;
-        /**
-         * Retrieves the difference with the current time span in milliseconds.
-         * @param {TimeSpan} timeSpan Time span to calculate the difference.
-         * @return {Number} difference between the two time span in milliseconds.
-         */
-        difference(timeSpan: TimeSpan): number;
-        /**
-         * Retrieves the percentage relation between the current time and the
-         * given one. This takes as the total value the given time span, so if
-         * this time span is greater than the parameter the percentage will be
-         * greater than one. The percentage is expressed between[0-1] being 1
-         * 100%.
-         * @param {TimeSpan} timeSpan Time considered the total time in the percentage relation.
-         * @return {Number} A Number greater or equal than 0, when 1 is 100%.
-         */
-        percentage(timeSpan: TimeSpan): number;
-        /**
-         * Converts the object into a string.
-         * @return {String} String representation of the object.
-         */
-        toString(): string;
-        /**
-         * Creates a new time span from a number of seconds.
-         * @param {Number} second Number of seconds.
-         * @return {TimeSpan} A time span representing the number of seconds.
-         * @static
-         */
-        static fromSeconds(seconds: any): TimeSpan;
-        /**
-         * Creates a new time span from a number of minutes.
-         * @param {Number} second Number of minutes.
-         * @return {TimeSpan} A time span representing the number of minutes.
-         * @static
-         */
-        static fromMinutes(minutes: any): TimeSpan;
-        /**
-         * Creates a new time span from a number of hours.
-         * @param {Number} second Number of hours.
-         * @return {TimeSpan} A time span representing the number of hours.
-         * @static
-         */
-        static fromHours(hours: any): TimeSpan;
-        /**
-         * Creates a new time span from a number of days.
-         * @param {Number} second Number of days.
-         * @return {TimeSpan} A time span representing the number of days.
-         * @static
-         */
-        static fromDays(days: any): TimeSpan;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -1061,9 +707,6 @@ declare module MiracleDevs.Angular.Directives {
     class FileDragAndDrop extends DirectiveBase {
         static register: IDirectiveRegister;
         restrict: string;
-        scope: {
-            fileSelected: string;
-        };
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
         static factory(): FileDragAndDrop;
     }
@@ -1563,6 +1206,360 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Core {
+    class FileMimeType {
+        private extensions;
+        constructor();
+        get(file: string): string;
+    }
+    var mimeType: FileMimeType;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class Guid {
+        value: string;
+        constructor(value: string);
+        private static s4();
+        static new(): Guid;
+    }
+}
+declare module MiracleDevs.Angular.Core {
+    interface IKeyValuePair<TKey, TValue> {
+        key: TKey;
+        value: TValue;
+    }
+    interface IEnumerable<TElement> {
+        forEach(action: (element: TElement) => void): void;
+        where(predicate: (element: TElement) => boolean): IEnumerable<TElement>;
+        select<TR>(predicate: (element: TElement) => TR): IEnumerable<TR>;
+        firstOrDefault(predicate?: (element: TElement) => boolean): TElement;
+        lastOrDefault(predicate?: (element: TElement) => boolean): TElement;
+        first(predicate?: (element: TElement) => boolean): TElement;
+        last(predicate?: (element: TElement) => boolean): TElement;
+        any(predicate?: (element: TElement) => boolean): boolean;
+        count(predicate?: (element: TElement) => boolean): number;
+        sum<TI>(predicate?: (element: TElement) => TI): TI;
+        orderBy<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
+        orderByDesc<TR>(predicate?: (element: TElement) => TR): IEnumerable<TElement>;
+        getInnerArray(): Array<TElement>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class LocalStorage {
+        static set<T>(name: string, value: T): void;
+        static get<T>(type: {
+            new (): T;
+        }, name: string): T;
+        static getInt(name: string): Number;
+        static getNumber(name: string): Number;
+        static getBoolean(name: string): Boolean;
+        static getDate(name: string): Date;
+        static remove(name: string): void;
+        static getAllContent(): Dictionary<string, string>;
+        static clear(): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Core {
+    class Md5 {
+        static computeHash(value: string): string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+interface NumberConstructor {
+    isNumber(value: any): boolean;
+}
+declare module MiracleDevs.Angular.Core {
+    class TimeSpan {
+        milliseconds: number;
+        /**
+         * The exact time when the application started.
+         * On reality holds the time when this script was loaded.
+         * @type TimeSpan
+         * @static
+         */
+        private static applicationStarted;
+        /**
+         * Retrieves the number of milliseconds in one second.
+         * @return {Number} Number of milliseconds in one second.
+         * @static
+         */
+        static readonly millisecondsPerSecond: number;
+        /**
+         * Retrieves the number of milliseconds in one minute.
+         * @return {Number} Number of milliseconds in one minute.
+         * @static
+         */
+        static readonly millisecondsPerMinute: number;
+        /**
+         * Retrieves the number of milliseconds in one hour.
+         * @return {Number} Number of milliseconds in one hour.
+         * @static
+         */
+        static readonly millisecondsPerHour: number;
+        /**
+         * Retrieves the number of milliseconds in one day.
+         * @return {Number} Number of milliseconds in one day.
+         * @static
+         */
+        static readonly millisecondsPerDay: number;
+        /**
+         * Creates a new time span with the number of milliseconds
+         * elapsed to the present time.
+         * @return {TimeSpan} Time span representing the current UTC time.
+         * @static
+         */
+        static readonly now: TimeSpan;
+        /**
+         * Creates a new time span with the number of milliseconds
+         * elapsed since the aplication started.
+         * @return {TimeSpan} Time elapsed sirce the Application started.
+         * @static
+         */
+        static sinceTheApplicationStarted(): TimeSpan;
+        /**
+         * A time span without milliseconds.
+         * @type TimeSpan
+         * @static
+         */
+        static readonly zero: TimeSpan;
+        /**
+         * A time span which represents one millisecond.
+         * @type TimeSpan
+         * @static
+         */
+        static oneMillisecond(): TimeSpan;
+        /**
+         * A time span which represents ten milliseconds.
+         * @type TimeSpan
+         * @static
+         */
+        static tenMilliseconds(): TimeSpan;
+        /**
+         * A time span which represents hundred milliseconds.
+         * @type TimeSpan
+         * @static
+         */
+        static hundredMilliseconds(): TimeSpan;
+        /**
+         * A time span which represents five hundred millisencods, or half a second.
+         * @type TimeSpan
+         * @static
+         */
+        static halfSecond(): TimeSpan;
+        /**
+         * A time span which represents one second.
+         * @type TimeSpan
+         * @static
+         */
+        static oneSecond(): TimeSpan;
+        /**
+         * A time span which represents thirty seconds or half a minute.
+         * @type TimeSpan
+         * @static
+         */
+        static halfMinute(): TimeSpan;
+        /**
+         * A time span which represents one minute.
+         * @type TimeSpan
+         * @static
+         */
+        static oneMinute(): TimeSpan;
+        /**
+         * A time span which represents thirty minutes or half an hour.
+         * @type TimeSpan
+         * @static
+         */
+        static halfHour(): TimeSpan;
+        /**
+         * A time span which represents an hour.
+         * @type TimeSpan
+         * @static
+         */
+        static oneHour(): TimeSpan;
+        /**
+         * A time span which represents tweleve hours or half a day.
+         * @type TimeSpan
+         * @static
+         */
+        static halfDay(): TimeSpan;
+        /**
+         * A time span which represents on day.
+         * @type TimeSpan
+         * @static
+         */
+        static oneDay(): TimeSpan;
+        constructor(milliseconds: number);
+        /**
+        * Adds the milliseconds of the parameter to the current timespan.
+         * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        add(timeSpan: TimeSpan): TimeSpan;
+        /**
+         * Adds milliseconds to the current time span.
+         * @param {Number} milliseconds Milliseconds to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addMilliseconds(milliseconds: number): TimeSpan;
+        /**
+         * Adds secods to the current time span.
+         * @param {Number} seconds Seconds to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addSeconds(seconds: number): TimeSpan;
+        /**
+         * Adds minutes to the current time span.
+         * @param {Number} minutes Minutes to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addMintures(minutes: number): TimeSpan;
+        /**
+         * Adds hours to the current time span.
+         * @param {Number} hours Hours to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addHours(hours: number): TimeSpan;
+        /**
+         * Adds days to the current time span.
+         * @param {Number} days Days to be added.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        addDays(days: number): TimeSpan;
+        /**
+         * Subtracts the milliseconds of the parameter to the current timespan.
+         * @param {TimeSpan} timeSpan TimeSpan to be added to the current one.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtract(timeSpan: TimeSpan): TimeSpan;
+        /**
+         * Subtracts milliseconds to the current time span.
+         * @param {Number} milliseconds Milliseconds to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractMilliseconds(milliseconds: number): TimeSpan;
+        /**
+         * Subtracts seconds to the current time span.
+         * @param {Number} seconds Seconds to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractSeconds(seconds: number): TimeSpan;
+        /**
+         * Subtracts minutes to the current time span.
+         * @param {Number} minutes Minutes to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractMintures(minutes: number): TimeSpan;
+        /**
+         * Subtracts hours to the current time span.
+         * @param {Number} hours Hours to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractHours(hours: number): TimeSpan;
+        /**
+         * Subtracts days to the current time span.
+         * @param {Number} days Days to be subtracted.
+         * @return {TimeSpan} A reference to the time span.
+         */
+        subtractDays(days: number): TimeSpan;
+        /**
+         * Converts the timespan into seconds.
+         * @return {Number} Number of seconds.
+         */
+        toSeconds(): number;
+        /**
+         * Converts the timespan into minutes.
+         * @return {Number} Number of minutes.
+         */
+        toMinutes(): number;
+        /**
+         * Converts the timespan into hours.
+         * @return {Number} Number of hours.
+         */
+        toHours(): number;
+        /**
+         * Converts the timespan into days.
+         * @return {Number} Number of days.
+         */
+        toDays(): number;
+        /**
+         * Returns a new instance copy of the current time span.
+         * @return {TimeSpan} New instance copied from this one.
+         */
+        copy(): TimeSpan;
+        /**
+         * Retrieves the difference with the current time span in milliseconds.
+         * @param {TimeSpan} timeSpan Time span to calculate the difference.
+         * @return {Number} difference between the two time span in milliseconds.
+         */
+        difference(timeSpan: TimeSpan): number;
+        /**
+         * Retrieves the percentage relation between the current time and the
+         * given one. This takes as the total value the given time span, so if
+         * this time span is greater than the parameter the percentage will be
+         * greater than one. The percentage is expressed between[0-1] being 1
+         * 100%.
+         * @param {TimeSpan} timeSpan Time considered the total time in the percentage relation.
+         * @return {Number} A Number greater or equal than 0, when 1 is 100%.
+         */
+        percentage(timeSpan: TimeSpan): number;
+        /**
+         * Converts the object into a string.
+         * @return {String} String representation of the object.
+         */
+        toString(): string;
+        /**
+         * Creates a new time span from a number of seconds.
+         * @param {Number} second Number of seconds.
+         * @return {TimeSpan} A time span representing the number of seconds.
+         * @static
+         */
+        static fromSeconds(seconds: any): TimeSpan;
+        /**
+         * Creates a new time span from a number of minutes.
+         * @param {Number} second Number of minutes.
+         * @return {TimeSpan} A time span representing the number of minutes.
+         * @static
+         */
+        static fromMinutes(minutes: any): TimeSpan;
+        /**
+         * Creates a new time span from a number of hours.
+         * @param {Number} second Number of hours.
+         * @return {TimeSpan} A time span representing the number of hours.
+         * @static
+         */
+        static fromHours(hours: any): TimeSpan;
+        /**
+         * Creates a new time span from a number of days.
+         * @param {Number} second Number of days.
+         * @return {TimeSpan} A time span representing the number of days.
+         * @static
+         */
+        static fromDays(days: any): TimeSpan;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     class AngularFilters {
         static readonly currency: string;
@@ -1815,15 +1812,18 @@ declare module MiracleDevs.Angular.Services {
  */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
+    import ITimeoutService = angular.ITimeoutService;
     class FileManagementService extends ServiceBase implements IFileManagementService {
         static register: IServiceRegister;
+        timeout: ITimeoutService;
+        constructor(timeout: ITimeoutService);
         read(file: File, completed: (file: File, content: string) => void, progress?: (p: number) => void, error?: (e: string) => void): void;
         download(fileName: string, content: string): void;
         open(fileName: string, content: string): void;
         getBlobUrl(fileName: string, content: string): string;
         private getBlob(fileName, content64);
         private getError(e);
-        static factory(): FileManagementService;
+        static factory(timeout: ITimeoutService): FileManagementService;
     }
 }
 /*!
