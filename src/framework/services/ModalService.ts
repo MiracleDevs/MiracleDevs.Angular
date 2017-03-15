@@ -71,10 +71,11 @@ module MiracleDevs.Angular.Services
             var modalInstance = new ModalInstance(this, this.$q.defer());
             const template = this.$templateCache.get<string>(dialog.register.viewUrl);
 
+            // TODO: search for a better way to handle templateCache. $http probably have a handler to store the result on cache instead of storning the whole result object.
             if (template == null)
                 this.$http.get<string>(dialog.register.viewUrl, { cache: this.$templateCache }).success(template => this.openModal(register, controllerAs, parameters, modalInstance, template, staticDialog, keyboard));
             else
-                this.openModal(register, controllerAs, parameters, modalInstance, template[1], staticDialog, keyboard);
+                this.openModal(register, controllerAs, parameters, modalInstance, Object.getTypeName(template).toLowerCase() === "string" ? template : template[1], staticDialog, keyboard);
 
             return modalInstance;
         }
