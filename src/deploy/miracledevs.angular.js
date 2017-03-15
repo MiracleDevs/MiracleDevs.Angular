@@ -1313,6 +1313,19 @@ String.formatArray = function (format, args) {
         return args[index];
     });
 };
+String.join = function (separator, values) {
+    if (Object.isNull(values))
+        return null;
+    var finalText = String.empty;
+    var finalIndex = values.length - 1;
+    values.forEach(function (value, index) {
+        finalText += value;
+        if (index !== finalIndex) {
+            finalText += separator;
+        }
+    });
+    return finalText;
+};
 String.prototype.padLeft = function (length, padChar) {
     return String.padLeft(this, length, padChar);
 };
@@ -4158,6 +4171,57 @@ var MiracleDevs;
     (function (Angular) {
         var Directives;
         (function (Directives) {
+            var AngularServices = Angular.Services.AngularServices;
+            var FormatAsNumber = (function (_super) {
+                __extends(FormatAsNumber, _super);
+                function FormatAsNumber(filter) {
+                    _super.call(this);
+                    this.restrict = "A";
+                    this.require = "?ngModel";
+                    this.filter = filter;
+                }
+                FormatAsNumber.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
+                    var _this = this;
+                    var control = $(instanceElement);
+                    if (!Object.isNull(controller)) {
+                        controller.$formatters.unshift(function (value) { return _this.filter("number")(value, instanceAttributes["decimalPlaces"] || 2); });
+                        controller.$parsers.unshift(function (value) { return parseFloat(value); });
+                        control.blur(function () { return control.val(_this.filter("number")(control.val(), instanceAttributes["decimalPlaces"] || 2)); });
+                    }
+                    scope.$on("$destroy", function () { return control.remove(); });
+                };
+                FormatAsNumber.factory = function (filter) {
+                    return new FormatAsNumber(filter);
+                };
+                FormatAsNumber.register = {
+                    name: "formatAsNumber",
+                    factory: FormatAsNumber.factory,
+                    dependencies: [AngularServices.filter]
+                };
+                return FormatAsNumber;
+            }(Directives.DirectiveBase));
+            Directives.FormatAsNumber = FormatAsNumber;
+            ////////////////////////////////////////////////////////////
+            // Register directive
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerDirective(FormatAsNumber.register);
+        })(Directives = Angular.Directives || (Angular.Directives = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="DirectiveBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Directives;
+        (function (Directives) {
             var FullSelect = (function (_super) {
                 __extends(FullSelect, _super);
                 function FullSelect() {
@@ -5211,6 +5275,41 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../core/Object.ts"/>
+///<reference path="../core/LocalStorage.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Session;
+        (function (Session) {
+            var LocalStorage = Angular.Core.LocalStorage;
+            var ObjectSession = (function () {
+                function ObjectSession() {
+                }
+                ObjectSession.save = function (name, data) {
+                    LocalStorage.set(name, JSON.stringify(data));
+                };
+                ObjectSession.restore = function (name) {
+                    var content = LocalStorage.get(String, name);
+                    if (Object.isNull(content))
+                        return null;
+                    return JSON.parse(content.valueOf());
+                };
+                ObjectSession.clear = function (name) {
+                    LocalStorage.remove(name);
+                };
+                return ObjectSession;
+            }());
+            Session.ObjectSession = ObjectSession;
+        })(Session = Angular.Session || (Angular.Session = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Core/ArrayList.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -6033,6 +6132,7 @@ var MiracleDevs;
                     var controllerAs = dialog.controllerAs || "controller";
                     var modalInstance = new ModalInstance(this, this.$q.defer());
                     var template = this.$templateCache.get(dialog.register.viewUrl);
+                    // TODO: search for a better way to handle templateCache. $http probably have a handler to store the result on cache instead of storning the whole result object.
                     if (template == null)
                         this.$http.get(dialog.register.viewUrl, { cache: this.$templateCache }).success(function (template) { return _this.openModal(register, controllerAs, parameters, modalInstance, template, staticDialog, keyboard); });
                     else
@@ -6185,41 +6285,6 @@ var MiracleDevs;
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerService(UrlService.register);
         })(Services = Angular.Services || (Angular.Services = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../core/Object.ts"/>
-///<reference path="../core/LocalStorage.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Session;
-        (function (Session) {
-            var LocalStorage = Angular.Core.LocalStorage;
-            var ObjectSession = (function () {
-                function ObjectSession() {
-                }
-                ObjectSession.save = function (name, data) {
-                    LocalStorage.set(name, JSON.stringify(data));
-                };
-                ObjectSession.restore = function (name) {
-                    var content = LocalStorage.get(String, name);
-                    if (Object.isNull(content))
-                        return null;
-                    return JSON.parse(content.valueOf());
-                };
-                ObjectSession.clear = function (name) {
-                    LocalStorage.remove(name);
-                };
-                return ObjectSession;
-            }());
-            Session.ObjectSession = ObjectSession;
-        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

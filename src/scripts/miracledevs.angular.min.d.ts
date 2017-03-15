@@ -379,6 +379,7 @@ interface StringConstructor {
     formatArray(format: string, arguments: any[]): string;
     padLeft(value: string, length: number, padChar: string): string;
     padRight(value: string, length: number, padChar: string): string;
+    join(separator: string, values: string[]): string;
     empty: string;
 }
 interface String {
@@ -1194,6 +1195,28 @@ declare module MiracleDevs.Angular.Directives {
     import IAttributes = angular.IAttributes;
     import ITranscludeFunction = angular.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IFilterService = angular.IFilterService;
+    class FormatAsNumber extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        require: string;
+        private readonly filter;
+        constructor(filter: IFilterService);
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(filter: IFilterService): FormatAsNumber;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = angular.IScope;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import IAttributes = angular.IAttributes;
+    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
     class FullSelect extends DirectiveBase {
         static register: IDirectiveRegister;
         restrict: string;
@@ -1677,6 +1700,18 @@ declare module MiracleDevs.Angular.Models {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Session {
+    class ObjectSession {
+        static save<T>(name: string, data: T): void;
+        static restore<T>(name: string): T;
+        static clear(name: string): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import ArrayList = Core.ArrayList;
     interface IAlertService {
@@ -2076,18 +2111,6 @@ declare module MiracleDevs.Angular.Services {
         constructor(sce: ISCEService);
         getParsedUrl(url: string): string;
         static factory(sce: ISCEService): IUrlService;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Session {
-    class ObjectSession {
-        static save<T>(name: string, data: T): void;
-        static restore<T>(name: string): T;
-        static clear(name: string): void;
     }
 }
 /*!

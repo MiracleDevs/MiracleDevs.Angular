@@ -20,6 +20,8 @@ interface StringConstructor
 
     padRight(value: string, length: number, padChar: string): string;
 
+    join(separator: string, values: string[]): string;
+
     empty: string;
 }
 
@@ -102,6 +104,28 @@ String.formatArray = (format: string, args: any[]) =>
         return args[index];
     });
 };
+
+String.join = (separator: string, values: string[]): string =>
+{
+    if (Object.isNull(values))
+        return null;
+
+    var finalText = String.empty;
+    var finalIndex = values.length - 1;
+
+    values.forEach((value, index) =>
+    {
+        finalText += value;
+
+        if (index !== finalIndex)
+        {
+            finalText += separator;
+        }
+    });
+
+    return finalText;
+};
+
 
 String.prototype.padLeft = function (length: number, padChar: string): string 
 {
