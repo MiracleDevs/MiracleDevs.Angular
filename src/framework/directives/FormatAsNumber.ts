@@ -15,27 +15,17 @@ module MiracleDevs.Angular.Directives
     import IAttributes = angular.IAttributes;
     import ITranscludeFunction = angular.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IFilterService = angular.IFilterService;
-    import AngularServices = Angular.Services.AngularServices;
 
     export class FormatAsNumber extends DirectiveBase
     {
         static register: IDirectiveRegister = {
             name: "formatAsNumber",
-            factory: FormatAsNumber.factory,
-            dependencies: [AngularServices.filter]
+            factory: FormatAsNumber.factory
         };
 
         restrict = "A";
-        require = "?ngModel";
 
-        private readonly filter: IFilterService;
-  
-        constructor(filter: IFilterService)
-        {
-            super();
-            this.filter = filter;       
-        }
+        require = "?ngModel";
 
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
         {
@@ -43,17 +33,27 @@ module MiracleDevs.Angular.Directives
 
             if (!Object.isNull(controller))
             {                
-                controller.$formatters.unshift(value => this.filter("number")(value, instanceAttributes["decimalPlaces"] || 2));
-                controller.$parsers.unshift(value => parseFloat(value));
-                control.blur(() => control.val(this.filter("number")(control.val(), instanceAttributes["decimalPlaces"] || 2)));
+                controller.$formatters.unshift(value =>
+                {
+                    return (Object.isNull(value) || value === "") ? null : new Number(value).toFixed(instanceAttributes["decimalPlaces"] || 2);
+                });
+                controller.$parsers.unshift(value =>
+                {
+                    return (Object.isNull(value) || value === "") ? null : new Number(value).valueOf();
+                });
+                control.blur(() =>
+                {
+                    var value = control.val();
+                    return control.val((Object.isNull(value) || value === "") ? null : new Number(control.val()).toFixed(instanceAttributes["decimalPlaces"] || 2));
+                });
             }
         
             scope.$on("$destroy", () => control.remove());
         }
 
-        static factory(filter: IFilterService): FormatAsNumber
+        static factory(): FormatAsNumber
         {
-            return new FormatAsNumber(filter);
+            return new FormatAsNumber();
         }
     }
 

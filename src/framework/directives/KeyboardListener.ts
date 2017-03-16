@@ -22,14 +22,13 @@ module MiracleDevs.Angular.Directives
     import ArrayList = Angular.Core.ArrayList;
     import KeyAction = Services.KeyAction;
     import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
-    import ILoggingService = Services.ILoggingService;
 
     export class KeyboardListener extends DirectiveBase
     {
         static register: IDirectiveRegister = {
             name: "keyboardListener",
             factory: KeyboardListener.factory,
-            dependencies: [FrameworkServices.keyProcessorService, FrameworkServices.loggingService]
+            dependencies: [FrameworkServices.keyProcessorService]
         };
 
         restrict = "E";
@@ -41,15 +40,12 @@ module MiracleDevs.Angular.Directives
 
         private readonly keyProcessor: IKeyProcessorService;
 
-        private readonly logger: ILoggingService;
-
         private readonly actions: ArrayList<KeyAction>;
 
-        constructor(keyProcessor: IKeyProcessorService, logger: ILoggingService)
+        constructor(keyProcessor: IKeyProcessorService)
         {
             super();
             this.keyProcessor = keyProcessor;
-            this.logger = logger;
         }
 
         protected create(scope: IKeyboardListenerScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
@@ -68,16 +64,12 @@ module MiracleDevs.Angular.Directives
 
             var keyActions = this.keyProcessor.parseActions(actions);
             var keyProcessor = this.keyProcessor;
-            var logger = this.logger;
-
-            keyActions.forEach(x => this.logger.writeMessage(`action for key=${x.keyCode} alt=${x.alt} ctrl=${x.ctrl} shift=${x.shift}`));
 
             function evaluateKeyPress(e: JQueryKeyEventObject): void
             {
                 if (scope.disabled)
                     return;
 
-                logger.writeMessage(`keypress for key=${e.keyCode} alt=${e.altKey} ctrl=${e.ctrlKey} shift=${e.shiftKey}`);
                 keyProcessor.evaluateKeyActions(keyActions, "keypress", scope.$parent, e);
             }
 
@@ -86,7 +78,6 @@ module MiracleDevs.Angular.Directives
                 if (scope.disabled)
                     return;
 
-                logger.writeMessage(`keydown for key=${e.keyCode} alt=${e.altKey} ctrl=${e.ctrlKey} shift=${e.shiftKey}`);
                 keyProcessor.evaluateKeyActions(keyActions, "keydown", scope.$parent, e);
             }
 
@@ -95,7 +86,6 @@ module MiracleDevs.Angular.Directives
                 if (scope.disabled)
                     return;
 
-                logger.writeMessage(`keyup for key=${e.keyCode} alt=${e.altKey} ctrl=${e.ctrlKey} shift=${e.shiftKey}`);
                 keyProcessor.evaluateKeyActions(keyActions, "keyup", scope.$parent, e);
             }
 
@@ -117,9 +107,9 @@ module MiracleDevs.Angular.Directives
             });
         }
 
-        static factory(keyProcessor: IKeyProcessorService, logger: ILoggingService): KeyboardListener
+        static factory(keyProcessor: IKeyProcessorService): KeyboardListener
         {
-            return new KeyboardListener(keyProcessor, logger);
+            return new KeyboardListener(keyProcessor);
         }
     }
 

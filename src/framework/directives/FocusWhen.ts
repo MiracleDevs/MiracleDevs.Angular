@@ -33,7 +33,7 @@ module MiracleDevs.Angular.Directives
         constructor(timeout: ITimeoutService)
         {
             super();
-            this.timeout = timeout;       
+            this.timeout = timeout;
         }
 
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
@@ -44,23 +44,26 @@ module MiracleDevs.Angular.Directives
             if (instanceAttributes["focus-delay"])
                 focusDelay = parseInt(instanceAttributes["focus-delay"]);
 
-            scope.$watch(() => instanceAttributes[FocusWhen.register.name], (value: string) => 
+            scope.$watch(() => instanceAttributes[FocusWhen.register.name], () => 
             {
-                try
+                this.timeout(() =>
                 {
-                    const model = scope.$eval(value);
-
-                    if (model)
+                    try
                     {
-                        this.timeout(() =>control.focus(), focusDelay);
+                        const model = scope.$eval(instanceAttributes[FocusWhen.register.name]);
+
+                        if (model)
+                        {
+                            control.focus();
+                        }
                     }
-                }
-                catch (e)
-                {
-                    
-                }
+                    catch (e)
+                    {
+
+                    }
+                }, focusDelay);
             });
-            
+
             scope.$on("$destroy", () => control.remove());
         }
 
