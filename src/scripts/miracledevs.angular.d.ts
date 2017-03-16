@@ -472,39 +472,6 @@ declare module MiracleDevs.Angular {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Controllers {
-    import IAlertService = Services.IAlertService;
-    import IStateService = angular.ui.IStateService;
-    import IInjectorService = angular.auto.IInjectorService;
-    import ILoggingService = Services.ILoggingService;
-    import IScope = angular.IScope;
-    import IPromise = angular.IPromise;
-    import IModalInstance = Services.IModalInstance;
-    abstract class ControllerBase {
-        protected scope: IScope;
-        protected injector: IInjectorService;
-        protected alertService: IAlertService;
-        protected stateService: IStateService;
-        protected logger: ILoggingService;
-        protected constructor(scope: IScope, injector: IInjectorService);
-        protected dispose(): void;
-        protected getService<T>(service: string): T;
-        protected open(controller: Function, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
-        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
-        protected showErrors(messages: string[]): void;
-        protected showWarnings(messages: string[]): void;
-        protected showError(message: string): void;
-        protected showWarning(message: string): void;
-        protected showMessage(message: string): void;
-        protected handleException(ex: any): void;
-        protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 declare module MiracleDevs.Angular.Core {
     class FileMimeType {
         private extensions;
@@ -859,6 +826,39 @@ declare module MiracleDevs.Angular.Core {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Controllers {
+    import IAlertService = Services.IAlertService;
+    import IStateService = angular.ui.IStateService;
+    import IInjectorService = angular.auto.IInjectorService;
+    import ILoggingService = Services.ILoggingService;
+    import IScope = angular.IScope;
+    import IPromise = angular.IPromise;
+    import IModalInstance = Services.IModalInstance;
+    abstract class ControllerBase {
+        protected scope: IScope;
+        protected injector: IInjectorService;
+        protected alertService: IAlertService;
+        protected stateService: IStateService;
+        protected logger: ILoggingService;
+        protected constructor(scope: IScope, injector: IInjectorService);
+        protected dispose(): void;
+        protected getService<T>(service: string): T;
+        protected open(controller: Function, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
+        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
+        protected showErrors(messages: string[]): void;
+        protected showWarnings(messages: string[]): void;
+        protected showError(message: string): void;
+        protected showWarning(message: string): void;
+        protected showMessage(message: string): void;
+        protected handleException(ex: any): void;
+        protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Directives {
     import IScope = angular.IScope;
     import IAugmentedJQuery = angular.IAugmentedJQuery;
@@ -1116,15 +1116,12 @@ declare module MiracleDevs.Angular.Directives {
     import IAttributes = angular.IAttributes;
     import ITranscludeFunction = angular.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IFilterService = angular.IFilterService;
     class FormatAsNumber extends DirectiveBase {
         static register: IDirectiveRegister;
         restrict: string;
         require: string;
-        private readonly filter;
-        constructor(filter: IFilterService);
         protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(filter: IFilterService): FormatAsNumber;
+        static factory(): FormatAsNumber;
     }
 }
 /*!
@@ -1581,6 +1578,30 @@ declare module MiracleDevs.Angular.Directives {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Interceptors {
+    import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
+    import IPromise = angular.IPromise;
+    import IRequestConfig = angular.IRequestConfig;
+    import IHttpInterceptor = angular.IHttpInterceptor;
+    import IqService = angular.IQService;
+    class InterceptorBase implements IHttpInterceptor {
+        request: (config: IRequestConfig) => IRequestConfig;
+        response: (response: IHttpPromiseCallbackArg<any>) => IPromise<any>;
+        requestError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
+        responseError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
+        protected q: IqService;
+        constructor(q: IqService);
+        onRequest(config: IRequestConfig): IRequestConfig;
+        onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
+        onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
+        onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Filters {
     class AngularFilters {
         static readonly currency: string;
@@ -1653,30 +1674,6 @@ declare module MiracleDevs.Angular.Filters {
     class UppercaseFilter {
         static register: FilterRegister;
         static factory(): (value: string) => string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Interceptors {
-    import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
-    import IPromise = angular.IPromise;
-    import IRequestConfig = angular.IRequestConfig;
-    import IHttpInterceptor = angular.IHttpInterceptor;
-    import IqService = angular.IQService;
-    class InterceptorBase implements IHttpInterceptor {
-        request: (config: IRequestConfig) => IRequestConfig;
-        response: (response: IHttpPromiseCallbackArg<any>) => IPromise<any>;
-        requestError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
-        responseError: (rejection: ng.IHttpPromiseCallbackArg<any>) => IPromise<any>;
-        protected q: IqService;
-        constructor(q: IqService);
-        onRequest(config: IRequestConfig): IRequestConfig;
-        onResponse(response: IHttpPromiseCallbackArg<any>): IPromise<any>;
-        onRequestError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
-        onResponseError(rejection: IHttpPromiseCallbackArg<any>): IPromise<any>;
     }
 }
 /*!
@@ -2116,22 +2113,6 @@ declare module MiracleDevs.Angular.Session {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-declare module MiracleDevs.Angular.Controllers.Dialogs {
-    import IInjectorService = angular.auto.IInjectorService;
-    import IModalInstance = Services.IModalInstance;
-    import IScope = angular.IScope;
-    abstract class DialogControllerBase extends ControllerBase {
-        protected modalInstance: IModalInstance;
-        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
-        cancel(): void;
-        protected close(result?: any): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 declare module MiracleDevs.Angular.Core.Mapping {
     class PropertyMapping<TSource, TDest> {
         property: string;
@@ -2179,6 +2160,22 @@ declare module MiracleDevs.Angular.Core.Mapping {
         static mapTo<TSource, TDest>(source: TSource, destination: TDest): void;
         static mapToByName<TSource, TDest>(name: string, source: TSource, destination: TDest): void;
         static dynamicMap(source: any, destination: any): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Controllers.Dialogs {
+    import IInjectorService = angular.auto.IInjectorService;
+    import IModalInstance = Services.IModalInstance;
+    import IScope = angular.IScope;
+    abstract class DialogControllerBase extends ControllerBase {
+        protected modalInstance: IModalInstance;
+        protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
+        cancel(): void;
+        protected close(result?: any): void;
     }
 }
 /*!
