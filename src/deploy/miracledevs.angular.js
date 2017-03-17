@@ -1603,6 +1603,110 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../services/FrameworkServices.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Controllers;
+        (function (Controllers) {
+            var FrameworkServices = Angular.Services.FrameworkServices;
+            var ControllerBase = (function () {
+                function ControllerBase(scope, injector) {
+                    var _this = this;
+                    this.scope = scope;
+                    this.injector = injector;
+                    this.scope.$on("$destroy", function () { return _this.dispose(); });
+                }
+                ControllerBase.prototype.dispose = function () {
+                    this.logger.writeMessage("Disposing " + Object.getTypeName(this));
+                };
+                ControllerBase.prototype.getService = function (service) {
+                    if (service == null)
+                        return null;
+                    return this.injector.get(service, null);
+                };
+                ControllerBase.prototype.open = function (controller, parameters, staticDialog, keyboard) {
+                    return this.getService(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
+                };
+                ControllerBase.prototype.call = function (call, success, loading, fail) {
+                    var _this = this;
+                    if (!Object.isNull(loading))
+                        loading(true);
+                    call()
+                        .then(function (result) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(success)) {
+                            success(result);
+                        }
+                    })
+                        .catch(function (error) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(fail))
+                            fail(error);
+                        _this.handleException(error);
+                    });
+                };
+                ControllerBase.prototype.showErrors = function (messages) {
+                    if (messages.length === 0)
+                        return;
+                    for (var i = 0; i < messages.length; i++) {
+                        this.showError(messages[i]);
+                    }
+                };
+                ControllerBase.prototype.showWarnings = function (messages) {
+                    if (messages.length === 0)
+                        return;
+                    for (var i = 0; i < messages.length; i++) {
+                        this.showWarning(messages[i]);
+                    }
+                };
+                ControllerBase.prototype.showError = function (message) {
+                    this.alertService.addError(message);
+                };
+                ControllerBase.prototype.showWarning = function (message) {
+                    this.alertService.addWarning(message);
+                };
+                ControllerBase.prototype.showMessage = function (message) {
+                    this.alertService.addMessage(message);
+                };
+                ControllerBase.prototype.handleException = function (ex) {
+                    if (Object.isNull(ex))
+                        return;
+                    // if ex.data is not null, it's probably a 
+                    // an http promise exception.
+                    if (!Object.isNull(ex.data))
+                        ex = ex.data;
+                    if (!Object.isNull(ex.message)) {
+                        this.showError(ex.message);
+                    }
+                    else if (!Object.isNull(ex.Message)) {
+                        this.showError(ex.Message);
+                    }
+                    else if (!Object.isNull(ex.ExceptionMessage)) {
+                        this.showError(ex.ExceptionMessage);
+                    }
+                    else if (!Object.isNull(ex.error) && !Object.isNull(ex.error.message)) {
+                        this.showError(ex.error.message);
+                    }
+                };
+                ControllerBase.prototype.changeState = function (state, params, reload) {
+                    if (reload === void 0) { reload = false; }
+                    return this.stateService.go(state, params, { reload: reload });
+                };
+                return ControllerBase;
+            }());
+            Controllers.ControllerBase = ControllerBase;
+        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -2515,6 +2619,20 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+Math.clamp = function (value, min, max) {
+    if (min === void 0) { min = 0; }
+    if (max === void 0) { max = 1; }
+    return value <= min
+        ? min
+        : value >= max
+            ? max
+            : value;
+};
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -3110,110 +3228,6 @@ var MiracleDevs;
             }());
             Core.TimeSpan = TimeSpan;
         })(Core = Angular.Core || (Angular.Core = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../services/FrameworkServices.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var FrameworkServices = Angular.Services.FrameworkServices;
-            var ControllerBase = (function () {
-                function ControllerBase(scope, injector) {
-                    var _this = this;
-                    this.scope = scope;
-                    this.injector = injector;
-                    this.scope.$on("$destroy", function () { return _this.dispose(); });
-                }
-                ControllerBase.prototype.dispose = function () {
-                    this.logger.writeMessage("Disposing " + Object.getTypeName(this));
-                };
-                ControllerBase.prototype.getService = function (service) {
-                    if (service == null)
-                        return null;
-                    return this.injector.get(service, null);
-                };
-                ControllerBase.prototype.open = function (controller, parameters, staticDialog, keyboard) {
-                    return this.getService(FrameworkServices.modalService).open(controller, parameters, staticDialog, keyboard);
-                };
-                ControllerBase.prototype.call = function (call, success, loading, fail) {
-                    var _this = this;
-                    if (!Object.isNull(loading))
-                        loading(true);
-                    call()
-                        .then(function (result) {
-                        if (!Object.isNull(loading))
-                            loading(false);
-                        if (!Object.isNull(success)) {
-                            success(result);
-                        }
-                    })
-                        .catch(function (error) {
-                        if (!Object.isNull(loading))
-                            loading(false);
-                        if (!Object.isNull(fail))
-                            fail(error);
-                        _this.handleException(error);
-                    });
-                };
-                ControllerBase.prototype.showErrors = function (messages) {
-                    if (messages.length === 0)
-                        return;
-                    for (var i = 0; i < messages.length; i++) {
-                        this.showError(messages[i]);
-                    }
-                };
-                ControllerBase.prototype.showWarnings = function (messages) {
-                    if (messages.length === 0)
-                        return;
-                    for (var i = 0; i < messages.length; i++) {
-                        this.showWarning(messages[i]);
-                    }
-                };
-                ControllerBase.prototype.showError = function (message) {
-                    this.alertService.addError(message);
-                };
-                ControllerBase.prototype.showWarning = function (message) {
-                    this.alertService.addWarning(message);
-                };
-                ControllerBase.prototype.showMessage = function (message) {
-                    this.alertService.addMessage(message);
-                };
-                ControllerBase.prototype.handleException = function (ex) {
-                    if (Object.isNull(ex))
-                        return;
-                    // if ex.data is not null, it's probably a 
-                    // an http promise exception.
-                    if (!Object.isNull(ex.data))
-                        ex = ex.data;
-                    if (!Object.isNull(ex.message)) {
-                        this.showError(ex.message);
-                    }
-                    else if (!Object.isNull(ex.Message)) {
-                        this.showError(ex.Message);
-                    }
-                    else if (!Object.isNull(ex.ExceptionMessage)) {
-                        this.showError(ex.ExceptionMessage);
-                    }
-                    else if (!Object.isNull(ex.error) && !Object.isNull(ex.error.message)) {
-                        this.showError(ex.error.message);
-                    }
-                };
-                ControllerBase.prototype.changeState = function (state, params, reload) {
-                    if (reload === void 0) { reload = false; }
-                    return this.stateService.go(state, params, { reload: reload });
-                };
-                return ControllerBase;
-            }());
-            Controllers.ControllerBase = ControllerBase;
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -4967,45 +4981,6 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-///<reference path="../../typings/angularjs/angular.d.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Interceptors;
-        (function (Interceptors) {
-            var InterceptorBase = (function () {
-                function InterceptorBase(q) {
-                    var _this = this;
-                    this.q = q;
-                    this.request = function (c) { return _this.onRequest(c); };
-                    this.response = function (r) { return _this.onResponse(r); };
-                    this.requestError = function (r) { return _this.onRequestError(r); };
-                    this.responseError = function (r) { return _this.onResponseError(r); };
-                }
-                InterceptorBase.prototype.onRequest = function (config) {
-                    return config;
-                };
-                InterceptorBase.prototype.onResponse = function (response) {
-                    return this.q.resolve(response);
-                };
-                InterceptorBase.prototype.onRequestError = function (rejection) {
-                    return this.q.reject(rejection);
-                };
-                InterceptorBase.prototype.onResponseError = function (rejection) {
-                    return this.q.reject(rejection);
-                };
-                return InterceptorBase;
-            }());
-            Interceptors.InterceptorBase = InterceptorBase;
-        })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -5234,6 +5209,45 @@ var MiracleDevs;
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerFilter(UppercaseFilter.register);
         })(Filters = Angular.Filters || (Angular.Filters = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/angularjs/angular.d.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Interceptors;
+        (function (Interceptors) {
+            var InterceptorBase = (function () {
+                function InterceptorBase(q) {
+                    var _this = this;
+                    this.q = q;
+                    this.request = function (c) { return _this.onRequest(c); };
+                    this.response = function (r) { return _this.onResponse(r); };
+                    this.requestError = function (r) { return _this.onRequestError(r); };
+                    this.responseError = function (r) { return _this.onResponseError(r); };
+                }
+                InterceptorBase.prototype.onRequest = function (config) {
+                    return config;
+                };
+                InterceptorBase.prototype.onResponse = function (response) {
+                    return this.q.resolve(response);
+                };
+                InterceptorBase.prototype.onRequestError = function (rejection) {
+                    return this.q.reject(rejection);
+                };
+                InterceptorBase.prototype.onResponseError = function (rejection) {
+                    return this.q.reject(rejection);
+                };
+                return InterceptorBase;
+            }());
+            Interceptors.InterceptorBase = InterceptorBase;
+        })(Interceptors = Angular.Interceptors || (Angular.Interceptors = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -6290,6 +6304,40 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../ControllerBase.ts" />
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Controllers;
+        (function (Controllers) {
+            var Dialogs;
+            (function (Dialogs) {
+                var DialogControllerBase = (function (_super) {
+                    __extends(DialogControllerBase, _super);
+                    function DialogControllerBase(scope, modalInstance, injector) {
+                        _super.call(this, scope, injector);
+                        this.modalInstance = modalInstance;
+                    }
+                    DialogControllerBase.prototype.cancel = function () {
+                        this.modalInstance.close();
+                    };
+                    DialogControllerBase.prototype.close = function (result) {
+                        if (result === void 0) { result = null; }
+                        this.modalInstance.resolve(result);
+                    };
+                    return DialogControllerBase;
+                }(Controllers.ControllerBase));
+                Dialogs.DialogControllerBase = DialogControllerBase;
+            })(Dialogs = Controllers.Dialogs || (Controllers.Dialogs = {}));
+        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -6437,40 +6485,6 @@ var MiracleDevs;
                 Mapping.AutoMapper = AutoMapper;
             })(Mapping = Core.Mapping || (Core.Mapping = {}));
         })(Core = Angular.Core || (Angular.Core = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../ControllerBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var Dialogs;
-            (function (Dialogs) {
-                var DialogControllerBase = (function (_super) {
-                    __extends(DialogControllerBase, _super);
-                    function DialogControllerBase(scope, modalInstance, injector) {
-                        _super.call(this, scope, injector);
-                        this.modalInstance = modalInstance;
-                    }
-                    DialogControllerBase.prototype.cancel = function () {
-                        this.modalInstance.close();
-                    };
-                    DialogControllerBase.prototype.close = function (result) {
-                        if (result === void 0) { result = null; }
-                        this.modalInstance.resolve(result);
-                    };
-                    return DialogControllerBase;
-                }(Controllers.ControllerBase));
-                Dialogs.DialogControllerBase = DialogControllerBase;
-            })(Dialogs = Controllers.Dialogs || (Controllers.Dialogs = {}));
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
