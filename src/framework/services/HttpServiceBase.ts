@@ -19,29 +19,65 @@ module MiracleDevs.Angular.Services
             this.host = host;
         }
 
-        post<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T> 
+        private getStringValue(value:any): string
         {
-            return this.$http.post<T>(this.host + url, data, { headers: this.getHeaders(), params: params });
+            if (Object.isNull(value))
+                return String.empty;
+
+            if (Object.getTypeName(value) === "Number" ||
+                Object.getTypeName(value) === "String" ||
+                Object.getTypeName(value) === "Boolean")
+            {
+                return value.toString();
+            }
+
+            if (Object.getTypeName(value) === "Date")
+            {
+                return (value as Date).formatUTC("yyyy-MM-ddThh:mm:ss.fff");
+            }
+
+            return String.empty;
         }
 
-        patch<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T> 
+        private getUrl(url: string, params?: any): string
         {
-            return this.$http.patch<T>(this.host + url, data, { headers: this.getHeaders(), params: params });
+            if (!Object.isNull(params))
+            {
+                for (let key in params)
+                {
+                    if (params.hasOwnProperty(key))
+                    {
+                        url = url.replace(`{${key}}`, this.getStringValue(params[key]));
+                    }
+                }
+            }
+
+            return `${this.host}${url}`;
         }
 
-        put<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T> 
+        post<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T> 
         {
-            return this.$http.put<T>(this.host + url, data, { headers: this.getHeaders(), params: params });
+            return this.$http.post<T>(this.getUrl(url, params), data, { headers: this.getHeaders(), params: queryString });
         }
 
-        get<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T> 
+        patch<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T> 
         {
-            return this.$http.get<T>(this.host + url, { headers: this.getHeaders(), params: params });
+            return this.$http.patch<T>(this.getUrl(url, params), data, { headers: this.getHeaders(), params: queryString  });
         }
 
-        delete<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T> 
+        put<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T> 
         {
-            return this.$http.delete<T>(this.host + url, { headers: this.getHeaders(), params: params });
+            return this.$http.put<T>(this.getUrl(url, params), data, { headers: this.getHeaders(), params: queryString  });
+        }
+
+        get<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T> 
+        {
+            return this.$http.get<T>(this.getUrl(url, params), { headers: this.getHeaders(), params: queryString  });
+        }
+
+        delete<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T> 
+        {
+            return this.$http.delete<T>(this.getUrl(url, params), { headers: this.getHeaders(), params: queryString  });
         }
 
         protected getHeaders(): any 

@@ -5,15 +5,19 @@
  */
 
 /// <reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../core/Dictionary.ts"/>
 
 module MiracleDevs.Angular.Services
 {
     import IControllerRegister = Interfaces.IControllerRegister;
     import IDeferred = angular.IDeferred;
     import IPromise = angular.IPromise;
+    import Dictionary = Core.Dictionary;
 
     export interface IModalService
     {
+        readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
+
         open<T>(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         open<T>(dialog: any, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
 

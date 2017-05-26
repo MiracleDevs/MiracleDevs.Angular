@@ -7,7 +7,6 @@
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/Dictionary.ts"/>
 ///<reference path="../core/Guid.ts"/>
 ///<reference path="IModalService.ts"/>
 
@@ -38,7 +37,7 @@ module MiracleDevs.Angular.Services
 
         private readonly $controller: angular.IControllerService;
 
-        private readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
+        public readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
 
         constructor(
             $rootScope: angular.IRootScopeService,

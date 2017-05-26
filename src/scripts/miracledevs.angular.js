@@ -5782,20 +5782,43 @@ var MiracleDevs;
                     this.$http = $http;
                     this.host = host;
                 }
-                HttpServiceBase.prototype.post = function (url, params, data) {
-                    return this.$http.post(this.host + url, data, { headers: this.getHeaders(), params: params });
+                HttpServiceBase.prototype.getStringValue = function (value) {
+                    if (Object.isNull(value))
+                        return String.empty;
+                    if (Object.getTypeName(value) === "Number" ||
+                        Object.getTypeName(value) === "String" ||
+                        Object.getTypeName(value) === "Boolean") {
+                        return value.toString();
+                    }
+                    if (Object.getTypeName(value) === "Date") {
+                        return value.formatUTC("yyyy-MM-ddThh:mm:ss.fff");
+                    }
+                    return String.empty;
                 };
-                HttpServiceBase.prototype.patch = function (url, params, data) {
-                    return this.$http.patch(this.host + url, data, { headers: this.getHeaders(), params: params });
+                HttpServiceBase.prototype.getUrl = function (url, params) {
+                    if (!Object.isNull(params)) {
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                url = url.replace("{" + key + "}", this.getStringValue(params[key]));
+                            }
+                        }
+                    }
+                    return "" + this.host + url;
                 };
-                HttpServiceBase.prototype.put = function (url, params, data) {
-                    return this.$http.put(this.host + url, data, { headers: this.getHeaders(), params: params });
+                HttpServiceBase.prototype.post = function (url, params, data, queryString) {
+                    return this.$http.post(this.getUrl(url, params), data, { headers: this.getHeaders(), params: queryString });
                 };
-                HttpServiceBase.prototype.get = function (url, params, data) {
-                    return this.$http.get(this.host + url, { headers: this.getHeaders(), params: params });
+                HttpServiceBase.prototype.patch = function (url, params, data, queryString) {
+                    return this.$http.patch(this.getUrl(url, params), data, { headers: this.getHeaders(), params: queryString });
                 };
-                HttpServiceBase.prototype.delete = function (url, params, data) {
-                    return this.$http.delete(this.host + url, { headers: this.getHeaders(), params: params });
+                HttpServiceBase.prototype.put = function (url, params, data, queryString) {
+                    return this.$http.put(this.getUrl(url, params), data, { headers: this.getHeaders(), params: queryString });
+                };
+                HttpServiceBase.prototype.get = function (url, params, data, queryString) {
+                    return this.$http.get(this.getUrl(url, params), { headers: this.getHeaders(), params: queryString });
+                };
+                HttpServiceBase.prototype.delete = function (url, params, data, queryString) {
+                    return this.$http.delete(this.getUrl(url, params), { headers: this.getHeaders(), params: queryString });
                 };
                 HttpServiceBase.prototype.getHeaders = function () {
                     return { "Content-Type": "application/json; charset=utf-8" };
@@ -5884,6 +5907,7 @@ var MiracleDevs;
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 /// <reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../core/Dictionary.ts"/>
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -6076,7 +6100,6 @@ var MiracleDevs;
 ///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/Dictionary.ts"/>
 ///<reference path="../core/Guid.ts"/>
 ///<reference path="IModalService.ts"/>
 var MiracleDevs;

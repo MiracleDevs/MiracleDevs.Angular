@@ -1879,11 +1879,13 @@ declare module MiracleDevs.Angular.Services {
         $http: ng.IHttpService;
         host: string;
         constructor($http: ng.IHttpService, host: string);
-        post<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        patch<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        put<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        get<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        delete<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
+        private getStringValue(value);
+        private getUrl(url, params?);
+        post<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        patch<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        put<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        get<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        delete<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
         protected getHeaders(): any;
     }
 }
@@ -1984,7 +1986,9 @@ declare module MiracleDevs.Angular.Services {
     import IControllerRegister = Interfaces.IControllerRegister;
     import IDeferred = angular.IDeferred;
     import IPromise = angular.IPromise;
+    import Dictionary = Core.Dictionary;
     interface IModalService {
+        readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
         open<T>(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         open<T>(dialog: any, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         close(modalInstance: any, reason?: string): any;
@@ -2061,6 +2065,7 @@ declare module MiracleDevs.Angular.Services {
  */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
+    import Dictionary = Core.Dictionary;
     class ModalService extends ServiceBase implements IModalService {
         static register: IServiceRegister;
         private readonly $rootScope;
@@ -2069,7 +2074,7 @@ declare module MiracleDevs.Angular.Services {
         private readonly $templateCache;
         private readonly $compile;
         private readonly $controller;
-        private readonly modals;
+        readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
         constructor($rootScope: angular.IRootScopeService, $q: angular.IQService, $http: angular.IHttpService, $templateCache: angular.ITemplateCacheService, $compile: angular.ICompileService, $controller: angular.IControllerService);
         open(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         close(modalInstance: IModalInstance, reason?: string): void;
