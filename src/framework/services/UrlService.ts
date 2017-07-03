@@ -4,14 +4,13 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="IModalService.ts"/>
 
 module MiracleDevs.Angular.Services
 {
     import IServiceRegister = Interfaces.IServiceRegister;
-    import ISCEService = angular.ISCEService;
+    import ISCEService = ng.ISCEService;
 
     export class UrlService extends ServiceBase implements IUrlService
     {

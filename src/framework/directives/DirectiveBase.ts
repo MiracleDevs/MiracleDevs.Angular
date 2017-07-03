@@ -4,26 +4,28 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../../typings/index.d.ts" />
+///<reference path="../core/String.ts" />
+///<reference path="../core/Object.ts" />
 
 module MiracleDevs.Angular.Directives
 {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirective = angular.IDirective;
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import IController = ng.IController;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirective = ng.IDirective;
 
     export abstract class DirectiveBase implements IDirective
     {
-        link: (scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction) => void;
+        link: (scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction) => void;
 
         constructor()
         {
             this.link = (s, e, a, c, t) => this.create(s, e, a, c, t);
         }
 
-        protected abstract create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction);
+        protected abstract create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction);
 
         protected getOptions<T>(instanceAttributes: IAttributes, optionsParameter: string): T
         {

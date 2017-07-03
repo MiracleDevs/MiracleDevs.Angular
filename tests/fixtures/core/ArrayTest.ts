@@ -126,7 +126,7 @@ describe("Array", () =>
             var array2 = [];
 
             expect(Array.first(array1)).toBe("element 1");
-            expect(() => Array.first(array2)).toThrow("The source sequence is empty.");
+            expect(() => Array.first(array2)).toThrow(new Error("The source sequence is empty."));
         });
 
         it("should retrieve the first element when condition is met or fail otherwise", () =>
@@ -135,8 +135,8 @@ describe("Array", () =>
             var array2 = [];
 
             expect(Array.first(array1, x => x.indexOf("element") >= 0)).toBe("element 1");
-            expect(() => Array.first(array1, x => x === "other element")).toThrow(firstLastError);
-            expect(() => Array.first(array2, x => x === "some string")).toThrow(firstLastError);
+            expect(() => Array.first(array1, x => x === "other element")).toThrow(new Error(firstLastError));
+            expect(() => Array.first(array2, x => x === "some string")).toThrow(new Error(firstLastError));
         });
 
         it("should retrieve the last element or fail otherwise", () =>
@@ -145,7 +145,7 @@ describe("Array", () =>
             var array2 = [];
 
             expect(Array.last(array1)).toBe("element 4");
-            expect(() => Array.last(array2)).toThrow(firstLastError);
+            expect(() => Array.last(array2)).toThrow(new Error(firstLastError));
         });
 
         it("should retrieve the last element when condition is met or fail otherwise", () =>
@@ -154,8 +154,8 @@ describe("Array", () =>
             var array2 = [];
 
             expect(Array.last(array1, x => x.indexOf("element") >= 0)).toBe("element 4");
-            expect(() => Array.last(array1, x => x === "other element")).toThrow(firstLastError);
-            expect(() => Array.last(array2, x => x === "some string")).toThrow(firstLastError);
+            expect(() => Array.last(array1, x => x === "other element")).toThrow(new Error(firstLastError));
+            expect(() => Array.last(array2, x => x === "some string")).toThrow(new Error(firstLastError));
         });
     });
 
@@ -343,8 +343,8 @@ describe("Array", () =>
         {
             var array = [1, 2, 3, 4];
 
-            expect(() => Array.removeAt(array, 5)).toThrow(indexGreaterError);
-            expect(() => Array.removeAt(array, -1)).toThrow(indexLesserError);
+            expect(() => Array.removeAt(array, 5)).toThrow(new Error(indexGreaterError));
+            expect(() => Array.removeAt(array, -1)).toThrow(new Error(indexLesserError));
 
             expect(array[0]).toBe(1);
             expect(array[1]).toBe(2);

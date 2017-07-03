@@ -4,15 +4,15 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts"/>
+///<reference path="../../typings/index.d.ts"/>
 ///<reference path="../core/ArrayList.ts" />
 
 
 module MiracleDevs.Angular.Services
 {
-    import IScope = angular.IScope;
+    import IScope = ng.IScope;
     import ArrayList = Core.ArrayList;
-    import ICompiledExpression = angular.ICompiledExpression;
+    import ICompiledExpression = ng.ICompiledExpression;
 
     export interface IKeyProcessorService
     {

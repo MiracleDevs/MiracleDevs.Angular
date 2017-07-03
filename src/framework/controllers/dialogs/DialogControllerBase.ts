@@ -8,9 +8,9 @@
 
 module MiracleDevs.Angular.Controllers.Dialogs
 {
-    import IInjectorService = angular.auto.IInjectorService;
+    import IInjectorService = ng.auto.IInjectorService;
     import IModalInstance = Services.IModalInstance;
-    import IScope = angular.IScope;
+    import IScope = ng.IScope;
 
     export abstract class DialogControllerBase extends ControllerBase 
     {

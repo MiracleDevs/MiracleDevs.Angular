@@ -4,21 +4,20 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/ArrayList.ts"/>
 ///<reference path="DirectiveBase.ts" />
 ///<reference path="../services/IKeyProcessorService.ts" />
 
 module MiracleDevs.Angular.Directives
 {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IScope = ng.IScope;
+    import IAugmentedJQuery = ng.IAugmentedJQuery;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import IKeyProcessorService = Services.IKeyProcessorService;
     import FrameworkServices = Services.FrameworkServices;
+    import IController = ng.IController;
 
     export class OnKeyboard extends DirectiveBase
     {
@@ -38,19 +37,19 @@ module MiracleDevs.Angular.Directives
             this.keyProcessor = keyProcessor;
         }
 
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void
         {
             var control = $(instanceElement);
             var keyActions = this.keyProcessor.parseActions(instanceAttributes[OnKeyboard.register.name]);
 
             if (keyActions.any(x => x.eventType === "keypress"))
-                control.keypress(e => this.keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e));
+                control.keypress(e => this.keyProcessor.evaluateKeyActions(keyActions, "keypress", scope, e as any));
             
             if (keyActions.any(x => x.eventType === "keydown"))
-                control.keydown(e => this.keyProcessor.evaluateKeyActions(keyActions, "keydown", scope, e));
+                control.keydown(e => this.keyProcessor.evaluateKeyActions(keyActions, "keydown", scope, e as any));
             
             if (keyActions.any(x => x.eventType === "keyup"))
-                control.keyup(e => this.keyProcessor.evaluateKeyActions(keyActions, "keyup", scope, e));           
+                control.keyup(e => this.keyProcessor.evaluateKeyActions(keyActions, "keyup", scope, e as any));           
 
             scope.$on("$destroy", () => control.remove());
         }

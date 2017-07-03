@@ -4,15 +4,15 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
+///<reference path="../../typings/index.d.ts" />
 
 module MiracleDevs.Angular.Interceptors
 {
-    import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
-    import IPromise = angular.IPromise;
-    import IRequestConfig = angular.IRequestConfig;
-    import IHttpInterceptor = angular.IHttpInterceptor;
-    import IqService = angular.IQService;
+    import IHttpPromiseCallbackArg = ng.IHttpPromiseCallbackArg;
+    import IPromise = ng.IPromise;
+    import IRequestConfig = ng.IRequestConfig;
+    import IHttpInterceptor = ng.IHttpInterceptor;
+    import IqService = ng.IQService;
 
     export class InterceptorBase implements IHttpInterceptor
     {

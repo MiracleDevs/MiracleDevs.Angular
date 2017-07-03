@@ -4,16 +4,16 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
 module MiracleDevs.Angular.Directives
 {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IScope = ng.IScope;
+    import IAugmentedJQuery = ng.IAugmentedJQuery;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
 
     export class ConvertToNumber extends DirectiveBase
     {
@@ -26,7 +26,7 @@ module MiracleDevs.Angular.Directives
 
         require = "ngModel";
 
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void
         {
             controller.$parsers.push((val) =>  Object.isNull(val) ? parseInt(val, 10) : null);
             controller.$formatters.push((val) => val != null ? `${val}` : null);

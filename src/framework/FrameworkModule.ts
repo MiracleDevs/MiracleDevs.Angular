@@ -9,14 +9,14 @@
 
 module MiracleDevs.Angular
 {
-    import IScope = angular.IScope;
-    import IInjectorService = angular.auto.IInjectorService;
-    import IHttpProvider = angular.IHttpProvider;
-    import IStateProvider = angular.ui.IStateProvider;
-    import IStateService = angular.ui.IStateService;
-    import IUrlRouterProvider = angular.ui.IUrlRouterProvider;
+    import IScope = ng.IScope;
+    import IInjectorService = ng.auto.IInjectorService;
+    import IHttpProvider = ng.IHttpProvider;
+    import IStateProvider = ng.ui.IStateProvider;
+    import IStateService = ng.ui.IStateService;
+    import IUrlRouterProvider = ng.ui.IUrlRouterProvider;
     import LoggingService = Services.LoggingService;
-    import ILocationProvider = angular.ILocationProvider;
+    import ILocationProvider = ng.ILocationProvider;
 
     export class FrameworkModule extends ModuleBase
     {

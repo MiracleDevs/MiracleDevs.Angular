@@ -4,19 +4,19 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
 module MiracleDevs.Angular.Directives
 {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IScope = ng.IScope;
+    import IAugmentedJQuery = ng.IAugmentedJQuery;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IInterpolateService = angular.IInterpolateService;
-    import IStateService = angular.ui.IStateService;
+    import IInterpolateService = ng.IInterpolateService;
+    import IStateService = ng.ui.IStateService;
     import AngularServices = Services.AngularServices;
+    import IController = ng.IController;
 
     export class MdUiSrefActive extends DirectiveBase
     {
@@ -39,7 +39,7 @@ module MiracleDevs.Angular.Directives
             this.state = state;
         }
 
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void
         {
             var control = $(instanceElement);
             var cssClass = instanceAttributes[MdUiSrefActive.register.name];

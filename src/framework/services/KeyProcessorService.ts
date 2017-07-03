@@ -4,14 +4,14 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts"/>
+///<reference path="../../typings/index.d.ts"/>
 ///<reference path="../core/ArrayList.ts" />
 ///<reference path="../interfaces/IServiceRegister.ts" />
 
 module MiracleDevs.Angular.Services
 {
-    import IScope = angular.IScope;
-    import IParseService = angular.IParseService;
+    import IScope = ng.IScope;
+    import IParseService = ng.IParseService;
     import ArrayList = Core.ArrayList;
     import IServiceRegister = Interfaces.IServiceRegister;
 

@@ -32,21 +32,6 @@ class TestLoggingService extends ServiceBase implements ILoggingService
     }
 }
 
-class TestLoadingService extends ServiceBase implements ILoadingService
-{
-    loadingVisible: boolean;
-
-    show(): void
-    {
-        this.loadingVisible = true;
-    }
-
-    hide(): void
-    {
-        this.loadingVisible = false;
-    }
-}
-
 interface ITestPromiseService
 {
     numberPromise(): IPromise<number>;
@@ -92,7 +77,7 @@ class TestPromiseService extends ServiceBase implements ITestPromiseService
 
     readonly rejectionReason: string;
 
-    constructor(q: angular.IQService, timeout: ITimeoutService)
+    constructor(q: ng.IQService, timeout: ITimeoutService)
     {
         super();
         this.q = q;
@@ -108,37 +93,37 @@ class TestPromiseService extends ServiceBase implements ITestPromiseService
         this.rejectionReason = "Testing promise rejection";
     }
 
-    numberPromise(): angular.IPromise<number>
+    numberPromise(): ng.IPromise<number>
     {
         return this.q.resolve(this.numberResult);
     }
 
-    booleanPromise(): angular.IPromise<boolean>
+    booleanPromise(): ng.IPromise<boolean>
     {
         return this.q.resolve(this.booleanResult);
     }
 
-    stringPromise(): angular.IPromise<string>
+    stringPromise(): ng.IPromise<string>
     {
         return this.q.resolve(this.stringResult);
     }
 
-    datePromise(): angular.IPromise<Date>
+    datePromise(): ng.IPromise<Date>
     {
         return this.q.resolve(this.dateResult);
     }
 
-    objectPromise(): angular.IPromise<Object>
+    objectPromise(): ng.IPromise<Object>
     {
         return this.q.resolve(this.objectResult);
     }
 
-    arrayPromise(): angular.IPromise<number[]>
+    arrayPromise(): ng.IPromise<number[]>
     {
         return this.q.resolve(this.arrayResult);
     }
 
-    rejectPromise(): angular.IPromise<number>
+    rejectPromise(): ng.IPromise<number>
     {
         return this.q.reject(this.rejectionReason);
     }

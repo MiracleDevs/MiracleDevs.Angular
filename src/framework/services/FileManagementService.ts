@@ -4,13 +4,12 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="ServiceBase.ts" />
 ///<reference path="../FrameworkModule.ts"/>
 
 module MiracleDevs.Angular.Services
 {
     import IServiceRegister = Interfaces.IServiceRegister;
-    import ITimeoutService = angular.ITimeoutService;
+    import ITimeoutService = ng.ITimeoutService;
 
     export class FileManagementService extends ServiceBase implements IFileManagementService
     {

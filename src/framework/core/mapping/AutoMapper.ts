@@ -4,7 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../Dictionary.ts"/>
 ///<reference path="TypeMapping.ts"/>
 
 module MiracleDevs.Angular.Core.Mapping

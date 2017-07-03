@@ -61,7 +61,7 @@ describe("String", () =>
 
         it("should format undefined", () => expect(String.format("Null: {0}", undefined)).toBe("Null: undefined"));
 
-        it("should fail without format string", () => expect(() => String.format(null, "hello")).toThrow(formatNullError));
+        it("should fail without format string", () => expect(() => String.format(null, "hello")).toThrow(new Error(formatNullError)));
     });
     
     describe("format array", () =>
@@ -78,6 +78,6 @@ describe("String", () =>
 
         it("should format undefined", () => expect(String.formatArray("Null: {0}", [undefined])).toBe("Null: undefined"));
 
-        it("should fail without format string", () => expect(() => String.formatArray(null, ["hello"])).toThrow(formatNullError));
+        it("should fail without format string", () => expect(() => String.formatArray(null, ["hello"])).toThrow(new Error(formatNullError)));
     });
 });

@@ -1,8 +1,8 @@
-/// <reference path="../angularjs/angular.d.ts" />
-/// <reference path="../angular-translate/angular-translate.d.ts" />
-/// <reference path="../angular-ui-router/angular-ui-router.d.ts" />
-/// <reference path="../datetimepicker/datetimepicker.d.ts" />
-/// <reference path="../bootstrap/bootstrap.d.ts" />
+/// <reference path="../index.d.ts" />
+/// <reference types="angular" />
+/// <reference types="angular-animate" />
+/// <reference types="angular-ui-router" />
+/// <reference types="angular-translate" />
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -296,20 +296,20 @@ declare module MiracleDevs.Angular.Services {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular {
-    import IModule = angular.IModule;
-    import IScope = angular.IScope;
-    import IHttpProvider = angular.IHttpProvider;
-    import IStateProvider = angular.ui.IStateProvider;
-    import IStateService = angular.ui.IStateService;
-    import IUrlRouterProvider = angular.ui.IUrlRouterProvider;
-    import IInjectorService = angular.auto.IInjectorService;
+    import IModule = ng.IModule;
+    import IScope = ng.IScope;
+    import IHttpProvider = ng.IHttpProvider;
+    import IStateProvider = ng.ui.IStateProvider;
+    import IStateService = ng.ui.IStateService;
+    import IUrlRouterProvider = ng.ui.IUrlRouterProvider;
+    import IInjectorService = ng.auto.IInjectorService;
     import IControllerRegister = Interfaces.IControllerRegister;
     import IServiceRegister = Interfaces.IServiceRegister;
     import IFilterRegister = Interfaces.IFilterRegister;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import ILoggingService = Services.ILoggingService;
-    import ITranslateProvider = angular.translate.ITranslateProvider;
-    import ILocationProvider = angular.ILocationProvider;
+    import ITranslateProvider = ng.translate.ITranslateProvider;
+    import ILocationProvider = ng.ILocationProvider;
     import IInterceptorRegister = Interfaces.IInterceptorRegister;
     abstract class ModuleBase {
         protected httpProvider: IHttpProvider;
@@ -354,7 +354,6 @@ declare module MiracleDevs.Angular.Services {
 declare module MiracleDevs.Angular.Services {
     class FrameworkServices {
         static readonly alertService: string;
-        static readonly loadingService: string;
         static readonly modalService: string;
         static readonly fileManagementService: string;
         static readonly loggingService: string;
@@ -380,6 +379,7 @@ interface StringConstructor {
     formatArray(format: string, arguments: any[]): string;
     padLeft(value: string, length: number, padChar: string): string;
     padRight(value: string, length: number, padChar: string): string;
+    join(separator: string, values: string[]): string;
     empty: string;
 }
 interface String {
@@ -449,13 +449,13 @@ declare module MiracleDevs.Angular.Services {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular {
-    import IScope = angular.IScope;
-    import IInjectorService = angular.auto.IInjectorService;
-    import IHttpProvider = angular.IHttpProvider;
-    import IStateProvider = angular.ui.IStateProvider;
-    import IStateService = angular.ui.IStateService;
-    import IUrlRouterProvider = angular.ui.IUrlRouterProvider;
-    import ILocationProvider = angular.ILocationProvider;
+    import IScope = ng.IScope;
+    import IInjectorService = ng.auto.IInjectorService;
+    import IHttpProvider = ng.IHttpProvider;
+    import IStateProvider = ng.ui.IStateProvider;
+    import IStateService = ng.ui.IStateService;
+    import IUrlRouterProvider = ng.ui.IUrlRouterProvider;
+    import ILocationProvider = ng.ILocationProvider;
     class FrameworkModule extends ModuleBase {
         private static internalInstance;
         static readonly instance: FrameworkModule;
@@ -474,19 +474,16 @@ declare module MiracleDevs.Angular {
  */
 declare module MiracleDevs.Angular.Controllers {
     import IAlertService = Services.IAlertService;
-    import ILoadingService = Services.ILoadingService;
-    import IStateService = angular.ui.IStateService;
-    import IInjectorService = angular.auto.IInjectorService;
+    import IStateService = ng.ui.IStateService;
+    import IInjectorService = ng.auto.IInjectorService;
     import ILoggingService = Services.ILoggingService;
-    import IScope = angular.IScope;
-    import IHttpPromise = angular.IHttpPromise;
-    import IPromise = angular.IPromise;
+    import IScope = ng.IScope;
+    import IPromise = ng.IPromise;
     import IModalInstance = Services.IModalInstance;
     abstract class ControllerBase {
         protected scope: IScope;
         protected injector: IInjectorService;
         protected alertService: IAlertService;
-        protected loadingService: ILoadingService;
         protected stateService: IStateService;
         protected logger: ILoggingService;
         protected constructor(scope: IScope, injector: IInjectorService);
@@ -494,14 +491,11 @@ declare module MiracleDevs.Angular.Controllers {
         protected getService<T>(service: string): T;
         protected open(controller: Function, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
-        protected callEx<T>(call: () => IHttpPromise<T>, success?: (t: T) => void, fail?: (e: any) => void, showLoading?: boolean): void;
         protected showErrors(messages: string[]): void;
         protected showWarnings(messages: string[]): void;
         protected showError(message: string): void;
         protected showWarning(message: string): void;
         protected showMessage(message: string): void;
-        protected showLoading(): void;
-        protected hideLoading(): void;
         protected handleException(ex: any): void;
         protected changeState(state: string, params?: any, reload?: boolean): IPromise<any>;
     }
@@ -578,6 +572,14 @@ declare module MiracleDevs.Angular.Core {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+interface Math {
+    clamp(value: number, min: number, max: number): number;
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Core {
     class Md5 {
         static computeHash(value: string): string;
@@ -594,13 +596,6 @@ interface NumberConstructor {
 declare module MiracleDevs.Angular.Core {
     class TimeSpan {
         milliseconds: number;
-        /**
-         * The exact time when the application started.
-         * On reality holds the time when this script was loaded.
-         * @type TimeSpan
-         * @static
-         */
-        private static applicationStarted;
         /**
          * Retrieves the number of milliseconds in one second.
          * @return {Number} Number of milliseconds in one second.
@@ -858,711 +853,13 @@ declare module MiracleDevs.Angular.Core {
          * @static
          */
         static fromDays(days: any): TimeSpan;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirective = angular.IDirective;
-    abstract class DirectiveBase implements IDirective {
-        link: (scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction) => void;
-        constructor();
-        protected abstract create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): any;
-        protected getOptions<T>(instanceAttributes: IAttributes, optionsParameter: string): T;
-        protected tryGetInt(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): number;
-        protected tryGetNumber(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): number;
-        protected tryGetDate(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): number;
-        protected tryGetBoolean(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): boolean;
-        protected tryGet(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class AddClass extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): AddClass;
-    }
-    interface IAddClassParameters {
-        addClass: string;
-        element: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import ITimeoutService = angular.ITimeoutService;
-    class Alert extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            alertType: string;
-            timeout: string;
-            close: string;
-        };
-        private timeout;
-        constructor(timeout: ITimeoutService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(timeout: ITimeoutService): Alert;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class BackgroundImage extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): BackgroundImage;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class CommentArea extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            ngModel: string;
-        };
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        private restrictEntry(event, options, element, cancel);
-        private showCharacterLeft(options, element, cancel);
-        private checkSize(options, element);
-        static factory(): CommentArea;
-    }
-    interface ICommentAreaParameters {
-        defaultHeight?: number;
-        maxSize?: number;
-        showAlways?: boolean;
-        maxSizeField?: string;
-        maxSizeText?: string;
-        resize?: boolean;
-        restrictEntry?: boolean;
-        negativeClass?: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class ConvertToNumber extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        require: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): ConvertToNumber;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IFilterService = angular.IFilterService;
-    class DateTimePicker extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        require: string;
-        private filter;
-        constructor(filter: IFilterService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(filter: IFilterService): DateTimePicker;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import ITimeoutService = angular.ITimeoutService;
-    class FileButton extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            title: string;
-            ariaLabel: string;
-            accept: string;
-            caption: string;
-            cssClass: string;
-            fileSelected: string;
-        };
-        template: string;
-        private timeout;
-        constructor(timeout: ITimeoutService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(timeout: ITimeoutService): FileButton;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class FileDragAndDrop extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            fileSelected: string;
-        };
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): FileDragAndDrop;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class FocusInvalidField extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): FocusInvalidField;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import ITimeoutService = angular.ITimeoutService;
-    class FocusWhen extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        private timeout;
-        constructor(timeout: ITimeoutService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(timeout: ITimeoutService): FocusWhen;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class FullSelect extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): FullSelect;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IInterpolateService = angular.IInterpolateService;
-    class HorizontalScroller extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        interpolate: IInterpolateService;
-        constructor(interpolate: IInterpolateService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(interpolate: IInterpolateService): HorizontalScroller;
-    }
-    interface IHorizontalScrollerParameters {
-        element: IAugmentedJQuery;
-        container: string;
-        content: string;
-        leftArrow: string;
-        rightArrow: string;
-        speed: number;
-        friction: number;
-        minVelocity: number;
-        fps: number;
-    }
-    class HorizontalScrollerInstance {
-        element: JQuery;
-        container: JQuery;
-        content: JQuery;
-        leftArrow: JQuery;
-        rightArrow: JQuery;
-        position: number;
-        velocity: number;
-        speed: number;
-        friction: number;
-        pressing: boolean;
-        direction: number;
-        millisecondsPerFrame: number;
-        minVelocity: number;
-        intervalId: number;
-        lastTime: number;
-        constructor(options: IHorizontalScrollerParameters);
-        enableScroll(): void;
-        private applyPosition();
-        private checkConstraints();
-        private killInterval();
-        private getMilliseconds();
-        private moveLeft();
-        private moveRight();
-        private move();
-        dispose(): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Services {
-    import IScope = angular.IScope;
-    import ArrayList = Core.ArrayList;
-    import ICompiledExpression = angular.ICompiledExpression;
-    interface IKeyProcessorService {
-        evaluateKeyActions(keyActions: ArrayList<KeyAction>, eventType: string, scope: IScope, e: JQueryKeyEventObject): void;
-        parseActions(text: string): ArrayList<KeyAction>;
-    }
-    class KeyAction {
-        eventType: string;
-        keyCode: number;
-        shift: boolean;
-        ctrl: boolean;
-        alt: boolean;
-        action: ICompiledExpression;
-    }
-}
-declare module MiracleDevs.Angular.Scopes.Directives {
-    import IScope = angular.IScope;
-    interface IKeyboardListenerScope extends IScope {
-        disabled: boolean;
-        attachTo: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IKeyProcessorService = Services.IKeyProcessorService;
-    import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
-    import ILoggingService = Services.ILoggingService;
-    class KeyboardListener extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            disabled: string;
-            attachTo: string;
-        };
-        private readonly keyProcessor;
-        private readonly logger;
-        private readonly actions;
-        constructor(keyProcessor: IKeyProcessorService, logger: ILoggingService);
-        protected create(scope: IKeyboardListenerScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(keyProcessor: IKeyProcessorService, logger: ILoggingService): KeyboardListener;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IInterpolateService = angular.IInterpolateService;
-    import IStateService = angular.ui.IStateService;
-    class MdUiSrefActive extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        private interpolate;
-        private state;
-        constructor(interpolate: IInterpolateService, state: IStateService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(interpolate: IInterpolateService, state: IStateService): MdUiSrefActive;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IKeyProcessorService = Services.IKeyProcessorService;
-    class OnKeyboard extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        private readonly keyProcessor;
-        constructor(keyProcessor: IKeyProcessorService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(keyProcessor: IKeyProcessorService): OnKeyboard;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class PaginationBar extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        template: string;
-        scope: {
-            cssClass: string;
-            firstText: string;
-            previousText: string;
-            nextText: string;
-            lastText: string;
-            pages: string;
-            currentPage: string;
-            totalLinks: string;
-            links: string;
-            itemClicked: string;
-            autoScroll: string;
-        };
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): PaginationBar;
-    }
-    interface IPaginationBarParameters {
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import ITimeoutService = angular.ITimeoutService;
-    class PreventEventIf extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            preventEventIf: string;
-            preventEvent: string;
-        };
-        private timeout;
-        constructor(timeout: ITimeoutService);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(timeout: ITimeoutService): PreventEventIf;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class RemoveClass extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): RemoveClass;
-    }
-    interface IRemoveClassParameters {
-        removeClass: string;
-        element: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IRootScope = angular.IRootScopeService;
-    class ScrollToBottom extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        private rootScope;
-        constructor(rootScope: IRootScope);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(rootScope: IRootScope): ScrollToBottom;
-    }
-    interface IScrollToBottomParameters {
-        onClick: boolean;
-        onContentChange: boolean;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class ScrollToggleClass extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        private updateElement(element, instanceAttributes);
-        static factory(): ScrollToggleClass;
-    }
-    interface IScrollToggleClassParameters {
-        forceAdd: boolean;
-        forceRemove: boolean;
-        minPos: number;
-        maxPos: number;
-        cssClass: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IRootScope = angular.IRootScopeService;
-    class ScrollToTop extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        private rootScope;
-        constructor(rootScope: IRootScope);
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(rootScope: IRootScope): ScrollToTop;
-    }
-    interface IScrollToTopParameters {
-        onStateChange: boolean;
-        onClick: boolean;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class SelectToggleClass extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): SelectToggleClass;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class ToggleClass extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): ToggleClass;
-    }
-    interface IToggleClassParameters {
-        toggleClass: string;
-        element: string;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class ToggleClassOnClick extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        static factory(): ToggleClassOnClick;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = angular.IScope;
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    class Tooltip extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        scope: {
-            tooltipOptions: string;
-            tooltipCose: string;
-            tooltipParameter: string;
-        };
-        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
-        private normalTooltip(control, scope, instanceAttributes);
-        static factory(): Tooltip;
-    }
-    interface ITooltipOptions {
-        animation: "fade" | "grow" | "swing" | "slide" | "fall";
-        animationDuration: number | number[];
-        arrow: boolean;
-        content: string | JQuery | any;
-        contentAsHTML: boolean;
-        contentCloning: boolean;
-        debug: boolean;
-        delay: number | number[];
-        delayTouch: number | number[];
-        distance: number | number[];
-        IEmin: number;
-        interactive: boolean;
-        maxWidth: number;
-        minIntersection: number;
-        minWidth: number;
-        multiple: boolean;
-        plugins: string[];
-        repositionOnScroll: boolean;
-        restoration: "none" | "previous" | "current";
-        selfDestruction: boolean;
-        side: string | string[];
-        timer: number;
-        theme: string | string[];
-        trackerInterval: number;
-        trackOrigin: boolean;
-        trackTooltip: boolean;
-        trigger: "hover" | "click" | "custom";
-        triggerClose: any;
-        triggerOpen: any;
-        updateAnimation: "fade" | "rotate" | "scale";
-        viewportAware: boolean;
-        zIndex: number;
+        /**
+         * The exact time when the application started.
+         * On reality holds the time when this script was loaded.
+         * @type TimeSpan
+         * @static
+         */
+        private static applicationStarted;
     }
 }
 /*!
@@ -1649,12 +946,732 @@ declare module MiracleDevs.Angular.Filters {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import IController = ng.IController;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirective = ng.IDirective;
+    abstract class DirectiveBase implements IDirective {
+        link: (scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction) => void;
+        constructor();
+        protected abstract create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): any;
+        protected getOptions<T>(instanceAttributes: IAttributes, optionsParameter: string): T;
+        protected tryGetInt(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): number;
+        protected tryGetNumber(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): number;
+        protected tryGetDate(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): number;
+        protected tryGetBoolean(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): boolean;
+        protected tryGet(options: any, instanceAttributes: IAttributes, optionFrom: string, optionTo?: string): string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class AddClass extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): AddClass;
+    }
+    interface IAddClassParameters {
+        addClass: string;
+        element: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import ITimeoutService = ng.ITimeoutService;
+    import IController = ng.IController;
+    class Alert extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            alertType: string;
+            timeout: string;
+            close: string;
+        };
+        private timeout;
+        constructor(timeout: ITimeoutService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(timeout: ITimeoutService): Alert;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class BackgroundImage extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): BackgroundImage;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class CommentArea extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            ngModel: string;
+        };
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        private restrictEntry(event, options, element, cancel);
+        private showCharacterLeft(options, element, cancel);
+        private checkSize(options, element);
+        static factory(): CommentArea;
+    }
+    interface ICommentAreaParameters {
+        defaultHeight?: number;
+        maxSize?: number;
+        showAlways?: boolean;
+        maxSizeField?: string;
+        maxSizeText?: string;
+        resize?: boolean;
+        restrictEntry?: boolean;
+        negativeClass?: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class ConvertToNumber extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        require: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): ConvertToNumber;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IFilterService = ng.IFilterService;
+    import IController = ng.IController;
+    class DateTimePicker extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        require: string;
+        private filter;
+        constructor(filter: IFilterService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(filter: IFilterService): DateTimePicker;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import ITimeoutService = ng.ITimeoutService;
+    import IController = ng.IController;
+    class FileButton extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            title: string;
+            ariaLabel: string;
+            accept: string;
+            caption: string;
+            cssClass: string;
+            fileSelected: string;
+        };
+        template: string;
+        private timeout;
+        constructor(timeout: ITimeoutService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(timeout: ITimeoutService): FileButton;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class FileDragAndDrop extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): FileDragAndDrop;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAugmentedJQuery = ng.IAugmentedJQuery;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    class FocusInvalidField extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void;
+        static factory(): FocusInvalidField;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import ITimeoutService = ng.ITimeoutService;
+    import IController = ng.IController;
+    class FocusWhen extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private timeout;
+        constructor(timeout: ITimeoutService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(timeout: ITimeoutService): FocusWhen;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class FormatAsNumber extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        require: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): FormatAsNumber;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class FullSelect extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): FullSelect;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAugmentedJQuery = ng.IAugmentedJQuery;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IInterpolateService = ng.IInterpolateService;
+    import IController = ng.IController;
+    class HorizontalScroller extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        interpolate: IInterpolateService;
+        constructor(interpolate: IInterpolateService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(interpolate: IInterpolateService): HorizontalScroller;
+    }
+    interface IHorizontalScrollerParameters {
+        element: IAugmentedJQuery;
+        container: string;
+        content: string;
+        leftArrow: string;
+        rightArrow: string;
+        speed: number;
+        friction: number;
+        minVelocity: number;
+        fps: number;
+    }
+    class HorizontalScrollerInstance {
+        element: JQuery;
+        container: JQuery;
+        content: JQuery;
+        leftArrow: JQuery;
+        rightArrow: JQuery;
+        position: number;
+        velocity: number;
+        speed: number;
+        friction: number;
+        pressing: boolean;
+        direction: number;
+        millisecondsPerFrame: number;
+        minVelocity: number;
+        intervalId: number;
+        lastTime: number;
+        constructor(options: IHorizontalScrollerParameters);
+        enableScroll(): void;
+        private applyPosition();
+        private checkConstraints();
+        private killInterval();
+        private getMilliseconds();
+        private moveLeft();
+        private moveRight();
+        private move();
+        dispose(): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Services {
+    import IScope = ng.IScope;
+    import ArrayList = Core.ArrayList;
+    import ICompiledExpression = ng.ICompiledExpression;
+    interface IKeyProcessorService {
+        evaluateKeyActions(keyActions: ArrayList<KeyAction>, eventType: string, scope: IScope, e: JQueryKeyEventObject): void;
+        parseActions(text: string): ArrayList<KeyAction>;
+    }
+    class KeyAction {
+        eventType: string;
+        keyCode: number;
+        shift: boolean;
+        ctrl: boolean;
+        alt: boolean;
+        action: ICompiledExpression;
+    }
+}
+declare module MiracleDevs.Angular.Scopes.Directives {
+    import IScope = ng.IScope;
+    interface IKeyboardListenerScope extends IScope {
+        disabled: boolean;
+        attachTo: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IKeyProcessorService = Services.IKeyProcessorService;
+    import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
+    import IController = ng.IController;
+    class KeyboardListener extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            disabled: string;
+            attachTo: string;
+        };
+        private readonly keyProcessor;
+        private readonly actions;
+        constructor(keyProcessor: IKeyProcessorService);
+        protected create(scope: IKeyboardListenerScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(keyProcessor: IKeyProcessorService): KeyboardListener;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IInterpolateService = ng.IInterpolateService;
+    import IStateService = ng.ui.IStateService;
+    import IController = ng.IController;
+    class MdUiSrefActive extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private interpolate;
+        private state;
+        constructor(interpolate: IInterpolateService, state: IStateService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(interpolate: IInterpolateService, state: IStateService): MdUiSrefActive;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IKeyProcessorService = Services.IKeyProcessorService;
+    import IController = ng.IController;
+    class OnKeyboard extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private readonly keyProcessor;
+        constructor(keyProcessor: IKeyProcessorService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(keyProcessor: IKeyProcessorService): OnKeyboard;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class PaginationBar extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        template: string;
+        scope: {
+            cssClass: string;
+            firstText: string;
+            previousText: string;
+            nextText: string;
+            lastText: string;
+            pages: string;
+            currentPage: string;
+            totalLinks: string;
+            links: string;
+            itemClicked: string;
+            autoScroll: string;
+        };
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): PaginationBar;
+    }
+    interface IPaginationBarParameters {
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import ITimeoutService = ng.ITimeoutService;
+    import IController = ng.IController;
+    class PreventEventIf extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            preventEventIf: string;
+            preventEvent: string;
+        };
+        private timeout;
+        constructor(timeout: ITimeoutService);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(timeout: ITimeoutService): PreventEventIf;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class RemoveClass extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): RemoveClass;
+    }
+    interface IRemoveClassParameters {
+        removeClass: string;
+        element: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IRootScope = ng.IRootScopeService;
+    import IController = ng.IController;
+    class ScrollToBottom extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private rootScope;
+        constructor(rootScope: IRootScope);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(rootScope: IRootScope): ScrollToBottom;
+    }
+    interface IScrollToBottomParameters {
+        onClick: boolean;
+        onContentChange: boolean;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class ScrollToggleClass extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        private updateElement(element, instanceAttributes);
+        static factory(): ScrollToggleClass;
+    }
+    interface IScrollToggleClassParameters {
+        forceAdd: boolean;
+        forceRemove: boolean;
+        minPos: number;
+        maxPos: number;
+        cssClass: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IRootScope = ng.IRootScopeService;
+    import IController = ng.IController;
+    class ScrollToTop extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        private rootScope;
+        constructor(rootScope: IRootScope);
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(rootScope: IRootScope): ScrollToTop;
+    }
+    interface IScrollToTopParameters {
+        onStateChange: boolean;
+        onClick: boolean;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class SelectToggleClass extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): SelectToggleClass;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class ToggleClass extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): ToggleClass;
+    }
+    interface IToggleClassParameters {
+        toggleClass: string;
+        element: string;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class ToggleClassOnClick extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        static factory(): ToggleClassOnClick;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Directives {
+    import IScope = ng.IScope;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
+    import IDirectiveRegister = Interfaces.IDirectiveRegister;
+    import IController = ng.IController;
+    class Tooltip extends DirectiveBase {
+        static register: IDirectiveRegister;
+        restrict: string;
+        scope: {
+            tooltipOptions: string;
+            tooltipCose: string;
+            tooltipParameter: string;
+        };
+        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
+        private normalTooltip(control, scope, instanceAttributes);
+        static factory(): Tooltip;
+    }
+    interface ITooltipOptions {
+        animation: "fade" | "grow" | "swing" | "slide" | "fall";
+        animationDuration: number | number[];
+        arrow: boolean;
+        content: string | JQuery | any;
+        contentAsHTML: boolean;
+        contentCloning: boolean;
+        debug: boolean;
+        delay: number | number[];
+        delayTouch: number | number[];
+        distance: number | number[];
+        IEmin: number;
+        interactive: boolean;
+        maxWidth: number;
+        minIntersection: number;
+        minWidth: number;
+        multiple: boolean;
+        plugins: string[];
+        repositionOnScroll: boolean;
+        restoration: "none" | "previous" | "current";
+        selfDestruction: boolean;
+        side: string | string[];
+        timer: number;
+        theme: string | string[];
+        trackerInterval: number;
+        trackOrigin: boolean;
+        trackTooltip: boolean;
+        trigger: "hover" | "click" | "custom";
+        triggerClose: any;
+        triggerOpen: any;
+        updateAnimation: "fade" | "rotate" | "scale";
+        viewportAware: boolean;
+        zIndex: number;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Interceptors {
-    import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
-    import IPromise = angular.IPromise;
-    import IRequestConfig = angular.IRequestConfig;
-    import IHttpInterceptor = angular.IHttpInterceptor;
-    import IqService = angular.IQService;
+    import IHttpPromiseCallbackArg = ng.IHttpPromiseCallbackArg;
+    import IPromise = ng.IPromise;
+    import IRequestConfig = ng.IRequestConfig;
+    import IHttpInterceptor = ng.IHttpInterceptor;
+    import IqService = ng.IQService;
     class InterceptorBase implements IHttpInterceptor {
         request: (config: IRequestConfig) => IRequestConfig;
         response: (response: IHttpPromiseCallbackArg<any>) => IPromise<any>;
@@ -1822,15 +1839,18 @@ declare module MiracleDevs.Angular.Services {
  */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
+    import ITimeoutService = ng.ITimeoutService;
     class FileManagementService extends ServiceBase implements IFileManagementService {
         static register: IServiceRegister;
+        timeout: ITimeoutService;
+        constructor(timeout: ITimeoutService);
         read(file: File, completed: (file: File, content: string) => void, progress?: (p: number) => void, error?: (e: string) => void): void;
         download(fileName: string, content: string): void;
         open(fileName: string, content: string): void;
         getBlobUrl(fileName: string, content: string): string;
         private getBlob(fileName, content64);
         private getError(e);
-        static factory(): FileManagementService;
+        static factory(timeout: ITimeoutService): FileManagementService;
     }
 }
 /*!
@@ -1860,11 +1880,13 @@ declare module MiracleDevs.Angular.Services {
         $http: ng.IHttpService;
         host: string;
         constructor($http: ng.IHttpService, host: string);
-        post<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        patch<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        put<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        get<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
-        delete<T>(url: string, params?: any, data?: any): ng.IHttpPromise<T>;
+        private getStringValue(value);
+        private getUrl(url, params?);
+        post<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        patch<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        put<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        get<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
+        delete<T>(url: string, params?: any, data?: any, queryString?: any): ng.IHttpPromise<T>;
         protected getHeaders(): any;
     }
 }
@@ -1928,17 +1950,6 @@ declare module MiracleDevs.Angular.Services {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Services {
-    interface ILoadingService {
-        show(): void;
-        hide(): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Services {
     import Dictionary = Core.Dictionary;
     import ArrayList = Core.ArrayList;
     import Guid = Core.Guid;
@@ -1974,9 +1985,11 @@ declare module MiracleDevs.Angular.Services {
  */
 declare module MiracleDevs.Angular.Services {
     import IControllerRegister = Interfaces.IControllerRegister;
-    import IDeferred = angular.IDeferred;
-    import IPromise = angular.IPromise;
+    import IDeferred = ng.IDeferred;
+    import IPromise = ng.IPromise;
+    import Dictionary = Core.Dictionary;
     interface IModalService {
+        readonly modals: Dictionary<IModalInstance, ng.IAugmentedJQuery>;
         open<T>(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         open<T>(dialog: any, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         close(modalInstance: any, reason?: string): any;
@@ -2010,8 +2023,8 @@ declare module MiracleDevs.Angular.Services {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Services {
-    import IScope = angular.IScope;
-    import IParseService = angular.IParseService;
+    import IScope = ng.IScope;
+    import IParseService = ng.IParseService;
     import ArrayList = Core.ArrayList;
     import IServiceRegister = Interfaces.IServiceRegister;
     class KeyProcessorService extends ServiceBase implements IKeyProcessorService {
@@ -2053,6 +2066,7 @@ declare module MiracleDevs.Angular.Services {
  */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
+    import Dictionary = Core.Dictionary;
     class ModalService extends ServiceBase implements IModalService {
         static register: IServiceRegister;
         private readonly $rootScope;
@@ -2061,21 +2075,21 @@ declare module MiracleDevs.Angular.Services {
         private readonly $templateCache;
         private readonly $compile;
         private readonly $controller;
-        private readonly modals;
-        constructor($rootScope: angular.IRootScopeService, $q: angular.IQService, $http: angular.IHttpService, $templateCache: angular.ITemplateCacheService, $compile: angular.ICompileService, $controller: angular.IControllerService);
+        readonly modals: Dictionary<IModalInstance, ng.IAugmentedJQuery>;
+        constructor($rootScope: ng.IRootScopeService, $q: ng.IQService, $http: ng.IHttpService, $templateCache: ng.ITemplateCacheService, $compile: ng.ICompileService, $controller: ng.IControllerService);
         open(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         close(modalInstance: IModalInstance, reason?: string): void;
         resolve<T>(modalInstance: IModalInstance, result: T): void;
         private openModal(register, controllerAs, parameters, modalInstance, template, staticDialog, keyboard);
         private removeModal(modalInstance, modal);
-        static factory($rootScope: angular.IRootScopeService, $q: angular.IQService, $http: angular.IHttpService, $templateCache: angular.ITemplateCacheService, $compile: angular.ICompileService, $controller: angular.IControllerService): ModalService;
+        static factory($rootScope: ng.IRootScopeService, $q: ng.IQService, $http: ng.IHttpService, $templateCache: ng.ITemplateCacheService, $compile: ng.ICompileService, $controller: ng.IControllerService): ModalService;
     }
     class ModalInstance implements IModalInstance {
         private modalService;
-        deferred: angular.IDeferred<any>;
-        promise: angular.IPromise<any>;
+        deferred: ng.IDeferred<any>;
+        promise: ng.IPromise<any>;
         dispose: () => void;
-        constructor(modalService: IModalService, deferred: angular.IDeferred<any>);
+        constructor(modalService: IModalService, deferred: ng.IDeferred<any>);
         close(reason?: string): void;
         resolve(result: any): void;
     }
@@ -2087,7 +2101,7 @@ declare module MiracleDevs.Angular.Services {
  */
 declare module MiracleDevs.Angular.Services {
     import IServiceRegister = Interfaces.IServiceRegister;
-    import ISCEService = angular.ISCEService;
+    import ISCEService = ng.ISCEService;
     class UrlService extends ServiceBase implements IUrlService {
         static register: IServiceRegister;
         private sce;
@@ -2114,9 +2128,9 @@ declare module MiracleDevs.Angular.Session {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Controllers.Dialogs {
-    import IInjectorService = angular.auto.IInjectorService;
+    import IInjectorService = ng.auto.IInjectorService;
     import IModalInstance = Services.IModalInstance;
-    import IScope = angular.IScope;
+    import IScope = ng.IScope;
     abstract class DialogControllerBase extends ControllerBase {
         protected modalInstance: IModalInstance;
         protected constructor(scope: IScope, modalInstance: IModalInstance, injector: IInjectorService);
@@ -2184,7 +2198,7 @@ declare module MiracleDevs.Angular.Core.Mapping {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Scopes.Directives.PaginationBar {
-    import IScope = angular.IScope;
+    import IScope = ng.IScope;
     interface IPaginationBarScope extends IScope {
         cssClass: string;
         firstText: string;
@@ -2212,7 +2226,7 @@ declare module MiracleDevs.Angular.Scopes.Directives.PaginationBar {
  */
 declare module MiracleDevs.Angular.Controllers.Directives.PaginationBar {
     import IControllerRegister = Interfaces.IControllerRegister;
-    import IInjectorService = angular.auto.IInjectorService;
+    import IInjectorService = ng.auto.IInjectorService;
     import IPaginationBarScope = Scopes.Directives.PaginationBar.IPaginationBarScope;
     import PaginationBarItem = Scopes.Directives.PaginationBar.PaginationBarItem;
     class PaginationBarController extends ControllerBase {

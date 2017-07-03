@@ -4,8 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../../../typings/angularjs/angular.d.ts"/>
-///<reference path="../../../FrameworkModule.ts"/>
 ///<reference path="../../ControllerBase.ts"/>
 ///<reference path="../../../session/ObjectSession.ts" />
 ///<reference path="../../../scopes/directives/pagination/IPaginationBarScope.ts" />
@@ -14,11 +12,11 @@
 module MiracleDevs.Angular.Controllers.Directives.PaginationBar
 {
     import IControllerRegister = Interfaces.IControllerRegister;
-    import IInjectorService = angular.auto.IInjectorService;
+    import IInjectorService = ng.auto.IInjectorService;
     import AngularServices = Services.AngularServices;
     import IPaginationBarScope = Scopes.Directives.PaginationBar.IPaginationBarScope;
     import PaginationBarItem = Scopes.Directives.PaginationBar.PaginationBarItem;
-    import ISCEService = angular.ISCEService;
+    import ISCEService = ng.ISCEService;
 
     export class PaginationBarController extends ControllerBase 
     {

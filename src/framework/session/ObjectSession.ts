@@ -4,7 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../core/Object.ts"/>
 ///<reference path="../core/LocalStorage.ts"/>
 
 module MiracleDevs.Angular.Session

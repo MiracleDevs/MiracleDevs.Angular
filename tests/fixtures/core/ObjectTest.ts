@@ -32,7 +32,7 @@ describe("Object", () =>
 
         it("should get type of custom class", () => expect(Object.getTypeName(Guid.new())).toBe("Guid"));
 
-        it("should get type of null", () => expect(() => Object.getTypeName(null)).toThrow(objectNullError));
+        it("should get type of null", () => expect(() => Object.getTypeName(null)).toThrow(new Error(objectNullError)));
     });
 
     describe("object is null", () =>

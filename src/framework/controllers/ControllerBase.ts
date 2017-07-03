@@ -9,11 +9,11 @@
 module MiracleDevs.Angular.Controllers
 {
     import IAlertService = Services.IAlertService;
-    import IStateService = angular.ui.IStateService;
-    import IInjectorService = angular.auto.IInjectorService;
+    import IStateService = ng.ui.IStateService;
+    import IInjectorService = ng.auto.IInjectorService;
     import ILoggingService = Services.ILoggingService;
-    import IScope = angular.IScope;
-    import IPromise = angular.IPromise;
+    import IScope = ng.IScope;
+    import IPromise = ng.IPromise;
     import IModalService = Services.IModalService;
     import FrameworkServices = Services.FrameworkServices;
     import IModalInstance = Services.IModalInstance;

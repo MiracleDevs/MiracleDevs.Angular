@@ -4,8 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../core/ArrayList.ts" />
-///<reference path="../interfaces/IServiceRegister.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="IAlertService.ts"/>
 

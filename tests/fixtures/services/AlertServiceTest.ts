@@ -4,7 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../Imports.ts" />
 ///<reference path="TestServices.ts"/>
 
 describe("AlertService", () =>

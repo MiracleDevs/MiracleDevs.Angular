@@ -4,18 +4,18 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../typings/jasmine/jasmine.d.ts" />
-///<reference path="../typings/angularjs/angular.d.ts" />
-///<reference path="../typings/angularjs/angular-mocks.d.ts" />
+///<reference path="../typings/index.d.ts" />
 ///<reference path="../typings/miracledevs.angular/miracledevs.angular.d.ts" />
+///<reference path="../node_modules/@types/angular-mocks/index.d.ts" />
+///<reference path="../node_modules/@types/jasmine/index.d.ts" />
 
-import IPromise = angular.IPromise;
-import IInjectorService = angular.auto.IInjectorService;
-import IScope = angular.IScope;
-import IRootScopeService = angular.IRootScopeService;
-import IQService = angular.IQService;
-import ITimeoutService = angular.ITimeoutService;
-import IControllerService = angular.IControllerService;
+import IPromise = ng.IPromise;
+import IInjectorService = ng.auto.IInjectorService;
+import IScope = ng.IScope;
+import IRootScopeService = ng.IRootScopeService;
+import IQService = ng.IQService;
+import ITimeoutService = ng.ITimeoutService;
+import IControllerService = ng.IControllerService;
 
 import IServiceRegister = MiracleDevs.Angular.Interfaces.IServiceRegister;
 
@@ -38,4 +38,3 @@ import DialogControllerBase = MiracleDevs.Angular.Controllers.Dialogs.DialogCont
 import ServiceBase = MiracleDevs.Angular.Services.ServiceBase;
 import AngularServices = MiracleDevs.Angular.Services.AngularServices;
 import ILoggingService = MiracleDevs.Angular.Services.ILoggingService;
-import ILoadingService = MiracleDevs.Angular.Services.ILoadingService;

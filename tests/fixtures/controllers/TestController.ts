@@ -24,7 +24,7 @@
 
     messagesShown: number;
 
-    constructor(scope: angular.IScope, injector: angular.auto.IInjectorService, testService: ITestPromiseService)
+    constructor(scope: ng.IScope, injector: ng.auto.IInjectorService, testService: ITestPromiseService)
     {
         super(scope, injector);
 

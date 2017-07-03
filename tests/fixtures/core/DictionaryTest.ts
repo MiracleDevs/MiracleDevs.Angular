@@ -47,7 +47,7 @@ describe("Dictionary", () =>
 
         it("should fail when creating the dictionary with duplicate keys", () =>
         {
-            expect(() => new Dictionary([{ key: "a", value: 1 }, { key: "a", value: 2 }])).toThrow(keyPresentError);
+            expect(() => new Dictionary([{ key: "a", value: 1 }, { key: "a", value: 2 }])).toThrow(new Error(keyPresentError));
         });
     });
 
@@ -65,7 +65,7 @@ describe("Dictionary", () =>
         {
             var dictionary = new Dictionary([{ key: "a", value: 1 }, { key: "b", value: 2 }]);
 
-            expect(() => dictionary.get("c")).toThrow(wrongKeyError);
+            expect(() => dictionary.get("c")).toThrow(new Error(wrongKeyError));
         });
 
         it("should pop last element", () =>
@@ -93,7 +93,7 @@ describe("Dictionary", () =>
         {
             var dictionary = new Dictionary([{ key: "a", value: 1 }, { key: "b", value: 2 }, { key: "c", value: 3 }]);
 
-            expect(() => dictionary.keyOf(-1)).toThrow(wrongValueError);
+            expect(() => dictionary.keyOf(-1)).toThrow(new Error(wrongValueError));
         });
 
         it("should add elements", () =>
@@ -122,25 +122,25 @@ describe("Dictionary", () =>
         it("should fail when adding duplicate keys", () =>
         {
             var dictionary = new Dictionary<string, number>();
-            expect(() => dictionary.addRange([{ key: "a", value: 1 }, { key: "a", value: 2 }])).toThrow(keyPresentError);
+            expect(() => dictionary.addRange([{ key: "a", value: 1 }, { key: "a", value: 2 }])).toThrow(new Error(keyPresentError));
         });
 
         it("should fail when adding other than key-value pairs.", () =>
         {
             var dictionary = new Dictionary<string, number>();
-            expect(() => dictionary.addRange(new Object() as any)).toThrow(valueNotArrayError);
+            expect(() => dictionary.addRange(new Object() as any)).toThrow(new Error(valueNotArrayError));
         });
 
         it("should fail when adding null items.", () =>
         {
             var dictionary = new Dictionary<string, number>();
-            expect(() => dictionary.addRange([{key: "element 1", value: 1}, null])).toThrow(itemNullError);
+            expect(() => dictionary.addRange([{ key: "element 1", value: 1 }, null])).toThrow(new Error(itemNullError));
         });
 
         it("should fail when adding one item with a null key.", () =>
         {
             var dictionary = new Dictionary<string, number>();
-            expect(() => dictionary.add(null,  1)).toThrow(keyNullError);
+            expect(() => dictionary.add(null, 1)).toThrow(new Error(keyNullError));
         });
 
         it("should execute code for each element", () =>
@@ -267,7 +267,7 @@ describe("Dictionary", () =>
             var dictionary2 = new Dictionary<string, number>();
 
             expect(dictionary1.first().key).toBe("element 1");
-            expect(() => dictionary2.first()).toThrow("The source sequence is empty.");
+            expect(() => dictionary2.first()).toThrow(new Error("The source sequence is empty."));
         });
 
         it("should retrieve the first element when condition is met or fail otherwise", () =>
@@ -276,8 +276,8 @@ describe("Dictionary", () =>
             var dictionary2 = new Dictionary<string, number>();
 
             expect(dictionary1.first(x => x.value === 3).key).toBe("element 3");
-            expect(() => dictionary1.first(x => x.key === "other element")).toThrow(firstLastError);
-            expect(() => dictionary2.first(x => x.key === "some string")).toThrow(firstLastError);
+            expect(() => dictionary1.first(x => x.key === "other element")).toThrow(new Error(firstLastError));
+            expect(() => dictionary2.first(x => x.key === "some string")).toThrow(new Error(firstLastError));
         });
 
         it("should retrieve the last element or fail otherwise", () =>
@@ -286,7 +286,7 @@ describe("Dictionary", () =>
             var dictionary2 = new Dictionary<string, number>();
 
             expect(dictionary1.last().key).toBe("element 5");
-            expect(() => dictionary2.last()).toThrow(firstLastError);
+            expect(() => dictionary2.last()).toThrow(new Error(firstLastError));
         });
 
         it("should retrieve the last element when condition is met or fail otherwise", () =>
@@ -295,8 +295,8 @@ describe("Dictionary", () =>
             var dictionary2 = new Dictionary<string, number>();
 
             expect(dictionary1.last(x => x.value === 3).key).toBe("element 3");
-            expect(() => dictionary1.last(x => x.key === "other element")).toThrow(firstLastError);
-            expect(() => dictionary2.last(x => x.key === "some string")).toThrow(firstLastError);
+            expect(() => dictionary1.last(x => x.key === "other element")).toThrow(new Error(firstLastError));
+            expect(() => dictionary2.last(x => x.key === "some string")).toThrow(new Error(firstLastError));
         });
     });
 
@@ -344,7 +344,7 @@ describe("Dictionary", () =>
             var dictionary1 = new Dictionary([{ key: "1", value: 1 }, { key: "2", value: 2 }, { key: "3", value: 3 }, { key: "4", value: 4 }]);
             var dictionary2 = new Dictionary<string, number>();
 
-            expect(() => dictionary1.sum(null)).toThrow(predicateError);
+            expect(() => dictionary1.sum(null)).toThrow(new Error(predicateError));
             expect(dictionary1.sum(x => x.value)).toBe(10);
             expect(dictionary1.sum(x => x.key)).toBe("1234");
             expect(dictionary2.sum(x => x.value)).toBe(null);
@@ -357,7 +357,7 @@ describe("Dictionary", () =>
         {
             var dictionary = new Dictionary([{ key: "element 3", value: 3 }, { key: "element 4", value: 4 }, { key: "element 2", value: 2 }, { key: "element 1", value: 1 }]);
 
-            expect(() => dictionary.orderBy(null)).toThrow(predicateError);
+            expect(() => dictionary.orderBy(null)).toThrow(new Error(predicateError));
 
             var ordered1 = dictionary.orderBy(x => x.key).getInnerArray();
             var ordered2 = dictionary.orderBy(x => x.value).getInnerArray();
@@ -377,7 +377,7 @@ describe("Dictionary", () =>
         {
             var dictionary = new Dictionary([{ key: "element 3", value: 3 }, { key: "element 4", value: 4 }, { key: "element 2", value: 2 }, { key: "element 1", value: 1 }]);
 
-            expect(() => dictionary.orderBy(null)).toThrow(predicateError);
+            expect(() => dictionary.orderBy(null)).toThrow(new Error(predicateError));
 
             var ordered1 = dictionary.orderByDesc(x => x.key).getInnerArray();
             var ordered2 = dictionary.orderByDesc(x => x.value).getInnerArray();
@@ -411,7 +411,7 @@ describe("Dictionary", () =>
         {
             var dictionary = new Dictionary([{ key: "element 1", value: 1 }, { key: "element 2", value: 2 }, { key: "element 3", value: 3 }, { key: "element 4", value: 4 }]);
 
-            expect(() => dictionary.remove("element 5")).toThrow(wrongKeyError);
+            expect(() => dictionary.remove("element 5")).toThrow(new Error(wrongKeyError));
             expect(dictionary.count()).toBe(4);
             expect(dictionary.get("element 1")).toBe(1);
             expect(dictionary.get("element 2")).toBe(2);

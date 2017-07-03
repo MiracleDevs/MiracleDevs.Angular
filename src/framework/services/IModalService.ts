@@ -4,19 +4,19 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-/// <reference path="../../typings/angularjs/angular.d.ts" />
+/// <reference path="../../typings/index.d.ts" />
 ///<reference path="../core/Dictionary.ts"/>
 
 module MiracleDevs.Angular.Services
 {
     import IControllerRegister = Interfaces.IControllerRegister;
-    import IDeferred = angular.IDeferred;
-    import IPromise = angular.IPromise;
+    import IDeferred = ng.IDeferred;
+    import IPromise = ng.IPromise;
     import Dictionary = Core.Dictionary;
 
     export interface IModalService
     {
-        readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
+        readonly modals: Dictionary<IModalInstance, ng.IAugmentedJQuery>;
 
         open<T>(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
         open<T>(dialog: any, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;

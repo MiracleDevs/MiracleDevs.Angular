@@ -51,8 +51,8 @@ describe("ArrayList", () =>
         {
             var array = new ArrayList([1, 2, 3]);
 
-            expect(() => array.get(-1)).toThrow(indexLesserError);
-            expect(() => array.get(3)).toThrow(indexGreaterError);
+            expect(() => array.get(-1)).toThrow(new Error(indexLesserError));
+            expect(() => array.get(3)).toThrow(new Error(indexGreaterError));
         });
 
         it("should pop last element", () =>
@@ -215,7 +215,7 @@ describe("ArrayList", () =>
             var array2 = new ArrayList<string>();
 
             expect(array1.first()).toBe("element 1");
-            expect(() => array2.first()).toThrow("The source sequence is empty.");
+            expect(() => array2.first()).toThrow(new Error("The source sequence is empty."));
         });
 
         it("should retrieve the first element when condition is met or fail otherwise", () =>
@@ -224,8 +224,8 @@ describe("ArrayList", () =>
             var array2 = new ArrayList<string>();
 
             expect(array1.first(x => x.indexOf("element") >= 0)).toBe("element 1");
-            expect(() => array1.first(x => x === "other element")).toThrow(firstLastError);
-            expect(() => array2.first(x => x === "some string")).toThrow(firstLastError);
+            expect(() => array1.first(x => x === "other element")).toThrow(new Error(firstLastError));
+            expect(() => array2.first(x => x === "some string")).toThrow(new Error(firstLastError));
         });
 
         it("should retrieve the last element or fail otherwise", () =>
@@ -234,7 +234,7 @@ describe("ArrayList", () =>
             var array2 = new ArrayList<string>();
 
             expect(array1.last()).toBe("element 4");
-            expect(() => array2.last()).toThrow(firstLastError);
+            expect(() => array2.last()).toThrow(new Error(firstLastError));
         });
 
         it("should retrieve the last element when condition is met or fail otherwise", () =>
@@ -243,8 +243,8 @@ describe("ArrayList", () =>
             var array2 = new ArrayList();
 
             expect(array1.last(x => x.indexOf("element") >= 0)).toBe("element 4");
-            expect(() => array1.last(x => x === "other element")).toThrow(firstLastError);
-            expect(() => array2.last(x => x === "some string")).toThrow(firstLastError);
+            expect(() => array1.last(x => x === "other element")).toThrow(new Error(firstLastError));
+            expect(() => array2.last(x => x === "some string")).toThrow(new Error(firstLastError));
         });
     });
 
@@ -432,8 +432,8 @@ describe("ArrayList", () =>
         {
             var array = new ArrayList([1, 2, 3, 4]);
 
-            expect(() => array.removeAt(5)).toThrow(indexGreaterError);
-            expect(() => array.removeAt(-1)).toThrow(indexLesserError);
+            expect(() => array.removeAt(5)).toThrow(new Error(indexGreaterError));
+            expect(() => array.removeAt(-1)).toThrow(new Error(indexLesserError));
 
             expect(array.get(0)).toBe(1);
             expect(array.get(1)).toBe(2);

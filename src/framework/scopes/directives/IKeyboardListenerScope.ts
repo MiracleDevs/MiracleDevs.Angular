@@ -1,7 +1,7 @@
-﻿///<reference path="../../../typings/angularjs/angular.d.ts" />
+﻿///<reference path="../../../typings/index.d.ts" />
 module MiracleDevs.Angular.Scopes.Directives
 {
-    import IScope = angular.IScope;
+    import IScope = ng.IScope;
 
     export interface IKeyboardListenerScope extends IScope
     {

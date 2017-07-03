@@ -66,6 +66,7 @@ gulp.task(compileTask, [copyFilesTask], function () {
             target: "ES5",
             diagnostics: true,
             removeComments: false,
+            lib : ["es2015", "es2015.iterable", "dom"],
             out: testFile
         }));
 

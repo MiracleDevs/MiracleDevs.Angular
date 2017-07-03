@@ -4,8 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
-///<reference path="../../typings/bootstrap/bootstrap.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="../core/Guid.ts"/>
 ///<reference path="IModalService.ts"/>
@@ -25,27 +23,27 @@ module MiracleDevs.Angular.Services
             dependencies: [AngularServices.rootScope, AngularServices.q, AngularServices.http, AngularServices.templateCache, AngularServices.compile, AngularServices.controller]
         };
 
-        private readonly $rootScope: angular.IRootScopeService;
+        private readonly $rootScope: ng.IRootScopeService;
 
-        private readonly $q: angular.IQService;
+        private readonly $q: ng.IQService;
 
-        private readonly $http: angular.IHttpService;
+        private readonly $http: ng.IHttpService;
 
-        private readonly $templateCache: angular.ITemplateCacheService;
+        private readonly $templateCache: ng.ITemplateCacheService;
 
-        private readonly $compile: angular.ICompileService;
+        private readonly $compile: ng.ICompileService;
 
-        private readonly $controller: angular.IControllerService;
+        private readonly $controller: ng.IControllerService;
 
-        public readonly modals: Dictionary<IModalInstance, angular.IAugmentedJQuery>;
+        public readonly modals: Dictionary<IModalInstance, ng.IAugmentedJQuery>;
 
         constructor(
-            $rootScope: angular.IRootScopeService,
-            $q: angular.IQService,
-            $http: angular.IHttpService,
-            $templateCache: angular.ITemplateCacheService,
-            $compile: angular.ICompileService,
-            $controller: angular.IControllerService
+            $rootScope: ng.IRootScopeService,
+            $q: ng.IQService,
+            $http: ng.IHttpService,
+            $templateCache: ng.ITemplateCacheService,
+            $compile: ng.ICompileService,
+            $controller: ng.IControllerService
         ) 
         {
             super();
@@ -55,7 +53,7 @@ module MiracleDevs.Angular.Services
             this.$templateCache = $templateCache;
             this.$compile = $compile;
             this.$controller = $controller;
-            this.modals = new Dictionary<IModalInstance, angular.IAugmentedJQuery>();
+            this.modals = new Dictionary<IModalInstance, ng.IAugmentedJQuery>();
         }
 
         open(dialog: IModalCreationParameter, parameters?: any, staticDialog?: boolean, keyboard?: boolean): IModalInstance;
@@ -72,7 +70,7 @@ module MiracleDevs.Angular.Services
 
             // TODO: search for a better way to handle templateCache. $http probably have a handler to store the result on cache instead of storning the whole result object.
             if (template == null)
-                this.$http.get<string>(dialog.register.viewUrl, { cache: this.$templateCache }).success(template => this.openModal(register, controllerAs, parameters, modalInstance, template, staticDialog, keyboard));
+                this.$http.get<string>(dialog.register.viewUrl, { cache: this.$templateCache }).then(result => this.openModal(register, controllerAs, parameters, modalInstance, result.data, staticDialog, keyboard));
             else
                 this.openModal(register, controllerAs, parameters, modalInstance, Object.getTypeName(template).toLowerCase() === "string" ? template : template[1], staticDialog, keyboard);
 
@@ -119,7 +117,7 @@ module MiracleDevs.Angular.Services
 
             // create the modal DOM elements.
             const id = Guid.new().value;
-            const modalBody = angular.element(`<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="login-title"></div>`);
+            const modalBody = ng.element(`<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="login-title"></div>`);
             modalBody.html(template);
 
             // compile the modal DOM for angular to resolve bindings and elements.
@@ -161,7 +159,7 @@ module MiracleDevs.Angular.Services
             });
         }
 
-        private removeModal(modalInstance: IModalInstance, modal: angular.IAugmentedJQuery)
+        private removeModal(modalInstance: IModalInstance, modal: ng.IAugmentedJQuery)
         {
             const scope = modal.scope();
 
@@ -181,12 +179,12 @@ module MiracleDevs.Angular.Services
         }
 
         static factory(
-            $rootScope: angular.IRootScopeService,
-            $q: angular.IQService,
-            $http: angular.IHttpService,
-            $templateCache: angular.ITemplateCacheService,
-            $compile: angular.ICompileService,
-            $controller: angular.IControllerService
+            $rootScope: ng.IRootScopeService,
+            $q: ng.IQService,
+            $http: ng.IHttpService,
+            $templateCache: ng.ITemplateCacheService,
+            $compile: ng.ICompileService,
+            $controller: ng.IControllerService
         ): ModalService
         {
             return new ModalService($rootScope, $q, $http, $templateCache, $compile, $controller);
@@ -197,13 +195,13 @@ module MiracleDevs.Angular.Services
     {
         private modalService: IModalService;
 
-        deferred: angular.IDeferred<any>;
+        deferred: ng.IDeferred<any>;
 
-        promise: angular.IPromise<any>;
+        promise: ng.IPromise<any>;
 
         dispose: () => void;
 
-        public constructor(modalService: IModalService, deferred: angular.IDeferred<any>)
+        public constructor(modalService: IModalService, deferred: ng.IDeferred<any>)
         {
             this.modalService = modalService;
             this.deferred = deferred;

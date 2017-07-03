@@ -76,6 +76,7 @@ function compileTypescript(path, destination, name, release) {
             diagnostics: true,
             removeComments: false,
             declaration: true,
+            lib : ["es2015", "es2015.iterable", "dom"],
             out: name}));
 
     if (release) {

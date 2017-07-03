@@ -4,24 +4,23 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../typings/angularjs/angular.d.ts" />
 ///<reference path="../FrameworkModule.ts" />
-///<reference path="../core/ArrayList.ts"/>
 ///<reference path="DirectiveBase.ts" />
 ///<reference path="../services/IKeyProcessorService.ts" />
 ///<reference path="../scopes/directives/IKeyboardListenerScope.ts" />
 
 module MiracleDevs.Angular.Directives
 {
-    import IAugmentedJQuery = angular.IAugmentedJQuery;
-    import IAttributes = angular.IAttributes;
-    import ITranscludeFunction = angular.ITranscludeFunction;
+    import IAugmentedJQuery = ng.IAugmentedJQuery;
+    import IAttributes = ng.IAttributes;
+    import ITranscludeFunction = ng.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import IKeyProcessorService = Services.IKeyProcessorService;
     import FrameworkServices = Services.FrameworkServices;
     import ArrayList = Angular.Core.ArrayList;
     import KeyAction = Services.KeyAction;
     import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
+    import IController = ng.IController;
 
     export class KeyboardListener extends DirectiveBase
     {
@@ -48,7 +47,7 @@ module MiracleDevs.Angular.Directives
             this.keyProcessor = keyProcessor;
         }
 
-        protected create(scope: IKeyboardListenerScope, instanceElement: IAugmentedJQuery, instanceAttributes: IAttributes, controller: any, transclude: ITranscludeFunction): void
+        protected create(scope: IKeyboardListenerScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void
         {
             var control = $(instanceElement);
             var actions = String.empty;

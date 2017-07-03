@@ -4,7 +4,6 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="ServiceBase.ts" />
 ///<reference path="../FrameworkModule.ts"/>
 
 module MiracleDevs.Angular.Services

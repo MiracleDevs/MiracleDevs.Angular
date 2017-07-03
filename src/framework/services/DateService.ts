@@ -5,12 +5,6 @@
  */
 
 ///<reference path="IDateService.ts" />
-///<reference path="FrameworkServices.ts" />
-///<reference path="ServiceBase.ts" />
-///<reference path="../interfaces/IServiceRegister.ts"/>
-///<reference path="../core/String.ts"/>
-///<reference path="../core/Object.ts"/>
-///<reference path="../core/Date.ts"/>
 ///<reference path="../FrameworkModule.ts"/>
 
 module MiracleDevs.Angular.Services

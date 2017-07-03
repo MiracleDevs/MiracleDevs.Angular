@@ -3,14 +3,6 @@ module MiracleDevs.Angular.Core
     export class TimeSpan  
     {
         /**
-         * The exact time when the application started.
-         * On reality holds the time when this script was loaded.
-         * @type TimeSpan
-         * @static
-         */
-        private static applicationStarted = TimeSpan.now;
-
-        /**
          * Retrieves the number of milliseconds in one second.
          * @return {Number} Number of milliseconds in one second.
          * @static
@@ -418,5 +410,13 @@ module MiracleDevs.Angular.Core
         {
             return new TimeSpan(days * TimeSpan.millisecondsPerDay);
         };
+
+        /**
+         * The exact time when the application started.
+         * On reality holds the time when this script was loaded.
+         * @type TimeSpan
+         * @static
+         */
+        private static applicationStarted = TimeSpan.now;
     }
 }

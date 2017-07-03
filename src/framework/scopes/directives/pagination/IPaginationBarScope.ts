@@ -4,11 +4,11 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
-///<reference path="../../../../typings/angularjs/angular.d.ts" />
+///<reference path="../../../../typings/index.d.ts" />
 
 module MiracleDevs.Angular.Scopes.Directives.PaginationBar
 {
-    import IScope = angular.IScope;
+    import IScope = ng.IScope;
  
     export interface IPaginationBarScope extends IScope
     {

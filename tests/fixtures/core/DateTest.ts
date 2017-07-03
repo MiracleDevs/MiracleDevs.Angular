@@ -24,7 +24,7 @@ describe("Date", () =>
 
         it("should be able to parse iso string with two year chars", () => expect(() => Date.fromIso8601("12-1-10")).not.toThrow());
 
-        it("shouldnt parse wrong formatted strings", () => expect(() => Date.fromIso8601("hello world")).toThrow(wrongDateError));
+        it("shouldnt parse wrong formatted strings", () => expect(() => Date.fromIso8601("hello world")).toThrow(new Error(wrongDateError)));
     });
 
     describe("format date", () =>

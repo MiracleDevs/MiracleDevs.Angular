@@ -4,12 +4,10 @@
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 
+///<reference path="../typings/index.d.ts"/>
 ///<reference path="core/Function.ts"/>
 ///<reference path="core/Object.ts"/>
 ///<reference path="services/AngularServices.ts"/>
-///<reference path="../typings/angularjs/angular.d.ts"/>
-///<reference path="../typings/angular-translate/angular-translate.d.ts"/>
-///<reference path="../typings/angular-ui-router/angular-ui-router.d.ts"/>
 ///<reference path="interfaces/IControllerRegister.ts"/>
 ///<reference path="interfaces/IServiceRegister.ts"/>
 ///<reference path="interfaces/IDirectiveRegister.ts"/>
@@ -19,22 +17,22 @@
 
 module MiracleDevs.Angular
 {
-    import IModule = angular.IModule;
-    import IScope = angular.IScope;
-    import IHttpProvider = angular.IHttpProvider;
-    import IStateProvider = angular.ui.IStateProvider;
-    import IStateService = angular.ui.IStateService;
-    import IState = angular.ui.IState;
-    import IUrlRouterProvider = angular.ui.IUrlRouterProvider;   
-    import IInjectorService = angular.auto.IInjectorService;
+    import IModule = ng.IModule;
+    import IScope = ng.IScope;
+    import IHttpProvider = ng.IHttpProvider;
+    import IStateProvider = ng.ui.IStateProvider;
+    import IStateService = ng.ui.IStateService;
+    import IState = ng.ui.IState;
+    import IUrlRouterProvider = ng.ui.IUrlRouterProvider;   
+    import IInjectorService = ng.auto.IInjectorService;
     import IControllerRegister = Interfaces.IControllerRegister;
     import IServiceRegister = Interfaces.IServiceRegister;
     import IFilterRegister = Interfaces.IFilterRegister;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import ILoggingService = Services.ILoggingService;
     import AngularServices = Services.AngularServices;
-    import ITranslateProvider = angular.translate.ITranslateProvider;
-    import ILocationProvider = angular.ILocationProvider;
+    import ITranslateProvider = ng.translate.ITranslateProvider;
+    import ILocationProvider = ng.ILocationProvider;
     import IInterceptorRegister = Interfaces.IInterceptorRegister;
 
     export abstract class ModuleBase 
@@ -84,7 +82,7 @@ module MiracleDevs.Angular
             if (!Object.isNull(register.dependencies))
                 register.controller.$inject = register.dependencies;
 
-            this.module.controller(register.name, register.controller);
+            this.module.controller(register.name, register.controller as any);
             this.logger.writeMessage(`registering ${register.name}`);
 
             if (this.stateProvider == null)

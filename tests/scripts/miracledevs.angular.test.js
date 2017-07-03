@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -60,19 +65,6 @@ var TestLoggingService = (function (_super) {
     };
     return TestLoggingService;
 }(ServiceBase));
-var TestLoadingService = (function (_super) {
-    __extends(TestLoadingService, _super);
-    function TestLoadingService() {
-        return _super.apply(this, arguments) || this;
-    }
-    TestLoadingService.prototype.show = function () {
-        this.loadingVisible = true;
-    };
-    TestLoadingService.prototype.hide = function () {
-        this.loadingVisible = false;
-    };
-    return TestLoadingService;
-}(ServiceBase));
 var TestPromiseService = (function (_super) {
     __extends(TestPromiseService, _super);
     function TestPromiseService(q, timeout) {
@@ -113,20 +105,19 @@ var TestPromiseService = (function (_super) {
     TestPromiseService.factory = function (q, timeout) {
         return new TestPromiseService(q, timeout);
     };
+    TestPromiseService.register = {
+        name: "TestPromiseService",
+        factory: TestPromiseService.factory,
+        dependencies: [AngularServices.q, AngularServices.timeout]
+    };
     return TestPromiseService;
 }(ServiceBase));
-TestPromiseService.register = {
-    name: "TestPromiseService",
-    factory: TestPromiseService.factory,
-    dependencies: [AngularServices.q, AngularServices.timeout]
-};
 FrameworkModule.instance.registerService(TestPromiseService.register);
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-///<reference path="../Imports.ts" />
 ///<reference path="../services/TestServices.ts" />
 describe("TestController", function () {
     var rootScopeService;
@@ -307,8 +298,8 @@ describe("ArrayList", function () {
         });
         it("should fail if get out of bounds", function () {
             var array = new ArrayList([1, 2, 3]);
-            expect(function () { return array.get(-1); }).toThrow(indexLesserError);
-            expect(function () { return array.get(3); }).toThrow(indexGreaterError);
+            expect(function () { return array.get(-1); }).toThrow(new Error(indexLesserError));
+            expect(function () { return array.get(3); }).toThrow(new Error(indexGreaterError));
         });
         it("should pop last element", function () {
             var array = new ArrayList([1, 2, 3]);
@@ -418,27 +409,27 @@ describe("ArrayList", function () {
             var array1 = new ArrayList(["element 1", "element 2", "element 3", "element 4"]);
             var array2 = new ArrayList();
             expect(array1.first()).toBe("element 1");
-            expect(function () { return array2.first(); }).toThrow("The source sequence is empty.");
+            expect(function () { return array2.first(); }).toThrow(new Error("The source sequence is empty."));
         });
         it("should retrieve the first element when condition is met or fail otherwise", function () {
             var array1 = new ArrayList(["element 1", "element 2", "element 3", "element 4"]);
             var array2 = new ArrayList();
             expect(array1.first(function (x) { return x.indexOf("element") >= 0; })).toBe("element 1");
-            expect(function () { return array1.first(function (x) { return x === "other element"; }); }).toThrow(firstLastError);
-            expect(function () { return array2.first(function (x) { return x === "some string"; }); }).toThrow(firstLastError);
+            expect(function () { return array1.first(function (x) { return x === "other element"; }); }).toThrow(new Error(firstLastError));
+            expect(function () { return array2.first(function (x) { return x === "some string"; }); }).toThrow(new Error(firstLastError));
         });
         it("should retrieve the last element or fail otherwise", function () {
             var array1 = new ArrayList(["element 1", "element 2", "element 3", "element 4"]);
             var array2 = new ArrayList();
             expect(array1.last()).toBe("element 4");
-            expect(function () { return array2.last(); }).toThrow(firstLastError);
+            expect(function () { return array2.last(); }).toThrow(new Error(firstLastError));
         });
         it("should retrieve the last element when condition is met or fail otherwise", function () {
             var array1 = new ArrayList(["element 1", "element 2", "element 3", "element 4"]);
             var array2 = new ArrayList();
             expect(array1.last(function (x) { return x.indexOf("element") >= 0; })).toBe("element 4");
-            expect(function () { return array1.last(function (x) { return x === "other element"; }); }).toThrow(firstLastError);
-            expect(function () { return array2.last(function (x) { return x === "some string"; }); }).toThrow(firstLastError);
+            expect(function () { return array1.last(function (x) { return x === "other element"; }); }).toThrow(new Error(firstLastError));
+            expect(function () { return array2.last(function (x) { return x === "some string"; }); }).toThrow(new Error(firstLastError));
         });
     });
     describe("checking elements", function () {
@@ -569,8 +560,8 @@ describe("ArrayList", function () {
         });
         it("should fail if tries to remove an element at an unexising index", function () {
             var array = new ArrayList([1, 2, 3, 4]);
-            expect(function () { return array.removeAt(5); }).toThrow(indexGreaterError);
-            expect(function () { return array.removeAt(-1); }).toThrow(indexLesserError);
+            expect(function () { return array.removeAt(5); }).toThrow(new Error(indexGreaterError));
+            expect(function () { return array.removeAt(-1); }).toThrow(new Error(indexLesserError));
             expect(array.get(0)).toBe(1);
             expect(array.get(1)).toBe(2);
             expect(array.get(2)).toBe(3);
@@ -689,27 +680,27 @@ describe("Array", function () {
             var array1 = ["element 1", "element 2", "element 3", "element 4"];
             var array2 = [];
             expect(Array.first(array1)).toBe("element 1");
-            expect(function () { return Array.first(array2); }).toThrow("The source sequence is empty.");
+            expect(function () { return Array.first(array2); }).toThrow(new Error("The source sequence is empty."));
         });
         it("should retrieve the first element when condition is met or fail otherwise", function () {
             var array1 = ["element 1", "element 2", "element 3", "element 4"];
             var array2 = [];
             expect(Array.first(array1, function (x) { return x.indexOf("element") >= 0; })).toBe("element 1");
-            expect(function () { return Array.first(array1, function (x) { return x === "other element"; }); }).toThrow(firstLastError);
-            expect(function () { return Array.first(array2, function (x) { return x === "some string"; }); }).toThrow(firstLastError);
+            expect(function () { return Array.first(array1, function (x) { return x === "other element"; }); }).toThrow(new Error(firstLastError));
+            expect(function () { return Array.first(array2, function (x) { return x === "some string"; }); }).toThrow(new Error(firstLastError));
         });
         it("should retrieve the last element or fail otherwise", function () {
             var array1 = ["element 1", "element 2", "element 3", "element 4"];
             var array2 = [];
             expect(Array.last(array1)).toBe("element 4");
-            expect(function () { return Array.last(array2); }).toThrow(firstLastError);
+            expect(function () { return Array.last(array2); }).toThrow(new Error(firstLastError));
         });
         it("should retrieve the last element when condition is met or fail otherwise", function () {
             var array1 = ["element 1", "element 2", "element 3", "element 4"];
             var array2 = [];
             expect(Array.last(array1, function (x) { return x.indexOf("element") >= 0; })).toBe("element 4");
-            expect(function () { return Array.last(array1, function (x) { return x === "other element"; }); }).toThrow(firstLastError);
-            expect(function () { return Array.last(array2, function (x) { return x === "some string"; }); }).toThrow(firstLastError);
+            expect(function () { return Array.last(array1, function (x) { return x === "other element"; }); }).toThrow(new Error(firstLastError));
+            expect(function () { return Array.last(array2, function (x) { return x === "some string"; }); }).toThrow(new Error(firstLastError));
         });
     });
     describe("checking elements", function () {
@@ -840,8 +831,8 @@ describe("Array", function () {
         });
         it("should fail if tries to remove an element at an unexising index", function () {
             var array = [1, 2, 3, 4];
-            expect(function () { return Array.removeAt(array, 5); }).toThrow(indexGreaterError);
-            expect(function () { return Array.removeAt(array, -1); }).toThrow(indexLesserError);
+            expect(function () { return Array.removeAt(array, 5); }).toThrow(new Error(indexGreaterError));
+            expect(function () { return Array.removeAt(array, -1); }).toThrow(new Error(indexLesserError));
             expect(array[0]).toBe(1);
             expect(array[1]).toBe(2);
             expect(array[2]).toBe(3);
@@ -885,7 +876,7 @@ describe("Date", function () {
         it("should be able to parse iso string with one month char", function () { return expect(function () { return Date.fromIso8601("2012-1-10"); }).not.toThrow(); });
         it("should be able to parse iso string with one day char", function () { return expect(function () { return Date.fromIso8601("2012-01-1"); }).not.toThrow(); });
         it("should be able to parse iso string with two year chars", function () { return expect(function () { return Date.fromIso8601("12-1-10"); }).not.toThrow(); });
-        it("shouldnt parse wrong formatted strings", function () { return expect(function () { return Date.fromIso8601("hello world"); }).toThrow(wrongDateError); });
+        it("shouldnt parse wrong formatted strings", function () { return expect(function () { return Date.fromIso8601("hello world"); }).toThrow(new Error(wrongDateError)); });
     });
     describe("format date", function () {
         it("should be able to format two digit years", function () { return expect(new Date(2012, 10, 10).format("yy")).toBe("12"); });
@@ -1048,7 +1039,7 @@ describe("Dictionary", function () {
             expect(dictionary.get("b")).toBe(2);
         });
         it("should fail when creating the dictionary with duplicate keys", function () {
-            expect(function () { return new Dictionary([{ key: "a", value: 1 }, { key: "a", value: 2 }]); }).toThrow(keyPresentError);
+            expect(function () { return new Dictionary([{ key: "a", value: 1 }, { key: "a", value: 2 }]); }).toThrow(new Error(keyPresentError));
         });
     });
     describe("operate over elements", function () {
@@ -1059,7 +1050,7 @@ describe("Dictionary", function () {
         });
         it("should fail if when key not present", function () {
             var dictionary = new Dictionary([{ key: "a", value: 1 }, { key: "b", value: 2 }]);
-            expect(function () { return dictionary.get("c"); }).toThrow(wrongKeyError);
+            expect(function () { return dictionary.get("c"); }).toThrow(new Error(wrongKeyError));
         });
         it("should pop last element", function () {
             var dictionary = new Dictionary([{ key: "a", value: 1 }, { key: "b", value: 2 }, { key: "c", value: 3 }]);
@@ -1077,7 +1068,7 @@ describe("Dictionary", function () {
         });
         it("should fail trying to retrieve a key of a value that is not present", function () {
             var dictionary = new Dictionary([{ key: "a", value: 1 }, { key: "b", value: 2 }, { key: "c", value: 3 }]);
-            expect(function () { return dictionary.keyOf(-1); }).toThrow(wrongValueError);
+            expect(function () { return dictionary.keyOf(-1); }).toThrow(new Error(wrongValueError));
         });
         it("should add elements", function () {
             var dictionary = new Dictionary();
@@ -1096,19 +1087,19 @@ describe("Dictionary", function () {
         });
         it("should fail when adding duplicate keys", function () {
             var dictionary = new Dictionary();
-            expect(function () { return dictionary.addRange([{ key: "a", value: 1 }, { key: "a", value: 2 }]); }).toThrow(keyPresentError);
+            expect(function () { return dictionary.addRange([{ key: "a", value: 1 }, { key: "a", value: 2 }]); }).toThrow(new Error(keyPresentError));
         });
         it("should fail when adding other than key-value pairs.", function () {
             var dictionary = new Dictionary();
-            expect(function () { return dictionary.addRange(new Object()); }).toThrow(valueNotArrayError);
+            expect(function () { return dictionary.addRange(new Object()); }).toThrow(new Error(valueNotArrayError));
         });
         it("should fail when adding null items.", function () {
             var dictionary = new Dictionary();
-            expect(function () { return dictionary.addRange([{ key: "element 1", value: 1 }, null]); }).toThrow(itemNullError);
+            expect(function () { return dictionary.addRange([{ key: "element 1", value: 1 }, null]); }).toThrow(new Error(itemNullError));
         });
         it("should fail when adding one item with a null key.", function () {
             var dictionary = new Dictionary();
-            expect(function () { return dictionary.add(null, 1); }).toThrow(keyNullError);
+            expect(function () { return dictionary.add(null, 1); }).toThrow(new Error(keyNullError));
         });
         it("should execute code for each element", function () {
             var counter = 0;
@@ -1194,27 +1185,27 @@ describe("Dictionary", function () {
             var dictionary1 = new Dictionary([{ key: "element 1", value: 1 }, { key: "index 2", value: 2 }, { key: "element 3", value: 3 }, { key: "index 4", value: 4 }, { key: "element 5", value: 5 }]);
             var dictionary2 = new Dictionary();
             expect(dictionary1.first().key).toBe("element 1");
-            expect(function () { return dictionary2.first(); }).toThrow("The source sequence is empty.");
+            expect(function () { return dictionary2.first(); }).toThrow(new Error("The source sequence is empty."));
         });
         it("should retrieve the first element when condition is met or fail otherwise", function () {
             var dictionary1 = new Dictionary([{ key: "element 1", value: 1 }, { key: "index 2", value: 2 }, { key: "element 3", value: 3 }, { key: "index 4", value: 4 }, { key: "element 5", value: 5 }]);
             var dictionary2 = new Dictionary();
             expect(dictionary1.first(function (x) { return x.value === 3; }).key).toBe("element 3");
-            expect(function () { return dictionary1.first(function (x) { return x.key === "other element"; }); }).toThrow(firstLastError);
-            expect(function () { return dictionary2.first(function (x) { return x.key === "some string"; }); }).toThrow(firstLastError);
+            expect(function () { return dictionary1.first(function (x) { return x.key === "other element"; }); }).toThrow(new Error(firstLastError));
+            expect(function () { return dictionary2.first(function (x) { return x.key === "some string"; }); }).toThrow(new Error(firstLastError));
         });
         it("should retrieve the last element or fail otherwise", function () {
             var dictionary1 = new Dictionary([{ key: "element 1", value: 1 }, { key: "index 2", value: 2 }, { key: "element 3", value: 3 }, { key: "index 4", value: 4 }, { key: "element 5", value: 5 }]);
             var dictionary2 = new Dictionary();
             expect(dictionary1.last().key).toBe("element 5");
-            expect(function () { return dictionary2.last(); }).toThrow(firstLastError);
+            expect(function () { return dictionary2.last(); }).toThrow(new Error(firstLastError));
         });
         it("should retrieve the last element when condition is met or fail otherwise", function () {
             var dictionary1 = new Dictionary([{ key: "element 1", value: 1 }, { key: "index 2", value: 2 }, { key: "element 3", value: 3 }, { key: "index 4", value: 4 }, { key: "element 5", value: 5 }]);
             var dictionary2 = new Dictionary();
             expect(dictionary1.last(function (x) { return x.value === 3; }).key).toBe("element 3");
-            expect(function () { return dictionary1.last(function (x) { return x.key === "other element"; }); }).toThrow(firstLastError);
-            expect(function () { return dictionary2.last(function (x) { return x.key === "some string"; }); }).toThrow(firstLastError);
+            expect(function () { return dictionary1.last(function (x) { return x.key === "other element"; }); }).toThrow(new Error(firstLastError));
+            expect(function () { return dictionary2.last(function (x) { return x.key === "some string"; }); }).toThrow(new Error(firstLastError));
         });
     });
     describe("checking elements", function () {
@@ -1245,7 +1236,7 @@ describe("Dictionary", function () {
         it("should sum elements", function () {
             var dictionary1 = new Dictionary([{ key: "1", value: 1 }, { key: "2", value: 2 }, { key: "3", value: 3 }, { key: "4", value: 4 }]);
             var dictionary2 = new Dictionary();
-            expect(function () { return dictionary1.sum(null); }).toThrow(predicateError);
+            expect(function () { return dictionary1.sum(null); }).toThrow(new Error(predicateError));
             expect(dictionary1.sum(function (x) { return x.value; })).toBe(10);
             expect(dictionary1.sum(function (x) { return x.key; })).toBe("1234");
             expect(dictionary2.sum(function (x) { return x.value; })).toBe(null);
@@ -1254,7 +1245,7 @@ describe("Dictionary", function () {
     describe("ordering elements", function () {
         it("should order by predicate ascending", function () {
             var dictionary = new Dictionary([{ key: "element 3", value: 3 }, { key: "element 4", value: 4 }, { key: "element 2", value: 2 }, { key: "element 1", value: 1 }]);
-            expect(function () { return dictionary.orderBy(null); }).toThrow(predicateError);
+            expect(function () { return dictionary.orderBy(null); }).toThrow(new Error(predicateError));
             var ordered1 = dictionary.orderBy(function (x) { return x.key; }).getInnerArray();
             var ordered2 = dictionary.orderBy(function (x) { return x.value; }).getInnerArray();
             expect(ordered1[0].value).toBe(1);
@@ -1268,7 +1259,7 @@ describe("Dictionary", function () {
         });
         it("should order elements descending", function () {
             var dictionary = new Dictionary([{ key: "element 3", value: 3 }, { key: "element 4", value: 4 }, { key: "element 2", value: 2 }, { key: "element 1", value: 1 }]);
-            expect(function () { return dictionary.orderBy(null); }).toThrow(predicateError);
+            expect(function () { return dictionary.orderBy(null); }).toThrow(new Error(predicateError));
             var ordered1 = dictionary.orderByDesc(function (x) { return x.key; }).getInnerArray();
             var ordered2 = dictionary.orderByDesc(function (x) { return x.value; }).getInnerArray();
             expect(ordered1[3].value).toBe(1);
@@ -1292,7 +1283,7 @@ describe("Dictionary", function () {
         });
         it("should fail if tries to remove an unexisting element", function () {
             var dictionary = new Dictionary([{ key: "element 1", value: 1 }, { key: "element 2", value: 2 }, { key: "element 3", value: 3 }, { key: "element 4", value: 4 }]);
-            expect(function () { return dictionary.remove("element 5"); }).toThrow(wrongKeyError);
+            expect(function () { return dictionary.remove("element 5"); }).toThrow(new Error(wrongKeyError));
             expect(dictionary.count()).toBe(4);
             expect(dictionary.get("element 1")).toBe(1);
             expect(dictionary.get("element 2")).toBe(2);
@@ -1442,7 +1433,7 @@ describe("Object", function () {
         it("should get type of date", function () { return expect(Object.getTypeName(new Date())).toBe("Date"); });
         it("should get type of custom object", function () { return expect(Object.getTypeName({})).toBe("Object"); });
         it("should get type of custom class", function () { return expect(Object.getTypeName(Guid.new())).toBe("Guid"); });
-        it("should get type of null", function () { return expect(function () { return Object.getTypeName(null); }).toThrow(objectNullError); });
+        it("should get type of null", function () { return expect(function () { return Object.getTypeName(null); }).toThrow(new Error(objectNullError)); });
     });
     describe("object is null", function () {
         it("should be true if null", function () { return expect(Object.isNull(null)).toBe(true); });
@@ -1619,7 +1610,7 @@ describe("String", function () {
         it("should format arrays", function () { return expect(String.format("Array: {0}", [1, 2, 3])).toBe("Array: 1,2,3"); });
         it("should format nulls", function () { return expect(String.format("Null: {0}", null)).toBe("Null: null"); });
         it("should format undefined", function () { return expect(String.format("Null: {0}", undefined)).toBe("Null: undefined"); });
-        it("should fail without format string", function () { return expect(function () { return String.format(null, "hello"); }).toThrow(formatNullError); });
+        it("should fail without format string", function () { return expect(function () { return String.format(null, "hello"); }).toThrow(new Error(formatNullError)); });
     });
     describe("format array", function () {
         it("should format strings", function () { return expect(String.formatArray("{0} {1}", ["hello", "world"])).toBe("hello world"); });
@@ -1628,7 +1619,7 @@ describe("String", function () {
         it("should format arrays", function () { return expect(String.formatArray("Array: {0}", [[1, 2, 3]])).toBe("Array: 1,2,3"); });
         it("should format nulls", function () { return expect(String.formatArray("Null: {0}", [null])).toBe("Null: null"); });
         it("should format undefined", function () { return expect(String.formatArray("Null: {0}", [undefined])).toBe("Null: undefined"); });
-        it("should fail without format string", function () { return expect(function () { return String.formatArray(null, ["hello"]); }).toThrow(formatNullError); });
+        it("should fail without format string", function () { return expect(function () { return String.formatArray(null, ["hello"]); }).toThrow(new Error(formatNullError)); });
     });
 });
 var PersonTest = (function () {
@@ -1642,7 +1633,6 @@ var PersonTest = (function () {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
-///<reference path="../Imports.ts" />
 ///<reference path="TestServices.ts"/>
 describe("AlertService", function () {
     var injector;
