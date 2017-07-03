@@ -117,7 +117,7 @@ module MiracleDevs.Angular.Services
 
             // create the modal DOM elements.
             const id = Guid.new().value;
-            const modalBody = ng.element(`<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="login-title"></div>`);
+            const modalBody = angular.element(`<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="login-title"></div>`);
             modalBody.html(template);
 
             // compile the modal DOM for angular to resolve bindings and elements.
@@ -159,7 +159,7 @@ module MiracleDevs.Angular.Services
             });
         }
 
-        private removeModal(modalInstance: IModalInstance, modal: ng.IAugmentedJQuery)
+        private removeModal(modalInstance: IModalInstance, modal: JQuery)
         {
             const scope = modal.scope();
 
