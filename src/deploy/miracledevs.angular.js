@@ -1256,6 +1256,11 @@ var MiracleDevs;
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(FrameworkServices, "asyncResourceService", {
+                    get: function () { return "$asyncResource"; },
+                    enumerable: true,
+                    configurable: true
+                });
                 return FrameworkServices;
             }());
             Services.FrameworkServices = FrameworkServices;
@@ -5291,6 +5296,40 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../core/LocalStorage.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Session;
+        (function (Session) {
+            var LocalStorage = Angular.Core.LocalStorage;
+            var ObjectSession = (function () {
+                function ObjectSession() {
+                }
+                ObjectSession.save = function (name, data) {
+                    LocalStorage.set(name, JSON.stringify(data));
+                };
+                ObjectSession.restore = function (name) {
+                    var content = LocalStorage.get(String, name);
+                    if (Object.isNull(content))
+                        return null;
+                    return JSON.parse(content.valueOf());
+                };
+                ObjectSession.clear = function (name) {
+                    LocalStorage.remove(name);
+                };
+                return ObjectSession;
+            }());
+            Session.ObjectSession = ObjectSession;
+        })(Session = Angular.Session || (Angular.Session = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../Core/ArrayList.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -5403,6 +5442,72 @@ var MiracleDevs;
             }(Services.ServiceBase));
             Services.AlertService = AlertService;
             Angular.FrameworkModule.instance.registerService(AlertService.register);
+        })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+///<reference path="../../typings/index.d.ts" />
+///<reference path="IAsyncResourceService.ts" />
+///<reference path="../FrameworkModule.ts" />
+///<reference path="../core/Dictionary.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Services;
+        (function (Services) {
+            var Dictionary = Angular.Core.Dictionary;
+            var AsyncResourceService = (function (_super) {
+                __extends(AsyncResourceService, _super);
+                function AsyncResourceService(sce, q, document) {
+                    var _this = _super.call(this) || this;
+                    _this.sce = sce;
+                    _this.q = q;
+                    _this.document = document;
+                    _this.deferredRequests = new Dictionary();
+                    return _this;
+                }
+                AsyncResourceService.prototype.loadScript = function (url) {
+                    return this.loadResource("script", url);
+                };
+                AsyncResourceService.prototype.loadImage = function (url) {
+                    return this.loadResource("img", url);
+                };
+                AsyncResourceService.prototype.loadVieo = function (url) {
+                    return this.loadResource("video", url);
+                };
+                AsyncResourceService.prototype.loadResource = function (type, url) {
+                    if (this.deferredRequests.containsKey(url))
+                        return this.deferredRequests.get(url).promise;
+                    var defer = this.q.defer();
+                    this.deferredRequests.add(url, defer);
+                    this.sce.trustAsResourceUrl(url);
+                    var element = angular.element("<" + type + "></" + type + ">");
+                    this.document.find("body").append(element);
+                    element.on("load", function () { return defer.resolve(); });
+                    element.attr("id", "async script");
+                    element[0]["src"] = url;
+                    return defer.promise;
+                };
+                AsyncResourceService.factory = function (sce, q, document) {
+                    return new AsyncResourceService(sce, q, document);
+                };
+                AsyncResourceService.register = {
+                    name: Services.FrameworkServices.asyncResourceService,
+                    factory: AsyncResourceService.factory,
+                    dependencies: [Services.AngularServices.sce, Services.AngularServices.q, Services.AngularServices.document]
+                };
+                return AsyncResourceService;
+            }(Services.ServiceBase));
+            Services.AsyncResourceService = AsyncResourceService;
+            ////////////////////////////////////////////////////////////
+            // Register service
+            ////////////////////////////////////////////////////////////
+            Angular.FrameworkModule.instance.registerService(AsyncResourceService.register);
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
@@ -6278,40 +6383,6 @@ var MiracleDevs;
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerService(UrlService.register);
         })(Services = Angular.Services || (Angular.Services = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../core/LocalStorage.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Session;
-        (function (Session) {
-            var LocalStorage = Angular.Core.LocalStorage;
-            var ObjectSession = (function () {
-                function ObjectSession() {
-                }
-                ObjectSession.save = function (name, data) {
-                    LocalStorage.set(name, JSON.stringify(data));
-                };
-                ObjectSession.restore = function (name) {
-                    var content = LocalStorage.get(String, name);
-                    if (Object.isNull(content))
-                        return null;
-                    return JSON.parse(content.valueOf());
-                };
-                ObjectSession.clear = function (name) {
-                    LocalStorage.remove(name);
-                };
-                return ObjectSession;
-            }());
-            Session.ObjectSession = ObjectSession;
-        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!

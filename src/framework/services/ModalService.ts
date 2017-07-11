@@ -35,7 +35,7 @@ module MiracleDevs.Angular.Services
 
         private readonly $controller: ng.IControllerService;
 
-        public readonly modals: Dictionary<IModalInstance, ng.IAugmentedJQuery>;
+        readonly modals: Dictionary<IModalInstance, ng.IAugmentedJQuery>;
 
         constructor(
             $rootScope: ng.IRootScopeService,
@@ -193,7 +193,7 @@ module MiracleDevs.Angular.Services
 
     export class ModalInstance implements IModalInstance
     {
-        private modalService: IModalService;
+        private readonly modalService: IModalService;
 
         deferred: ng.IDeferred<any>;
 

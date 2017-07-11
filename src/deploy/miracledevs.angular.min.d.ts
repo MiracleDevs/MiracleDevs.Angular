@@ -364,6 +364,7 @@ declare module MiracleDevs.Angular.Services {
         static readonly keyProcessorService: string;
         static readonly modalInstance: string;
         static readonly modalParameters: string;
+        static readonly asyncResourceService: string;
     }
 }
 /*!
@@ -1704,6 +1705,18 @@ declare module MiracleDevs.Angular.Models {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Session {
+    class ObjectSession {
+        static save<T>(name: string, data: T): void;
+        static restore<T>(name: string): T;
+        static clear(name: string): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Services {
     import ArrayList = Core.ArrayList;
     interface IAlertService {
@@ -1751,6 +1764,39 @@ declare module MiracleDevs.Angular.Services {
         get(index: number): Alert;
         getAlerts(): ArrayList<Alert>;
         static factory(logger: ILoggingService): IAlertService;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
+declare module MiracleDevs.Angular.Services {
+    import IPromise = ng.IPromise;
+    interface IAsyncResourceService {
+        loadScript(url: string): IPromise<void>;
+        loadImage(url: string): IPromise<void>;
+        loadVieo(url: string): IPromise<void>;
+    }
+}
+declare module MiracleDevs.Angular.Services {
+    import IServiceRegister = Interfaces.IServiceRegister;
+    import ISCEService = ng.ISCEService;
+    import IQService = ng.IQService;
+    import IDocumentService = ng.IDocumentService;
+    import IPromise = ng.IPromise;
+    class AsyncResourceService extends ServiceBase implements IAsyncResourceService {
+        static register: IServiceRegister;
+        private readonly sce;
+        private readonly q;
+        private readonly document;
+        private readonly deferredRequests;
+        constructor(sce: ISCEService, q: IQService, document: IDocumentService);
+        loadScript(url: string): IPromise<void>;
+        loadImage(url: string): IPromise<void>;
+        loadVieo(url: string): IPromise<void>;
+        private loadResource(type, url);
+        static factory(sce: ISCEService, q: IQService, document: IDocumentService): IAsyncResourceService;
     }
 }
 /*!
@@ -2085,7 +2131,7 @@ declare module MiracleDevs.Angular.Services {
         static factory($rootScope: ng.IRootScopeService, $q: ng.IQService, $http: ng.IHttpService, $templateCache: ng.ITemplateCacheService, $compile: ng.ICompileService, $controller: ng.IControllerService): ModalService;
     }
     class ModalInstance implements IModalInstance {
-        private modalService;
+        private readonly modalService;
         deferred: ng.IDeferred<any>;
         promise: ng.IPromise<any>;
         dispose: () => void;
@@ -2108,18 +2154,6 @@ declare module MiracleDevs.Angular.Services {
         constructor(sce: ISCEService);
         getParsedUrl(url: string): string;
         static factory(sce: ISCEService): IUrlService;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Session {
-    class ObjectSession {
-        static save<T>(name: string, data: T): void;
-        static restore<T>(name: string): T;
-        static clear(name: string): void;
     }
 }
 /*!

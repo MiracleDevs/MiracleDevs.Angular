@@ -8,26 +8,28 @@ module MiracleDevs.Angular.Services
 {
     export class FrameworkServices
     {
-        static get alertService(): string { return "AlertService"; }
+        static get alertService(): string { return "alertService"; }
        
-        static get modalService(): string { return "ModalService"; }
+        static get modalService(): string { return "modalService"; }
 
-        static get fileManagementService(): string { return "FileManagementService"; }
+        static get fileManagementService(): string { return "fileManagementService"; }
 
-        static get loggingService(): string { return "LoggingService"; }
+        static get loggingService(): string { return "loggingService"; }
 
-        static get geolocationService(): string { return "GeolocationService"; }
+        static get geolocationService(): string { return "geolocationService"; }
 
         static get urlService(): string { return "urlService"; }
 
-        static get dateService(): string { return "dateService"; }
+        static get dateService(): string { return "dateService"; }    
 
-        static get messageBus(): string { return "MessageBus"; }
+        static get keyProcessorService(): string { return "keyProcessorService"; }
 
-        static get keyProcessorService(): string { return "KeyProcessorService"; }
+        static get messageBus(): string { return "$messageBus"; }
 
         static get modalInstance(): string { return "$modalInstance"; }
 
         static get modalParameters(): string { return "$modalParameters"; }
+
+        static get asyncResourceService(): string { return "$asyncResource"; }
     }
 }
