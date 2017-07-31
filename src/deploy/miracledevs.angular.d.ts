@@ -360,8 +360,8 @@ declare module MiracleDevs.Angular.Services {
         static readonly geolocationService: string;
         static readonly urlService: string;
         static readonly dateService: string;
-        static readonly messageBus: string;
         static readonly keyProcessorService: string;
+        static readonly messageBus: string;
         static readonly modalInstance: string;
         static readonly modalParameters: string;
         static readonly asyncResourceService: string;
@@ -1233,13 +1233,6 @@ declare module MiracleDevs.Angular.Services {
         action: ICompiledExpression;
     }
 }
-declare module MiracleDevs.Angular.Scopes.Directives {
-    import IScope = ng.IScope;
-    interface IKeyboardListenerScope extends IScope {
-        disabled: boolean;
-        attachTo: string;
-    }
-}
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -1250,7 +1243,7 @@ declare module MiracleDevs.Angular.Directives {
     import ITranscludeFunction = ng.ITranscludeFunction;
     import IDirectiveRegister = Interfaces.IDirectiveRegister;
     import IKeyProcessorService = Services.IKeyProcessorService;
-    import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
+    import IScope = ng.IScope;
     import IController = ng.IController;
     class KeyboardListener extends DirectiveBase {
         static register: IDirectiveRegister;
@@ -1264,6 +1257,10 @@ declare module MiracleDevs.Angular.Directives {
         constructor(keyProcessor: IKeyProcessorService);
         protected create(scope: IKeyboardListenerScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
         static factory(keyProcessor: IKeyProcessorService): KeyboardListener;
+    }
+    interface IKeyboardListenerScope extends IScope {
+        disabled: boolean;
+        attachTo: string;
     }
 }
 /*!
@@ -1308,40 +1305,6 @@ declare module MiracleDevs.Angular.Directives {
         constructor(keyProcessor: IKeyProcessorService);
         protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
         static factory(keyProcessor: IKeyProcessorService): OnKeyboard;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Directives {
-    import IScope = ng.IScope;
-    import IAttributes = ng.IAttributes;
-    import ITranscludeFunction = ng.ITranscludeFunction;
-    import IDirectiveRegister = Interfaces.IDirectiveRegister;
-    import IController = ng.IController;
-    class PaginationBar extends DirectiveBase {
-        static register: IDirectiveRegister;
-        restrict: string;
-        template: string;
-        scope: {
-            cssClass: string;
-            firstText: string;
-            previousText: string;
-            nextText: string;
-            lastText: string;
-            pages: string;
-            currentPage: string;
-            totalLinks: string;
-            links: string;
-            itemClicked: string;
-            autoScroll: string;
-        };
-        protected create(scope: IScope, instanceElement: JQuery, instanceAttributes: IAttributes, controller: IController, transclude: ITranscludeFunction): void;
-        static factory(): PaginationBar;
-    }
-    interface IPaginationBarParameters {
     }
 }
 /*!
@@ -1698,18 +1661,6 @@ declare module MiracleDevs.Angular.Models {
         stopTracking(): void;
         isDirty(): boolean;
         isTracking(): boolean;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Session {
-    class ObjectSession {
-        static save<T>(name: string, data: T): void;
-        static restore<T>(name: string): T;
-        static clear(name: string): void;
     }
 }
 /*!
@@ -2161,6 +2112,18 @@ declare module MiracleDevs.Angular.Services {
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+declare module MiracleDevs.Angular.Session {
+    class ObjectSession {
+        static save<T>(name: string, data: T): void;
+        static restore<T>(name: string): T;
+        static clear(name: string): void;
+    }
+}
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 declare module MiracleDevs.Angular.Controllers.Dialogs {
     import IInjectorService = ng.auto.IInjectorService;
     import IModalInstance = Services.IModalInstance;
@@ -2224,50 +2187,5 @@ declare module MiracleDevs.Angular.Core.Mapping {
         static mapTo<TSource, TDest>(source: TSource, destination: TDest): void;
         static mapToByName<TSource, TDest>(name: string, source: TSource, destination: TDest): void;
         static dynamicMap(source: any, destination: any): void;
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Scopes.Directives.PaginationBar {
-    import IScope = ng.IScope;
-    interface IPaginationBarScope extends IScope {
-        cssClass: string;
-        firstText: string;
-        previousText: string;
-        nextText: string;
-        lastText: string;
-        pages: number;
-        currentPage: number;
-        totalLinks: number;
-        itemClicked: Function;
-        links: PaginationBarItem[];
-    }
-    class PaginationBarItem {
-        name: string;
-        tag: any;
-        enabled: boolean;
-        selected: boolean;
-        constructor(name: string, tag: any, enabled?: boolean, selected?: boolean);
-    }
-}
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-declare module MiracleDevs.Angular.Controllers.Directives.PaginationBar {
-    import IControllerRegister = Interfaces.IControllerRegister;
-    import IInjectorService = ng.auto.IInjectorService;
-    import IPaginationBarScope = Scopes.Directives.PaginationBar.IPaginationBarScope;
-    import PaginationBarItem = Scopes.Directives.PaginationBar.PaginationBarItem;
-    class PaginationBarController extends ControllerBase {
-        static register: IControllerRegister;
-        protected scope: IPaginationBarScope;
-        constructor(scope: IPaginationBarScope, injector: IInjectorService);
-        private create();
-        navigate(link: PaginationBarItem): void;
     }
 }

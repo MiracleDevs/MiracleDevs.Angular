@@ -1202,27 +1202,27 @@ var MiracleDevs;
                 function FrameworkServices() {
                 }
                 Object.defineProperty(FrameworkServices, "alertService", {
-                    get: function () { return "AlertService"; },
+                    get: function () { return "alertService"; },
                     enumerable: true,
                     configurable: true
                 });
                 Object.defineProperty(FrameworkServices, "modalService", {
-                    get: function () { return "ModalService"; },
+                    get: function () { return "modalService"; },
                     enumerable: true,
                     configurable: true
                 });
                 Object.defineProperty(FrameworkServices, "fileManagementService", {
-                    get: function () { return "FileManagementService"; },
+                    get: function () { return "fileManagementService"; },
                     enumerable: true,
                     configurable: true
                 });
                 Object.defineProperty(FrameworkServices, "loggingService", {
-                    get: function () { return "LoggingService"; },
+                    get: function () { return "loggingService"; },
                     enumerable: true,
                     configurable: true
                 });
                 Object.defineProperty(FrameworkServices, "geolocationService", {
-                    get: function () { return "GeolocationService"; },
+                    get: function () { return "geolocationService"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -1236,13 +1236,13 @@ var MiracleDevs;
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(FrameworkServices, "messageBus", {
-                    get: function () { return "MessageBus"; },
+                Object.defineProperty(FrameworkServices, "keyProcessorService", {
+                    get: function () { return "keyProcessorService"; },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(FrameworkServices, "keyProcessorService", {
-                    get: function () { return "KeyProcessorService"; },
+                Object.defineProperty(FrameworkServices, "messageBus", {
+                    get: function () { return "$messageBus"; },
                     enumerable: true,
                     configurable: true
                 });
@@ -4231,7 +4231,6 @@ var MiracleDevs;
         })(Services = Angular.Services || (Angular.Services = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
-///<reference path="../../../typings/index.d.ts" />
 /*!
  * MiracleDevs.Angular v1.0.0
  * Copyright (c) 2017 Miracle Devs, Inc
@@ -4240,7 +4239,6 @@ var MiracleDevs;
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
 ///<reference path="../services/IKeyProcessorService.ts" />
-///<reference path="../scopes/directives/IKeyboardListenerScope.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -4426,61 +4424,6 @@ var MiracleDevs;
             // Register directive
             ////////////////////////////////////////////////////////////
             Angular.FrameworkModule.instance.registerDirective(OnKeyboard.register);
-        })(Directives = Angular.Directives || (Angular.Directives = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../FrameworkModule.ts" />
-///<reference path="DirectiveBase.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Directives;
-        (function (Directives) {
-            var PaginationBar = (function (_super) {
-                __extends(PaginationBar, _super);
-                function PaginationBar() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
-                    _this.restrict = "E";
-                    _this.template = '<div class="pagination-bar" ng-controller="PaginationBarController as controller"><ul class="pagination"><li ng-repeat="link in links" ng-class="{ \'active\': link.selected }"><a ng-click="link.enabled && controller.navigate(link)" tooltip title="Go to page {{link.tag}}" ng-bind-html="link.name"></a></li></ul></div>';
-                    _this.scope = {
-                        cssClass: "@",
-                        firstText: "@",
-                        previousText: "@",
-                        nextText: "@",
-                        lastText: "@",
-                        pages: "=",
-                        currentPage: "=",
-                        totalLinks: "@",
-                        links: "=",
-                        itemClicked: "&",
-                        autoScroll: "@"
-                    };
-                    return _this;
-                }
-                PaginationBar.prototype.create = function (scope, instanceElement, instanceAttributes, controller, transclude) {
-                    var control = $(instanceElement);
-                    scope.$on("$destroy", function () { return control.remove(); });
-                };
-                PaginationBar.factory = function () {
-                    return new PaginationBar();
-                };
-                PaginationBar.register = {
-                    name: "paginationBar",
-                    factory: PaginationBar.factory
-                };
-                return PaginationBar;
-            }(Directives.DirectiveBase));
-            Directives.PaginationBar = PaginationBar;
-            ////////////////////////////////////////////////////////////
-            // Register directive
-            ////////////////////////////////////////////////////////////
-            Angular.FrameworkModule.instance.registerDirective(PaginationBar.register);
         })(Directives = Angular.Directives || (Angular.Directives = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
@@ -5289,40 +5232,6 @@ var MiracleDevs;
             }());
             Models.ModelBase = ModelBase;
         })(Models = Angular.Models || (Angular.Models = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../core/LocalStorage.ts"/>
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Session;
-        (function (Session) {
-            var LocalStorage = Angular.Core.LocalStorage;
-            var ObjectSession = (function () {
-                function ObjectSession() {
-                }
-                ObjectSession.save = function (name, data) {
-                    LocalStorage.set(name, JSON.stringify(data));
-                };
-                ObjectSession.restore = function (name) {
-                    var content = LocalStorage.get(String, name);
-                    if (Object.isNull(content))
-                        return null;
-                    return JSON.parse(content.valueOf());
-                };
-                ObjectSession.clear = function (name) {
-                    LocalStorage.remove(name);
-                };
-                return ObjectSession;
-            }());
-            Session.ObjectSession = ObjectSession;
-        })(Session = Angular.Session || (Angular.Session = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));
 /*!
@@ -6390,6 +6299,40 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../core/LocalStorage.ts"/>
+var MiracleDevs;
+(function (MiracleDevs) {
+    var Angular;
+    (function (Angular) {
+        var Session;
+        (function (Session) {
+            var LocalStorage = Angular.Core.LocalStorage;
+            var ObjectSession = (function () {
+                function ObjectSession() {
+                }
+                ObjectSession.save = function (name, data) {
+                    LocalStorage.set(name, JSON.stringify(data));
+                };
+                ObjectSession.restore = function (name) {
+                    var content = LocalStorage.get(String, name);
+                    if (Object.isNull(content))
+                        return null;
+                    return JSON.parse(content.valueOf());
+                };
+                ObjectSession.clear = function (name) {
+                    LocalStorage.remove(name);
+                };
+                return ObjectSession;
+            }());
+            Session.ObjectSession = ObjectSession;
+        })(Session = Angular.Session || (Angular.Session = {}));
+    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
+})(MiracleDevs || (MiracleDevs = {}));
+/*!
+ * MiracleDevs.Angular v1.0.0
+ * Copyright (c) 2017 Miracle Devs, Inc
+ * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
+ */
 ///<reference path="../ControllerBase.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
@@ -6571,128 +6514,5 @@ var MiracleDevs;
                 Mapping.AutoMapper = AutoMapper;
             })(Mapping = Core.Mapping || (Core.Mapping = {}));
         })(Core = Angular.Core || (Angular.Core = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../../../typings/index.d.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Scopes;
-        (function (Scopes) {
-            var Directives;
-            (function (Directives) {
-                var PaginationBar;
-                (function (PaginationBar) {
-                    var PaginationBarItem = (function () {
-                        function PaginationBarItem(name, tag, enabled, selected) {
-                            if (enabled === void 0) { enabled = true; }
-                            if (selected === void 0) { selected = false; }
-                            this.name = name;
-                            this.tag = tag;
-                            this.enabled = enabled;
-                            this.selected = selected;
-                        }
-                        return PaginationBarItem;
-                    }());
-                    PaginationBar.PaginationBarItem = PaginationBarItem;
-                })(PaginationBar = Directives.PaginationBar || (Directives.PaginationBar = {}));
-            })(Directives = Scopes.Directives || (Scopes.Directives = {}));
-        })(Scopes = Angular.Scopes || (Angular.Scopes = {}));
-    })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
-})(MiracleDevs || (MiracleDevs = {}));
-/*!
- * MiracleDevs.Angular v1.0.0
- * Copyright (c) 2017 Miracle Devs, Inc
- * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
- */
-///<reference path="../../ControllerBase.ts"/>
-///<reference path="../../../session/ObjectSession.ts" />
-///<reference path="../../../scopes/directives/pagination/IPaginationBarScope.ts" />
-///<reference path="../../../directives/PaginationBar.ts" />
-var MiracleDevs;
-(function (MiracleDevs) {
-    var Angular;
-    (function (Angular) {
-        var Controllers;
-        (function (Controllers) {
-            var Directives;
-            (function (Directives) {
-                var PaginationBar;
-                (function (PaginationBar) {
-                    var AngularServices = Angular.Services.AngularServices;
-                    var PaginationBarItem = Angular.Scopes.Directives.PaginationBar.PaginationBarItem;
-                    var PaginationBarController = (function (_super) {
-                        __extends(PaginationBarController, _super);
-                        function PaginationBarController(scope, injector) {
-                            var _this = _super.call(this, scope, injector) || this;
-                            _this.logger.writeMessage("Starting Pagination Bar Controller..");
-                            scope.$watch(function () { return scope.pages; }, function () { return _this.create(); });
-                            scope.$watch(function () { return scope.currentPage; }, function () { return _this.create(); });
-                            return _this;
-                        }
-                        PaginationBarController.prototype.create = function () {
-                            if (Object.isNull(this.scope.pages) || this.scope.pages <= 1) {
-                                this.scope.links = null;
-                                return;
-                            }
-                            var sce = this.getService(AngularServices.sce);
-                            var current = this.scope.currentPage;
-                            var first = 1;
-                            var previous = current - 1;
-                            var next = current + 1;
-                            var last = this.scope.pages;
-                            if (previous < first)
-                                previous = first;
-                            if (next > last)
-                                next = last;
-                            var totalLinks = this.scope.totalLinks;
-                            var halfLinks = totalLinks / 2;
-                            var linkFrom = current - halfLinks;
-                            var linkTo = current + halfLinks;
-                            if (linkFrom < first)
-                                linkTo += first - linkFrom;
-                            if (linkTo > last)
-                                linkFrom += last - linkTo;
-                            if (linkFrom < first)
-                                linkFrom = first;
-                            if (linkTo > last)
-                                linkTo = last;
-                            this.scope.links = [];
-                            this.scope.links.push(new PaginationBarItem(sce.trustAsHtml(this.scope["firstText"]), first, current !== first));
-                            this.scope.links.push(new PaginationBarItem(sce.trustAsHtml(this.scope["previousText"]), previous, current !== first));
-                            for (var i = linkFrom; i <= linkTo; i++)
-                                this.scope.links.push(new PaginationBarItem(i.toString(), i, true, current === i));
-                            this.scope.links.push(new PaginationBarItem(sce.trustAsHtml(this.scope["nextText"]), next, current !== last));
-                            this.scope.links.push(new PaginationBarItem(sce.trustAsHtml(this.scope["lastText"]), last, current !== last));
-                        };
-                        PaginationBarController.prototype.navigate = function (link) {
-                            if (Object.isNull(this.scope["autoScroll"]) || this.scope["autoScroll"] === "true") {
-                                $("body").scrollTop(0);
-                            }
-                            if (Object.isNull(this.scope["itemClicked"]))
-                                return;
-                            this.scope["itemClicked"]({ tag: link.tag });
-                        };
-                        PaginationBarController.register = {
-                            name: "PaginationBarController",
-                            controller: PaginationBarController,
-                            dependencies: [AngularServices.scope, AngularServices.injector]
-                        };
-                        return PaginationBarController;
-                    }(Controllers.ControllerBase));
-                    PaginationBar.PaginationBarController = PaginationBarController;
-                    ////////////////////////////////////////////////////////////
-                    // Register controller
-                    ////////////////////////////////////////////////////////////
-                    Angular.FrameworkModule.instance.registerController(PaginationBarController.register);
-                })(PaginationBar = Directives.PaginationBar || (Directives.PaginationBar = {}));
-            })(Directives = Controllers.Directives || (Controllers.Directives = {}));
-        })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = MiracleDevs.Angular || (MiracleDevs.Angular = {}));
 })(MiracleDevs || (MiracleDevs = {}));

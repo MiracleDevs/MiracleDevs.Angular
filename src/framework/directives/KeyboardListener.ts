@@ -7,7 +7,6 @@
 ///<reference path="../FrameworkModule.ts" />
 ///<reference path="DirectiveBase.ts" />
 ///<reference path="../services/IKeyProcessorService.ts" />
-///<reference path="../scopes/directives/IKeyboardListenerScope.ts" />
 
 module MiracleDevs.Angular.Directives
 {
@@ -19,7 +18,7 @@ module MiracleDevs.Angular.Directives
     import FrameworkServices = Services.FrameworkServices;
     import ArrayList = Angular.Core.ArrayList;
     import KeyAction = Services.KeyAction;
-    import IKeyboardListenerScope = Scopes.Directives.IKeyboardListenerScope;
+    import IScope = ng.IScope;
     import IController = ng.IController;
 
     export class KeyboardListener extends DirectiveBase
@@ -110,6 +109,14 @@ module MiracleDevs.Angular.Directives
         {
             return new KeyboardListener(keyProcessor);
         }
+    }
+
+
+    export interface IKeyboardListenerScope extends IScope
+    {
+        disabled: boolean;
+
+        attachTo: string;
     }
 
     ////////////////////////////////////////////////////////////
