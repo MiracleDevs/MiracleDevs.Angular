@@ -343,7 +343,9 @@ declare module MiracleDevs.Angular {
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
 declare module MiracleDevs.Angular.Services {
+    import IPromise = ng.IPromise;
     class ServiceBase {
+        protected call<T>(call: () => IPromise<T>, success?: (result: T) => void, loading?: (loading: boolean) => void, fail?: (reason: any) => void): void;
     }
 }
 /*!
