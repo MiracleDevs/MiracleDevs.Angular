@@ -5978,9 +5978,7 @@ var MiracleDevs;
                                 (!Object.isNull(keyAction.ctrl) && keyAction.ctrl && e.ctrlKey) ||
                                 (!Object.isNull(keyAction.ctrl) && !keyAction.ctrl && !e.ctrlKey))) {
                             scope.$apply(function () {
-                                keyAction.action(scope, null);
-                                e.stopPropagation();
-                                e.preventDefault();
+                                keyAction.action(scope, { $event: e });
                             });
                         }
                     });
