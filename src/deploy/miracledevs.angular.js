@@ -1172,6 +1172,8 @@ var MiracleDevs;
  * Copyright (c) 2017 Miracle Devs, Inc
  * Licensed under MIT (https://github.com/MiracleDevs/MiracleDevs.Angular/blob/master/LICENSE)
  */
+///<reference path="../core/Object.ts" />
+///<reference path="../../Typings/index.d.ts" />
 var MiracleDevs;
 (function (MiracleDevs) {
     var Angular;
@@ -1181,6 +1183,24 @@ var MiracleDevs;
             var ServiceBase = (function () {
                 function ServiceBase() {
                 }
+                ServiceBase.prototype.call = function (call, success, loading, fail) {
+                    if (!Object.isNull(loading))
+                        loading(true);
+                    call()
+                        .then(function (result) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(success)) {
+                            success(result);
+                        }
+                    })
+                        .catch(function (error) {
+                        if (!Object.isNull(loading))
+                            loading(false);
+                        if (!Object.isNull(fail))
+                            fail(error);
+                    });
+                };
                 return ServiceBase;
             }());
             Services.ServiceBase = ServiceBase;
