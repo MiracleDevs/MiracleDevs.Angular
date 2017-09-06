@@ -50,9 +50,7 @@ module MiracleDevs.Angular.Services
                 {
                     scope.$apply(() =>
                     {
-                        keyAction.action(scope, null);
-                        e.stopPropagation();
-                        e.preventDefault();
+                        keyAction.action(scope, { $event: e });
                     });
                 }
             });
